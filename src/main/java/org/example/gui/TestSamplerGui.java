@@ -6,14 +6,12 @@ import org.example.TestSampler;
 
 import java.awt.*;
 import javax.swing.JPanel;
-//import java.awt.BorderLayout;
 
-
-public class TestSamplerGui extends AbstractSamplerGui{
+public class TestSamplerGui extends AbstractSamplerGui {
 
     private final TestSamplerPanel testSamplerPanel;
 
-    public TestSamplerGui(){
+    public TestSamplerGui() {
         setLayout(new BorderLayout(0, 5));
         setBorder(makeBorder());
         add(makeTitlePanel(), BorderLayout.NORTH);
@@ -38,7 +36,8 @@ public class TestSamplerGui extends AbstractSamplerGui{
     }
 
     @Override
-    public TestElement createTestElement() {//创建所对应的Sampler
+    public TestElement createTestElement() {
+        // create new sampler (when create sampler or save sampler)
         System.out.println("createTestElement");
         TestElement sampler = new TestSampler();
         modifyTestElement(sampler);
@@ -47,6 +46,8 @@ public class TestSamplerGui extends AbstractSamplerGui{
 
     @Override
     public void configure(TestElement element) {
+        // to read user input
+
         System.out.println("GUI configure");
         super.configure(element);
         testSamplerPanel.configure(element);
@@ -54,6 +55,7 @@ public class TestSamplerGui extends AbstractSamplerGui{
 
     @Override
     public void modifyTestElement(TestElement element) {
+        // save user input to Jmeter
         System.out.println("GUI modifyTestElement");
         super.configureTestElement(element);
         testSamplerPanel.modifyTestElement(element);

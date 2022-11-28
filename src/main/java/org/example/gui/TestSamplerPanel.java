@@ -6,16 +6,6 @@ import org.example.TestSampler;
 import javax.swing.*;
 import java.awt.*;
 
-//import javax.swing.JPanel;
-//import javax.swing.JCheckBox;
-//import javax.swing.JTextField;
-//import javax.swing.JLabel;
-//import javax.swing.JComponent;
-//import java.awt.BorderLayout;
-//import java.awt.GridBagLayout;
-//import java.awt.GridBagConstraints;
-
-
 public class TestSamplerPanel extends JPanel {
     private JCheckBox isSuccessful;
 
@@ -30,7 +20,9 @@ public class TestSamplerPanel extends JPanel {
         super(new GridBagLayout());
     }
 
-    public void configure(TestElement element){
+    public void configure(TestElement element) {
+        // to read user input
+
         System.out.println("PANEL configure");
 
         if (element instanceof TestSampler) {
@@ -45,6 +37,8 @@ public class TestSamplerPanel extends JPanel {
     }
 
     public void modifyTestElement(TestElement element) {
+        // save user input to Jmeter
+
         System.out.println("PANEL modifyTestElement");
         if (element instanceof TestSampler) {
             TestSampler dummySampler = (TestSampler) element;
@@ -80,17 +74,17 @@ public class TestSamplerPanel extends JPanel {
 
         addToPanel(this, labelConstraints, 0, 0, new JLabel("Successful sample: ", JLabel.RIGHT));
         addToPanel(this, editConstraints, 1, 0, isSuccessful = new JCheckBox());
-        addToPanel(this, labelConstraints, 0,1, new JLabel("response code: ", JLabel.RIGHT));
+        addToPanel(this, labelConstraints, 0, 1, new JLabel("response code: ", JLabel.RIGHT));
         addToPanel(this, editConstraints, 1, 1, responseCode = new JTextField());
 
 //        editConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
 //        labelConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
 
-        addToPanel(this, labelConstraints, 0,2, new JLabel("response message: ", JLabel.RIGHT));
+        addToPanel(this, labelConstraints, 0, 2, new JLabel("response message: ", JLabel.RIGHT));
         addToPanel(this, editConstraints, 1, 2, responseMessage = new JTextField());
-        addToPanel(this, labelConstraints, 0,3, new JLabel("response label: ", JLabel.RIGHT));
+        addToPanel(this, labelConstraints, 0, 3, new JLabel("response label: ", JLabel.RIGHT));
         addToPanel(this, editConstraints, 1, 3, responseLabel = new JTextField());
-        addToPanel(this, labelConstraints, 0,4, new JLabel("Test case file path: ", JLabel.RIGHT));
+        addToPanel(this, labelConstraints, 0, 4, new JLabel("Test case file path: ", JLabel.RIGHT));
         addToPanel(this, editConstraints, 1, 4, tcFilePath = new JTextField());
 
         JPanel container = new JPanel(new BorderLayout());
