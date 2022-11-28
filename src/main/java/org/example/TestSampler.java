@@ -4,10 +4,15 @@ import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.logging.log4j.util.Strings;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +35,7 @@ public class TestSampler extends AbstractSampler {
     public String getLabel() {
         return getPropertyAsString(LABEL, Strings.EMPTY);
     }
+
     public void setResponseCode(String responseCode) {
         setProperty(RESPONSE_CODE, responseCode);
     }
@@ -71,6 +77,27 @@ public class TestSampler extends AbstractSampler {
         System.out.println(line);
     }
 
+    public static void getJsonObj(String filePath) {
+        //JSON parser object to parse read file
+        JSONParser jsonParser = new JSONParser();
+
+        try (FileReader reader = new FileReader(filePath)) {
+            //Read JSON file
+            Object obj = jsonParser.parse(reader);
+//            JSONArray employeeList = (JSONArray) obj;
+            JSONObject myJsonObj = (JSONObject) obj;
+
+            System.out.println(myJsonObj);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public SampleResult sample(Entry entry) {
@@ -81,11 +108,10 @@ public class TestSampler extends AbstractSampler {
         // get file contents
         String testCaseFilePath = getTestCaseFilePath();
         System.out.println("testCaseFilePath: " + testCaseFilePath);
-        try {
-            getFileContent(testCaseFilePath);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        getJsonObj(testCaseFilePath);
+
+
         res.setSampleLabel(getLabel());
         res.setSuccessful(getSuccessful());
         res.setResponseCode(getResponseCode());
