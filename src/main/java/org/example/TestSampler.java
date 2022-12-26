@@ -68,26 +68,16 @@ public class TestSampler extends AbstractSampler {
         return getPropertyAsString(TC_FILE_PATH, "");
     }
 
-    public static void getFileContent(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-
-        BufferedReader reader = Files.newBufferedReader(path);
-        String line = reader.readLine();
-        System.out.println("line: ");
-        System.out.println(line);
-    }
-
-    public static void getJsonObj(String filePath) {
+    public static String getJsonString(String filePath) {
         //JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
-
+        String stringJsonObj = null;
         try (FileReader reader = new FileReader(filePath)) {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
-//            JSONArray employeeList = (JSONArray) obj;
             JSONObject myJsonObj = (JSONObject) obj;
-
-            System.out.println(myJsonObj);
+            stringJsonObj = myJsonObj.toString();
+            System.out.println(stringJsonObj);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -96,26 +86,28 @@ public class TestSampler extends AbstractSampler {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return stringJsonObj;
     }
-
 
     @Override
     public SampleResult sample(Entry entry) {
         SampleResult res = new SampleResult();
         res.sampleStart();
 
-
         // get file contents
         String testCaseFilePath = getTestCaseFilePath();
         System.out.println("testCaseFilePath: " + testCaseFilePath);
 
-        getJsonObj(testCaseFilePath);
-
+        String resultJsonString = getJsonString(testCaseFilePath);
 
         res.setSampleLabel(getLabel());
         res.setSuccessful(getSuccessful());
         res.setResponseCode(getResponseCode());
+
         res.setResponseMessage(getResponseMessage());
+//        res.setResponseMessage(resultJsonString);
+        // here set the result of json
+        res.setResponseData(resultJsonString, null);
 
         res.sampleEnd();
         return res;
