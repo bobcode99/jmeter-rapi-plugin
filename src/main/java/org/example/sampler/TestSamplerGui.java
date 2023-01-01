@@ -2,6 +2,7 @@ package org.example.sampler;
 
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
+import org.example.JMeterPluginUtils;
 
 import java.awt.*;
 
@@ -21,22 +22,21 @@ public class TestSamplerGui extends AbstractSamplerGui {
 
     @Override
     public String getLabelResource() {
-        System.out.println("getLabelResource");
+//        System.out.println("getLabelResource");
         return this.getClass().getSimpleName();
     }
 
     @Override
     public String getStaticLabel() {
         //set display name
-        System.out.println("getStaticLabel");
-
-        return "TestSampler";
+//        System.out.println("getStaticLabel");
+        return JMeterPluginUtils.prefixLabel("TestSampler");
     }
 
     @Override
     public TestElement createTestElement() {
         // create new sampler (when create sampler or save sampler)
-        System.out.println("createTestElement");
+//        System.out.println("createTestElement");
         TestElement sampler = new TestSampler();
         modifyTestElement(sampler);
         return sampler;
@@ -46,7 +46,7 @@ public class TestSamplerGui extends AbstractSamplerGui {
     public void configure(TestElement element) {
         // to read user input
 
-        System.out.println("GUI configure");
+//        System.out.println("GUI configure");
         super.configure(element);
         testSamplerPanel.configure(element);
     }
@@ -54,14 +54,14 @@ public class TestSamplerGui extends AbstractSamplerGui {
     @Override
     public void modifyTestElement(TestElement element) {
         // save user input to Jmeter
-        System.out.println("GUI modifyTestElement");
+//        System.out.println("GUI modifyTestElement");
         super.configureTestElement(element);
         testSamplerPanel.modifyTestElement(element);
     }
 
     @Override
     public void clearGui() {
-        System.out.println("clearGui");
+//        System.out.println("clearGui");
 
         super.clearGui();
         testSamplerPanel.initFields();

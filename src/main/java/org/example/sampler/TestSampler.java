@@ -73,13 +73,9 @@ public class TestSampler extends AbstractSampler {
             Object obj = jsonParser.parse(reader);
             JSONObject myJsonObj = (JSONObject) obj;
             stringJsonObj = myJsonObj.toString();
-            System.out.println(stringJsonObj);
+            System.out.println("getJsonString: " + stringJsonObj);
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
         return stringJsonObj;
@@ -93,8 +89,12 @@ public class TestSampler extends AbstractSampler {
         // get file contents
         String testCaseFilePath = getTestCaseFilePath();
         System.out.println("testCaseFilePath: " + testCaseFilePath);
+        System.out.println(testCaseFilePath);
 
-        String resultJsonString = getJsonString(testCaseFilePath);
+        if(!testCaseFilePath.isEmpty() && !testCaseFilePath.isBlank()) {
+            String resultJsonString = getJsonString(testCaseFilePath);
+            res.setResponseData(resultJsonString, null);
+        }
 
         res.setSampleLabel(getLabel());
         res.setSuccessful(getSuccessful());
@@ -103,7 +103,6 @@ public class TestSampler extends AbstractSampler {
         res.setResponseMessage(getResponseMessage());
 //        res.setResponseMessage(resultJsonString);
         // here set the result of json
-        res.setResponseData(resultJsonString, null);
 
         res.sampleEnd();
         return res;

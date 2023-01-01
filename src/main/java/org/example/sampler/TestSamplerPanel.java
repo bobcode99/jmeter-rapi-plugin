@@ -22,7 +22,7 @@ public class TestSamplerPanel extends JPanel {
     public void configure(TestElement element) {
         // to read user input
 
-        System.out.println("PANEL configure");
+//        System.out.println("PANEL configure");
 
         if (element instanceof TestSampler) {
             TestSampler dummySampler = (TestSampler) element;
@@ -38,7 +38,7 @@ public class TestSamplerPanel extends JPanel {
     public void modifyTestElement(TestElement element) {
         // save user input to Jmeter
 
-        System.out.println("PANEL modifyTestElement");
+//        System.out.println("PANEL modifyTestElement");
         if (element instanceof TestSampler) {
             TestSampler dummySampler = (TestSampler) element;
             dummySampler.setLabel(responseLabel.getText());
