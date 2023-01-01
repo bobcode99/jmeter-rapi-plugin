@@ -1,7 +1,6 @@
-package org.example.gui;
+package org.example.sampler;
 
 import org.apache.jmeter.testelement.TestElement;
-import org.example.TestSampler;
 
 import javax.swing.*;
 import java.awt.*;

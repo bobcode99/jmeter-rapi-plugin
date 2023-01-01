@@ -1,11 +1,9 @@
-package org.example.gui;
+package org.example.sampler;
 
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
-import org.example.TestSampler;
 
 import java.awt.*;
-import javax.swing.JPanel;
 
 public class TestSamplerGui extends AbstractSamplerGui {
 
