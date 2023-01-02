@@ -83,15 +83,18 @@ public class TestSampler extends AbstractSampler {
 
     @Override
     public SampleResult sample(Entry entry) {
-        SampleResult res = new SampleResult();
-        res.sampleStart();
+        TestSamplerResult res = new TestSamplerResult();
+//        res.sampleStart();
 
         // get file contents
         String testCaseFilePath = getTestCaseFilePath();
-        System.out.println("testCaseFilePath: " + testCaseFilePath);
-        System.out.println(testCaseFilePath);
+//        System.out.println("testCaseFilePath: " + testCaseFilePath);
+//        System.out.println(testCaseFilePath);
 
         if(!testCaseFilePath.isEmpty() && !testCaseFilePath.isBlank()) {
+            // here set the result of json
+            // res.setResponseMessage(resultJsonString);
+            System.out.println("write response data !");
             String resultJsonString = getJsonString(testCaseFilePath);
             res.setResponseData(resultJsonString, null);
         }
@@ -99,11 +102,7 @@ public class TestSampler extends AbstractSampler {
         res.setSampleLabel(getLabel());
         res.setSuccessful(getSuccessful());
         res.setResponseCode(getResponseCode());
-
         res.setResponseMessage(getResponseMessage());
-//        res.setResponseMessage(resultJsonString);
-        // here set the result of json
-
         res.sampleEnd();
         return res;
     }
