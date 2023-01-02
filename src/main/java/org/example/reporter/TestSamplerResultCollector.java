@@ -1,6 +1,7 @@
 package org.example.reporter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.jmeter.engine.util.NoThreadClone;
@@ -16,6 +17,8 @@ import org.example.sampler.TestSamplerResult;
 public class TestSamplerResultCollector extends AbstractListenerElement implements SampleListener, Clearable, Serializable,
         TestStateListener, Remoteable, NoThreadClone {
 
+    public ArrayList<String> allResponseMessage = new ArrayList<String>(); // Create an ArrayList object
+
     public boolean isSampleWanted(SampleResult result){
         if(result instanceof TestSamplerResult){
             System.out.println("isSampleWanted true");
@@ -28,7 +31,7 @@ public class TestSamplerResultCollector extends AbstractListenerElement implemen
     @Override
     public void testEnded() {
         System.out.println("testEnded 1");
-
+        System.out.println("Here's allResponseMessage: " + allResponseMessage);
     }
 
     @Override
@@ -65,6 +68,9 @@ public class TestSamplerResultCollector extends AbstractListenerElement implemen
             System.out.println("result: " + result);
             System.out.println("result getResponseData: " + Arrays.toString(result.getResponseData()));
             System.out.println("result getResponseDataAsString: " + result.getResponseDataAsString());
+            allResponseMessage.add(result.getResponseDataAsString());
+
+
         }
 
     }
