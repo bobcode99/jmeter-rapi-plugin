@@ -24,6 +24,8 @@ public class TestSampler extends AbstractSampler {
     private static final String RESPONSE_MESSAGE = "RESPONSE_MESSAGE";
     private static final String TC_FILE_PATH = "TC_FILE_PATH";
 
+    private static final String BROWSER_SELECT = "BROWSER_SELECT";
+
     public void setLabel(String label) {
         setProperty(LABEL, label);
     }
@@ -64,6 +66,14 @@ public class TestSampler extends AbstractSampler {
         return getPropertyAsString(TC_FILE_PATH, "");
     }
 
+    public void setBrowserSelect(String browserName) {
+        setProperty(BROWSER_SELECT, browserName);
+    }
+
+    public String getBrowserSelect() {
+        return getPropertyAsString(BROWSER_SELECT, "Firefox");
+    }
+
     public static String getJsonString(String filePath) {
         //JSON parser object to parse read file
         JSONParser jsonParser = new JSONParser();
@@ -90,6 +100,8 @@ public class TestSampler extends AbstractSampler {
         String testCaseFilePath = getTestCaseFilePath();
 //        System.out.println("testCaseFilePath: " + testCaseFilePath);
 //        System.out.println(testCaseFilePath);
+        String browserName = getBrowserSelect();
+        System.out.println("browserName: " + browserName);
 
         if(!testCaseFilePath.isEmpty() && !testCaseFilePath.isBlank()) {
             // here set the result of json
