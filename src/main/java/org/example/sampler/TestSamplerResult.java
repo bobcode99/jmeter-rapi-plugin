@@ -6,6 +6,7 @@ public class TestSamplerResult extends SampleResult {
     private String name = null;
 
     public TestSamplerResult() {
+        System.out.println("sample Start");
         sampleStart();
     }
 
