@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class TestSampler extends AbstractSampler {
+public class SideexSampler extends AbstractSampler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TestSampler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SideexSampler.class);
 
     private static final String LABEL = "LABEL";
     private static final String RESPONSE_CODE = "RESPONSE_CODE";
@@ -92,7 +92,7 @@ public class TestSampler extends AbstractSampler {
 
     @Override
     public SampleResult sample(Entry entry) {
-        TestSamplerResult res = new TestSamplerResult();
+        SideexSamplerResult res = new SideexSamplerResult();
 //        res.sampleStart();
 
         // get file contents

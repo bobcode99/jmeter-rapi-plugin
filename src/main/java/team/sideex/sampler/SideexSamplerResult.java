@@ -2,10 +2,10 @@ package team.sideex.sampler;
 
 import org.apache.jmeter.samplers.SampleResult;
 
-public class TestSamplerResult extends SampleResult {
+public class SideexSamplerResult extends SampleResult {
     private String name = null;
 
-    public TestSamplerResult() {
+    public SideexSamplerResult() {
         System.out.println("sample Start");
         sampleStart();
     }

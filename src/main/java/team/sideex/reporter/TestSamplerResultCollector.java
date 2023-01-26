@@ -12,16 +12,15 @@ import org.apache.jmeter.samplers.SampleEvent;
 import org.apache.jmeter.samplers.SampleListener;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.TestStateListener;
-import team.sideex.sampler.TestSamplerResult;
-import team.sideex.sampler.TestSamplerResult;
+import team.sideex.sampler.SideexSamplerResult;
 
 public class TestSamplerResultCollector extends AbstractListenerElement implements SampleListener, Clearable, Serializable,
         TestStateListener, Remoteable, NoThreadClone {
 
-    public ArrayList<String> allResponseMessage = new ArrayList<String>(); // Create an ArrayList object
+    public ArrayList<String> allResponseMessage = new ArrayList<>(); // Create an ArrayList object
 
     public boolean isSampleWanted(SampleResult result){
-        if(result instanceof TestSamplerResult){
+        if(result instanceof SideexSamplerResult){
             System.out.println("isSampleWanted true");
             return true;
         }

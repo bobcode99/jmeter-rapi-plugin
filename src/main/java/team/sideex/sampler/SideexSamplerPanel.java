@@ -6,11 +6,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
-public class TestSamplerPanel extends JPanel {
+public class SideexSamplerPanel extends JPanel {
     private JTextField tcFilePath;
     private JComboBox<String> browserSelect;
 
-    public TestSamplerPanel() {
+    public SideexSamplerPanel() {
         super(new GridBagLayout());
     }
 
@@ -19,10 +19,10 @@ public class TestSamplerPanel extends JPanel {
 
 //        System.out.println("PANEL configure");
 
-        if (element instanceof TestSampler) {
-            TestSampler testSampler = (TestSampler) element;
-            tcFilePath.setText(testSampler.getTestCaseFilePath());
-            browserSelect.setSelectedItem(testSampler.getBrowserSelect());
+        if (element instanceof SideexSampler) {
+            SideexSampler sideexSampler = (SideexSampler) element;
+            tcFilePath.setText(sideexSampler.getTestCaseFilePath());
+            browserSelect.setSelectedItem(sideexSampler.getBrowserSelect());
         }
 
     }
@@ -31,10 +31,10 @@ public class TestSamplerPanel extends JPanel {
         // save user input to Jmeter
 
 //        System.out.println("PANEL modifyTestElement");
-        if (element instanceof TestSampler) {
-            TestSampler testSampler = (TestSampler) element;
-            testSampler.setTestCaseFilePath(tcFilePath.getText());
-            testSampler.setBrowserSelect(Objects.requireNonNull(browserSelect.getSelectedItem()).toString());
+        if (element instanceof SideexSampler) {
+            SideexSampler sideexSampler = (SideexSampler) element;
+            sideexSampler.setTestCaseFilePath(tcFilePath.getText());
+            sideexSampler.setBrowserSelect(Objects.requireNonNull(browserSelect.getSelectedItem()).toString());
         }
 
     }

@@ -6,18 +6,18 @@ import org.apache.jmeter.testelement.TestElement;
 
 import java.awt.*;
 
-public class TestSamplerGui extends AbstractSamplerGui {
+public class SideexSamplerGui extends AbstractSamplerGui {
 
-    private final TestSamplerPanel testSamplerPanel;
+    private final SideexSamplerPanel sideexSamplerPanel;
 
-    public TestSamplerGui() {
+    public SideexSamplerGui() {
         setLayout(new BorderLayout(0, 5));
         setBorder(makeBorder());
         add(makeTitlePanel(), BorderLayout.NORTH);
 
-        this.testSamplerPanel = new TestSamplerPanel();
-        add(testSamplerPanel.init(), BorderLayout.CENTER);
-        testSamplerPanel.initFields();
+        this.sideexSamplerPanel = new SideexSamplerPanel();
+        add(sideexSamplerPanel.init(), BorderLayout.CENTER);
+        sideexSamplerPanel.initFields();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class TestSamplerGui extends AbstractSamplerGui {
     public TestElement createTestElement() {
         // create new sampler (when create sampler or save sampler)
 //        System.out.println("createTestElement");
-        TestElement sampler = new TestSampler();
+        TestElement sampler = new SideexSampler();
         modifyTestElement(sampler);
         return sampler;
     }
@@ -48,7 +48,7 @@ public class TestSamplerGui extends AbstractSamplerGui {
 
 //        System.out.println("GUI configure");
         super.configure(element);
-        testSamplerPanel.configure(element);
+        sideexSamplerPanel.configure(element);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class TestSamplerGui extends AbstractSamplerGui {
         // save user input to Jmeter
 //        System.out.println("GUI modifyTestElement");
         super.configureTestElement(element);
-        testSamplerPanel.modifyTestElement(element);
+        sideexSamplerPanel.modifyTestElement(element);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TestSamplerGui extends AbstractSamplerGui {
 //        System.out.println("clearGui");
 
         super.clearGui();
-        testSamplerPanel.initFields();
+        sideexSamplerPanel.initFields();
     }
 
 }
