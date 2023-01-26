@@ -1,4 +1,4 @@
-package org.example.sampler;
+package team.sideex.sampler;
 
 import org.apache.jmeter.testelement.TestElement;
 

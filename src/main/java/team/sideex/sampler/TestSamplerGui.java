@@ -1,8 +1,8 @@
-package org.example.sampler;
+package team.sideex.sampler;
 
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
-import org.example.JMeterPluginUtils;
+//import org.example.JMeterPluginUtils;
 
 import java.awt.*;
 

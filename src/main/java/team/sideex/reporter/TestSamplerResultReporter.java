@@ -1,8 +1,8 @@
-package org.example.reporter;
+package team.sideex.reporter;
 
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.visualizers.gui.AbstractListenerGui;
-import org.example.JMeterPluginUtils;
+import team.sideex.sampler.JMeterPluginUtils;
 
 public class TestSamplerResultReporter extends AbstractListenerGui{
 

@@ -1,4 +1,4 @@
-package org.example.reporter;
+package team.sideex.reporter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +12,8 @@ import org.apache.jmeter.samplers.SampleEvent;
 import org.apache.jmeter.samplers.SampleListener;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.TestStateListener;
-import org.example.sampler.TestSamplerResult;
+import team.sideex.sampler.TestSamplerResult;
+import team.sideex.sampler.TestSamplerResult;
 
 public class TestSamplerResultCollector extends AbstractListenerElement implements SampleListener, Clearable, Serializable,
         TestStateListener, Remoteable, NoThreadClone {

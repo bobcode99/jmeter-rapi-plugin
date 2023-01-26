@@ -1,4 +1,4 @@
-package org.example;
+package team.sideex.sampler;
 
 public class JMeterPluginUtils {
 
