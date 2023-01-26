@@ -30,7 +30,7 @@ public class SideexSamplerGui extends AbstractSamplerGui {
     public String getStaticLabel() {
         //set display name
 //        System.out.println("getStaticLabel");
-        return JMeterPluginUtils.prefixLabel("TestSampler");
+        return JMeterPluginUtils.prefixLabel("SideexSampler");
     }
 
     @Override
