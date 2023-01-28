@@ -3,7 +3,7 @@
 ### How to compile
 
 ```bash
-mvn clean package
+mvn clean compile assembly:single
 ```
 
 
