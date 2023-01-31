@@ -2,6 +2,7 @@ package team.sideex.sampler;
 
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
+import team.sideex.JMeterPluginUtils;
 //import org.example.JMeterPluginUtils;
 
 import java.awt.*;
@@ -24,6 +25,7 @@ public class SideexSamplerGui extends AbstractSamplerGui {
     public String getLabelResource() {
 //        System.out.println("getLabelResource");
         return this.getClass().getSimpleName();
+//        return getClass().getCanonicalName();
     }
 
     @Override

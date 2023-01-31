@@ -1,4 +1,9 @@
-package team.sideex.sampler;
+/*
+ * @link    https://github.com/fourcolor/sideex-api-java
+ * @author  fourcolor
+ */
+
+package team.sideex;
 
 public class JMeterPluginUtils {
 

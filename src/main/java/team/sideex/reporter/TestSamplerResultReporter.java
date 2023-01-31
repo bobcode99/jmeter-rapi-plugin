@@ -2,7 +2,7 @@ package team.sideex.reporter;
 
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.visualizers.gui.AbstractListenerGui;
-import team.sideex.sampler.JMeterPluginUtils;
+import team.sideex.JMeterPluginUtils;
 
 public class TestSamplerResultReporter extends AbstractListenerGui{
 
