@@ -123,6 +123,8 @@ public class SideexSampler extends AbstractSampler {
         config.getInput().setTestSuites(testSuites);
         config.getWebdriver().setConfigs(webDriverConfigs);
 
+        // Note that if executable path doesn't exist, it will not print any warning message.
+        // TODO: add file check exist
         Driver driver = new Driver(
                 jMeterVariables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"), config);
 
