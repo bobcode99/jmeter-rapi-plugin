@@ -4,6 +4,8 @@ import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jmeter.engine.event.LoopIterationEvent;
 import org.apache.jmeter.engine.event.LoopIterationListener;
 import org.apache.jmeter.testelement.ThreadListener;
+import org.apache.jmeter.threads.JMeterContextService;
+import org.apache.jmeter.threads.JMeterVariables;
 import team.sideex.JMeterPluginUtils;
 
 import javax.swing.*;
@@ -36,9 +38,16 @@ public class SideexRunnerConfig extends ConfigTestElement implements LoopIterati
     public void threadStarted() {
         System.out.println("threadStarted");
 
-        getThreadContext().getVariables().putObject("RUNNER_EXE_PATH", getRunnerExePath());
+//        getThreadContext().getVariables().putObject("RUNNER_EXE_PATH", getRunnerExePath());
+//        getThreadContext().getVariables().putObject("SELENIUM_PORT", getSeleniumPort());
 
-        getThreadContext().getVariables().putObject("SELENIUM_PORT", getSeleniumPort());
+        JMeterVariables variables = new JMeterVariables();
+        variables.put("RUNNER_EXE_PATH_FOR_SIDEEX_USE", getRunnerExePath());
+        variables.put("SELENIUM_PORT_FOR_SIDEEX_USE", getSeleniumPort());
+
+//        System.out.println("variables.get RUNNER_EXE_PATH:" + variables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"));
+//        System.out.println(("variables.get SELENIUM_PORT:" +variables.get("SELENIUM_PORT_FOR_SIDEEX_USE")));
+        getThreadContext().setVariables(variables);
 
     }
 

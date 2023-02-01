@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
+import org.apache.jmeter.threads.JMeterContext;
+import org.apache.jmeter.threads.JMeterContextService;
+import org.apache.jmeter.threads.JMeterVariables;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,8 +110,13 @@ public class SideexSampler extends AbstractSampler {
         WebDriverConfig webDriverConfig = new WebDriverConfig();
         webDriverConfig.setBrowsers(browsers);
 
-        // TODO: write jmeter plugin config to send executable sideex runner's path and selenium port
-        webDriverConfig.setServerUrl("http://127.0.0.1:4445");
+        JMeterContext context = getThreadContext();
+        JMeterVariables jMeterVariables = context.getVariables();
+
+        System.out.println("jMeterVariables RUNNER_EXE_PATH: " + jMeterVariables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"));
+        System.out.println("jMeterVariables SELENIUM_PORT: " + jMeterVariables.get("SELENIUM_PORT_FOR_SIDEEX_USE"));
+
+        webDriverConfig.setServerUrl(jMeterVariables.get("SELENIUM_PORT_FOR_SIDEEX_USE"));
         ArrayList<WebDriverConfig> webDriverConfigs = new ArrayList<>();
         webDriverConfigs.add(webDriverConfig);
 
@@ -117,7 +125,7 @@ public class SideexSampler extends AbstractSampler {
         config.getWebdriver().setConfigs(webDriverConfigs);
 
         Driver driver = new Driver(
-                "/Users/user/sideex-things/runner-testcase/runner-executable-file-oneline/sideex-runner-macos-arm64", config);
+                jMeterVariables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"), config);
 
         JsonNode report = driver.run();
         String browserNameInJsonReport = report.fieldNames().next();

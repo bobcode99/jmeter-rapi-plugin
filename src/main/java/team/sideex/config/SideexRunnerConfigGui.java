@@ -11,8 +11,7 @@ import java.util.Objects;
 
 public class SideexRunnerConfigGui extends AbstractConfigGui {
 
-    private JTextField runnerExePath;
-    private JTextField seleniumPath;
+    private SideexRunnerConfigPanel sideexRunnerConfigPanel;
 
     public SideexRunnerConfigGui() {
         createGui();
@@ -22,36 +21,30 @@ public class SideexRunnerConfigGui extends AbstractConfigGui {
         setLayout(new BorderLayout(0, 5));
         setBorder(makeBorder());
         add(makeTitlePanel(), BorderLayout.NORTH);
+        sideexRunnerConfigPanel = new SideexRunnerConfigPanel();
+        add(sideexRunnerConfigPanel.init(), BorderLayout.CENTER);
+        sideexRunnerConfigPanel.initFields();
     }
 
     @Override
     public void configure(TestElement element) {
-        if(element instanceof SideexRunnerConfig) {
-            SideexRunnerConfig sideexRunnerConfig = (SideexRunnerConfig) element;
-            runnerExePath.setText(sideexRunnerConfig.getRunnerExePath());
-            seleniumPath.setText(sideexRunnerConfig.getSeleniumPort());
-        }
+        super.configure(element);
+        sideexRunnerConfigPanel.configure(element);
     }
 
     @Override
     public void modifyTestElement(TestElement element) {
-        if(element instanceof SideexRunnerConfig) {
-            SideexRunnerConfig sideexRunnerConfig = (SideexRunnerConfig) element;
-            sideexRunnerConfig.setRunnerExePath(runnerExePath.getText());
-            sideexRunnerConfig.setSeleniumPort(seleniumPath.getText());
-        }
+        super.configureTestElement(element);
+        sideexRunnerConfigPanel.modifyTestElement(element);
     }
 
     @Override
     public void clearGui() {
         super.clearGui();
-        initFields();
+        sideexRunnerConfigPanel.initFields();
     }
 
-    public void initFields() {
-        runnerExePath.setText("/path/to/sideex-runner-exe");
-        seleniumPath.setText("http://127.0.0.1:4445");
-    }
+
 
 
 //    @Override

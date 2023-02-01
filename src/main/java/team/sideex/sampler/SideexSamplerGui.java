@@ -9,9 +9,13 @@ import java.awt.*;
 
 public class SideexSamplerGui extends AbstractSamplerGui {
 
-    private final SideexSamplerPanel sideexSamplerPanel;
+    private SideexSamplerPanel sideexSamplerPanel;
 
     public SideexSamplerGui() {
+        createGui();
+    }
+
+    private void createGui() {
         setLayout(new BorderLayout(0, 5));
         setBorder(makeBorder());
         add(makeTitlePanel(), BorderLayout.NORTH);

@@ -5,6 +5,7 @@ import org.apache.jmeter.testelement.TestElement;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
+import team.sideex.JMeterPluginUtils;
 
 public class SideexSamplerPanel extends JPanel {
     private JTextField tcFilePath;
@@ -54,15 +55,14 @@ public class SideexSamplerPanel extends JPanel {
         editConstraints.weightx = 1.0;
         editConstraints.fill = GridBagConstraints.HORIZONTAL;
 
-        addToPanel(this, labelConstraints, 0, 0, new JLabel("Test case file path: ", JLabel.RIGHT));
-        addToPanel(this, editConstraints, 1, 0, tcFilePath = new JTextField());
+        JMeterPluginUtils.addToPanel(this, labelConstraints, 0, 0, new JLabel("Test case file path: ", JLabel.RIGHT));
+        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 0, tcFilePath = new JTextField());
 
-
-        addToPanel(this, labelConstraints, 0, 1, new JLabel("Select browser to run test: ", JLabel.RIGHT));
+        JMeterPluginUtils.addToPanel(this, labelConstraints, 0, 1, new JLabel("Select browser to run test: ", JLabel.RIGHT));
         String[] browserList = {"Chrome", "Firefox", "MicrosoftEdge"};
 
         browserSelect = new JComboBox<>(browserList);
-        addToPanel(this, editConstraints, 1, 1, browserSelect);
+        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 1, browserSelect);
 
         JPanel container = new JPanel(new BorderLayout());
         container.add(this, BorderLayout.NORTH);
@@ -70,10 +70,10 @@ public class SideexSamplerPanel extends JPanel {
     }
 
 
-    private void addToPanel(JPanel panel, GridBagConstraints constraints, int col, int row, JComponent component) {
-        constraints.gridx = col;
-        constraints.gridy = row;
-        panel.add(component, constraints);
-    }
+//    private void addToPanel(JPanel panel, GridBagConstraints constraints, int col, int row, JComponent component) {
+//        constraints.gridx = col;
+//        constraints.gridy = row;
+//        panel.add(component, constraints);
+//    }
 
 }
