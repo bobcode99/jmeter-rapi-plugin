@@ -1,26 +1,22 @@
 package team.sideex.reporter;
 
+import org.apache.jmeter.engine.util.NoThreadClone;
+import org.apache.jmeter.reporters.AbstractListenerElement;
+import org.apache.jmeter.samplers.*;
+import org.apache.jmeter.testelement.TestStateListener;
+import team.sideex.sampler.SideexSamplerResult;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import org.apache.jmeter.engine.util.NoThreadClone;
-import org.apache.jmeter.reporters.AbstractListenerElement;
-import org.apache.jmeter.samplers.Clearable;
-import org.apache.jmeter.samplers.Remoteable;
-import org.apache.jmeter.samplers.SampleEvent;
-import org.apache.jmeter.samplers.SampleListener;
-import org.apache.jmeter.samplers.SampleResult;
-import org.apache.jmeter.testelement.TestStateListener;
-import team.sideex.sampler.SideexSamplerResult;
 
 public class TestSamplerResultCollector extends AbstractListenerElement implements SampleListener, Clearable, Serializable,
         TestStateListener, Remoteable, NoThreadClone {
 
     public ArrayList<String> allResponseMessage = new ArrayList<>(); // Create an ArrayList object
 
-    public boolean isSampleWanted(SampleResult result){
-        if(result instanceof SideexSamplerResult){
+    public boolean isSampleWanted(SampleResult result) {
+        if (result instanceof SideexSamplerResult) {
             System.out.println("isSampleWanted true");
             return true;
         }
@@ -61,7 +57,7 @@ public class TestSamplerResultCollector extends AbstractListenerElement implemen
     public void sampleOccurred(SampleEvent event) {
         SampleResult result = event.getResult();
         System.out.println();
-        if(isSampleWanted(result)){
+        if (isSampleWanted(result)) {
 //            long during = result.getEndTime() - result.getStartTime();
 //            System.out.println(result.getSampleLabel() + ":" + during + "ms");
             System.out.println("sampleOccurred !!!");

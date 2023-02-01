@@ -4,7 +4,7 @@ import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.visualizers.gui.AbstractListenerGui;
 import team.sideex.JMeterPluginUtils;
 
-public class TestSamplerResultReporter extends AbstractListenerGui{
+public class TestSamplerResultReporter extends AbstractListenerGui {
 
     @Override
     public TestElement createTestElement() {

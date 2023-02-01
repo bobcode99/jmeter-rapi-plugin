@@ -3,11 +3,8 @@ package team.sideex.config;
 import org.apache.jmeter.config.gui.AbstractConfigGui;
 import org.apache.jmeter.testelement.TestElement;
 import team.sideex.JMeterPluginUtils;
-import team.sideex.sampler.SideexSampler;
 
-import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 public class SideexRunnerConfigGui extends AbstractConfigGui {
 
@@ -43,8 +40,6 @@ public class SideexRunnerConfigGui extends AbstractConfigGui {
         super.clearGui();
         sideexRunnerConfigPanel.initFields();
     }
-
-
 
 
 //    @Override

@@ -1,11 +1,11 @@
 package team.sideex.sampler;
 
 import org.apache.jmeter.testelement.TestElement;
+import team.sideex.JMeterPluginUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
-import team.sideex.JMeterPluginUtils;
 
 public class SideexSamplerPanel extends JPanel {
     private JTextField tcFilePath;

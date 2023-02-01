@@ -4,31 +4,29 @@ import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jmeter.engine.event.LoopIterationEvent;
 import org.apache.jmeter.engine.event.LoopIterationListener;
 import org.apache.jmeter.testelement.ThreadListener;
-import org.apache.jmeter.threads.JMeterContextService;
 import org.apache.jmeter.threads.JMeterVariables;
-import team.sideex.JMeterPluginUtils;
-
-import javax.swing.*;
 
 public class SideexRunnerConfig extends ConfigTestElement implements LoopIterationListener, ThreadListener {
 
     private static final String RUNNER_EXE_PATH = "RUNNER_EXE_PATH";
     private static final String SELENIUM_PORT = "SELENIUM_PORT";
 
+    public String getRunnerExePath() {
+        return getPropertyAsString(RUNNER_EXE_PATH);
+    }
+
     public void setRunnerExePath(String path) {
         setProperty(RUNNER_EXE_PATH, path);
+    }
+
+    public String getSeleniumPort() {
+        return getPropertyAsString(SELENIUM_PORT);
     }
 
     public void setSeleniumPort(String port) {
         setProperty(SELENIUM_PORT, port);
     }
 
-    public String getRunnerExePath() {
-        return getPropertyAsString(RUNNER_EXE_PATH);
-    }
-    public String getSeleniumPort() {
-        return getPropertyAsString(SELENIUM_PORT);
-    }
     @Override
     public void iterationStart(LoopIterationEvent loopIterationEvent) {
         System.out.println("iterationStart");
