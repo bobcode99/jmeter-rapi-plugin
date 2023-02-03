@@ -50,5 +50,10 @@ public class SideexSamplerResultReporterGui extends AbstractListenerGui {
         super.configure(element);
     }
 
+    @Override
+    public void clearGui() {
+        super.clearGui();
+    }
+
 }
 

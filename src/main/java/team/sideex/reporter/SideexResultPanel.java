@@ -20,7 +20,7 @@ public class SideexResultPanel extends JPanel {
     private static final String[] EXTS = {".xml", ".jtl", ".csv"}; // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
     private final FilePanel filePanel;
     private final JButton startGenerateReportButton;
-    private final RequestStatsReport requestStatsReport;
+    private RequestStatsReport requestStatsReport;
 
     public SideexResultPanel() {
         setLayout(new BorderLayout(0, 5));
@@ -29,7 +29,6 @@ public class SideexResultPanel extends JPanel {
         filePanel.add(startGenerateReportButton);
 
 
-        requestStatsReport = new RequestStatsReport();
         startGenerateReportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -38,10 +37,19 @@ public class SideexResultPanel extends JPanel {
                 ArrayList<String> sideexReportArrayList = getSideexReportArrayList(csvFilePath);
 
 //                System.out.println("sideexReportArrayList: " + sideexReportArrayList);
-                String generateReportPath = csvFilePath.substring(0, csvFilePath.lastIndexOf('/') + 1);
+                String generateReportPath = csvFilePath.substring(0, csvFilePath.lastIndexOf('/'));
+
+                if (generateReportPath.contains("/"))
+                    generateReportPath += "/";
+                else {
+                    generateReportPath += "\\";
+                }
+
                 System.out.println("generateReportPath: " + generateReportPath);
                 try {
+                    requestStatsReport = new RequestStatsReport();
                     requestStatsReport.startGenerateReport(generateReportPath, sideexReportArrayList);
+
                 } catch (IOException ex) {
                     System.out.println("catch IOException ex");
                     throw new RuntimeException(ex);
