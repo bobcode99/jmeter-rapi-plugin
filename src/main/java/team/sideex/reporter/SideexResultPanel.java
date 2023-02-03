@@ -17,39 +17,10 @@ import java.util.List;
 
 public class SideexResultPanel extends JPanel {
 
-    private JButton startGenerateReportButton;
-    private RequestStatsReport requestStatsReport;
-
-    private static final String[] EXTS = { ".xml", ".jtl", ".csv" }; // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
-
+    private static final String[] EXTS = {".xml", ".jtl", ".csv"}; // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
     private final FilePanel filePanel;
-
-    private ArrayList<String> getSideexReportArrayList(String path) {
-        ArrayList<String> sideexReportArrayList = new ArrayList<>();
-
-        try {
-            CSVReader reader = new CSVReader(new FileReader(path));
-
-            List<String[]> records = reader.readAll();
-            for (String[] record : records) {
-                // process each record
-                Character firstCharacter = record[4].charAt(0);
-//                System.out.println(firstCharacter);
-                if (firstCharacter.equals('{')) {
-                    sideexReportArrayList.add(record[4]);
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("catch getSideexReportArrayList IOException e");
-            e.printStackTrace();
-        } catch (CsvException e) {
-            System.out.println("catch getSideexReportArrayList CsvException e");
-
-            throw new RuntimeException(e);
-        }
-        return sideexReportArrayList;
-    }
-
+    private final JButton startGenerateReportButton;
+    private final RequestStatsReport requestStatsReport;
 
     public SideexResultPanel() {
         setLayout(new BorderLayout(0, 5));
@@ -86,6 +57,32 @@ public class SideexResultPanel extends JPanel {
             }
         });
         add(filePanel, BorderLayout.NORTH);
+    }
+
+    private ArrayList<String> getSideexReportArrayList(String path) {
+        ArrayList<String> sideexReportArrayList = new ArrayList<>();
+
+        try {
+            CSVReader reader = new CSVReader(new FileReader(path));
+
+            List<String[]> records = reader.readAll();
+            for (String[] record : records) {
+                // process each record
+                Character firstCharacter = record[4].charAt(0);
+//                System.out.println(firstCharacter);
+                if (firstCharacter.equals('{')) {
+                    sideexReportArrayList.add(record[4]);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("catch getSideexReportArrayList IOException e");
+            e.printStackTrace();
+        } catch (CsvException e) {
+            System.out.println("catch getSideexReportArrayList CsvException e");
+
+            throw new RuntimeException(e);
+        }
+        return sideexReportArrayList;
     }
 
 }

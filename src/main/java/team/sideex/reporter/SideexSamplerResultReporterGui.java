@@ -8,13 +8,14 @@ import java.awt.*;
 
 public class SideexSamplerResultReporterGui extends AbstractListenerGui {
 
+    protected SideexSamplerResultCollector collector = new SideexSamplerResultCollector();
     private SideexResultPanel sideexResultPanel;
 
     public SideexSamplerResultReporterGui() {
         createGui();
     }
 
-    private void createGui(){
+    private void createGui() {
         setLayout(new BorderLayout(0, 5));
         setBorder(makeBorder());
         add(makeTitlePanel(), BorderLayout.NORTH);
@@ -22,8 +23,6 @@ public class SideexSamplerResultReporterGui extends AbstractListenerGui {
         sideexResultPanel = new SideexResultPanel();
         add(sideexResultPanel, BorderLayout.CENTER);
     }
-
-    protected SideexSamplerResultCollector collector = new SideexSamplerResultCollector();
 
     @Override
     public TestElement createTestElement() {
