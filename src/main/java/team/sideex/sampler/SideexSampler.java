@@ -101,7 +101,7 @@ public class SideexSampler extends AbstractSampler {
 
         browser.setCapability(caps);
 
-        System.out.println("browser.getCapability: " + browser.getCapability());
+//        System.out.println("browser.getCapability: " + browser.getCapability());
 
         ArrayList<Browser> browsers = new ArrayList<>();
         browsers.add(browser);
@@ -112,8 +112,8 @@ public class SideexSampler extends AbstractSampler {
         JMeterContext context = getThreadContext();
         JMeterVariables jMeterVariables = context.getVariables();
 
-        System.out.println("jMeterVariables RUNNER_EXE_PATH: " + jMeterVariables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"));
-        System.out.println("jMeterVariables SELENIUM_PORT: " + jMeterVariables.get("SELENIUM_PORT_FOR_SIDEEX_USE"));
+//        System.out.println("jMeterVariables RUNNER_EXE_PATH: " + jMeterVariables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"));
+//        System.out.println("jMeterVariables SELENIUM_PORT: " + jMeterVariables.get("SELENIUM_PORT_FOR_SIDEEX_USE"));
 
         webDriverConfig.setServerUrl(jMeterVariables.get("SELENIUM_PORT_FOR_SIDEEX_USE"));
         ArrayList<WebDriverConfig> webDriverConfigs = new ArrayList<>();
@@ -138,7 +138,7 @@ public class SideexSampler extends AbstractSampler {
         ResultSideex resultSideex = new ResultSideex();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        System.out.println("resultSuite: " + resultSuite);
+//        System.out.println("resultSuite: " + resultSuite);
 
         resultSideex.jsonReport = objectMapper.writeValueAsString(report);
         resultSideex.successfulStatus = resultSuite.equals("success");
@@ -157,7 +157,7 @@ public class SideexSampler extends AbstractSampler {
         // because chrome, firefox's browserName need lowercase
         String browserName = getBrowserSelect().equals("Chrome") || getBrowserSelect().equals("Firefox") ? getBrowserSelect().toLowerCase() : getBrowserSelect();
 
-        System.out.println("browserName: " + browserName);
+//        System.out.println("browserName: " + browserName);
         ResultSideex resultSideex = new ResultSideex();
         if (!testCaseFilePath.isEmpty() && !testCaseFilePath.isBlank()) {
 

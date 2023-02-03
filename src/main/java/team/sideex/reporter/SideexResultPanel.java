@@ -28,15 +28,12 @@ public class SideexResultPanel extends JPanel {
         startGenerateReportButton = new JButton("Generate Report");
         filePanel.add(startGenerateReportButton);
 
-
         startGenerateReportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("click");
                 String csvFilePath = filePanel.getFilename();
                 ArrayList<String> sideexReportArrayList = getSideexReportArrayList(csvFilePath);
 
-//                System.out.println("sideexReportArrayList: " + sideexReportArrayList);
                 String generateReportPath = csvFilePath.substring(0, csvFilePath.lastIndexOf('/'));
 
                 if (generateReportPath.contains("/"))
@@ -45,20 +42,15 @@ public class SideexResultPanel extends JPanel {
                     generateReportPath += "\\";
                 }
 
-                System.out.println("generateReportPath: " + generateReportPath);
                 try {
                     requestStatsReport = new RequestStatsReport();
                     requestStatsReport.startGenerateReport(generateReportPath, sideexReportArrayList);
 
                 } catch (IOException ex) {
-                    System.out.println("catch IOException ex");
                     throw new RuntimeException(ex);
                 } catch (ParseException ex) {
-                    System.out.println("catch arseException ex");
-
                     throw new RuntimeException(ex);
                 } catch (java.text.ParseException ex) {
-                    System.out.println("catch java.text.ParseException ex");
                     throw new RuntimeException(ex);
                 }
 
@@ -83,11 +75,8 @@ public class SideexResultPanel extends JPanel {
                 }
             }
         } catch (IOException e) {
-            System.out.println("catch getSideexReportArrayList IOException e");
             e.printStackTrace();
         } catch (CsvException e) {
-            System.out.println("catch getSideexReportArrayList CsvException e");
-
             throw new RuntimeException(e);
         }
         return sideexReportArrayList;

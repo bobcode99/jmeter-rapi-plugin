@@ -17,10 +17,10 @@ public class SideexSamplerResultCollector extends AbstractListenerElement implem
 
     public boolean isSampleWanted(SampleResult result) {
         if (result instanceof SideexSamplerResult) {
-            System.out.println("isSampleWanted true");
+//            System.out.println("isSampleWanted true");
             return true;
         }
-        System.out.println("isSampleWanted false");
+//        System.out.println("isSampleWanted false");
         return false;
     }
 
@@ -55,17 +55,14 @@ public class SideexSamplerResultCollector extends AbstractListenerElement implem
     @Override
     public void sampleOccurred(SampleEvent event) {
         SampleResult result = event.getResult();
-        System.out.println();
         if (isSampleWanted(result)) {
 //            long during = result.getEndTime() - result.getStartTime();
 //            System.out.println(result.getSampleLabel() + ":" + during + "ms");
-            System.out.println("sampleOccurred !!!");
-            System.out.println("result: " + result);
-            System.out.println("result getResponseData: " + Arrays.toString(result.getResponseData()));
-            System.out.println("result getResponseDataAsString: " + result.getResponseDataAsString());
+//            System.out.println("sampleOccurred !!!");
+//            System.out.println("result: " + result);
+//            System.out.println("result getResponseData: " + Arrays.toString(result.getResponseData()));
+//            System.out.println("result getResponseDataAsString: " + result.getResponseDataAsString());
             allResponseMessage.add(result.getResponseDataAsString());
-
-
         }
 
     }

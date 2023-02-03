@@ -29,12 +29,11 @@ public class SideexRunnerConfig extends ConfigTestElement implements LoopIterati
 
     @Override
     public void iterationStart(LoopIterationEvent loopIterationEvent) {
-        System.out.println("iterationStart");
+
     }
 
     @Override
     public void threadStarted() {
-        System.out.println("threadStarted");
 
 //        getThreadContext().getVariables().putObject("RUNNER_EXE_PATH", getRunnerExePath());
 //        getThreadContext().getVariables().putObject("SELENIUM_PORT", getSeleniumPort());
@@ -51,7 +50,6 @@ public class SideexRunnerConfig extends ConfigTestElement implements LoopIterati
 
     @Override
     public void threadFinished() {
-        System.out.println("threadFinished");
 
     }
 
