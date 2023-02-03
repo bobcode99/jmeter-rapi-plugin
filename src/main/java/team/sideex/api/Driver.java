@@ -40,7 +40,6 @@ public class Driver {
 
     public JsonNode run() throws Exception {
         Proc proc = new Proc(runnerPath);
-        JsonNode result = proc.run(config.toString());
         // System.out.println(new String(result.getStderr().readAllBytes(), StandardCharsets.UTF_8));
 
         // if (result.getStatus() != 0) {
@@ -48,6 +47,6 @@ public class Driver {
         //     throw new Exception(new String(result.getStderr().readAllBytes(), StandardCharsets.UTF_8));
 
         // }
-        return result;
+        return proc.run(config.toString());
     }
 }

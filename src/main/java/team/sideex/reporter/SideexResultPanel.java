@@ -8,8 +8,8 @@ import team.sideex.report.RequestStatsReport;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,44 +17,56 @@ import java.util.List;
 
 public class SideexResultPanel extends JPanel {
 
-    private static final String[] EXTS = {".xml", ".jtl", ".csv"}; // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+    private static final String[] ONLY_ACCEPT = {".jtl", ".csv"};
     private final FilePanel filePanel;
-    private final JButton startGenerateReportButton;
     private RequestStatsReport requestStatsReport;
+
+    private void checkCsvFileExist(String path) throws FileNotFoundException {
+        if(!new File(path).isFile()){
+            throw new FileNotFoundException("This .csv file not found.");
+        }
+    }
+
+    private void checkCsvContentIsEmpty(ArrayList<String> arrayList) {
+        if(arrayList.size() == 0)  {
+            throw new RuntimeException("Please choose a .csv file that have sideex result.");
+        }
+    }
+
+    private void generateReport(ArrayList<String> arrayList, String csvFilePath) {
+        String generateReportPath = csvFilePath.substring(0, csvFilePath.lastIndexOf('/'));
+
+        if (generateReportPath.contains("/"))
+            generateReportPath += "/";
+        else {
+            generateReportPath += "\\";
+        }
+
+        try {
+            requestStatsReport = new RequestStatsReport();
+            requestStatsReport.startGenerateReport(generateReportPath, arrayList);
+        } catch (java.text.ParseException | ParseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
     public SideexResultPanel() {
         setLayout(new BorderLayout(0, 5));
-        filePanel = new FilePanel("Read from file", EXTS); // $NON-NLS-1$
-        startGenerateReportButton = new JButton("Generate Report");
+        filePanel = new FilePanel("Fill in the csv file path", ONLY_ACCEPT);
+        JButton startGenerateReportButton = new JButton("Generate Report");
         filePanel.add(startGenerateReportButton);
 
-        startGenerateReportButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String csvFilePath = filePanel.getFilename();
-                ArrayList<String> sideexReportArrayList = getSideexReportArrayList(csvFilePath);
 
-                String generateReportPath = csvFilePath.substring(0, csvFilePath.lastIndexOf('/'));
+        startGenerateReportButton.addActionListener(e -> {
+            String csvFilePath = filePanel.getFilename();
 
-                if (generateReportPath.contains("/"))
-                    generateReportPath += "/";
-                else {
-                    generateReportPath += "\\";
-                }
-
-                try {
-                    requestStatsReport = new RequestStatsReport();
-                    requestStatsReport.startGenerateReport(generateReportPath, sideexReportArrayList);
-
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ParseException ex) {
-                    throw new RuntimeException(ex);
-                } catch (java.text.ParseException ex) {
-                    throw new RuntimeException(ex);
-                }
-
+            try {
+                checkCsvFileExist(csvFilePath);
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
             }
+            ArrayList<String> sideexReportArrayList = getSideexReportArrayList(csvFilePath);
+            generateReport(sideexReportArrayList, csvFilePath);
         });
         add(filePanel, BorderLayout.NORTH);
     }
@@ -69,11 +81,12 @@ public class SideexResultPanel extends JPanel {
             for (String[] record : records) {
                 // process each record
                 Character firstCharacter = record[4].charAt(0);
-//                System.out.println(firstCharacter);
                 if (firstCharacter.equals('{')) {
                     sideexReportArrayList.add(record[4]);
                 }
             }
+
+            checkCsvContentIsEmpty(sideexReportArrayList);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CsvException e) {

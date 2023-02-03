@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public class WebDriver {
-    private ArrayList<WebDriverConfig> configs = new ArrayList<WebDriverConfig>();
+    private ArrayList<WebDriverConfig> configs = new ArrayList<>();
     private Map<String, String> i18n = Collections.emptyMap();
 
     public ArrayList<WebDriverConfig> getConfigs() {

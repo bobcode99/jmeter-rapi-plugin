@@ -10,23 +10,20 @@ import java.io.IOException;
 
 public class Html {
 
-    public void generate(String report, String reportPath) throws IOException {
+    public void generate(String report, String reportPath) {
 
-
-        String html = (report);
 
         //flexible path
         File file = new File(reportPath + "sideexReport.html");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            writer.write(html);
+            writer.write((report));
             writer.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        file = null;
     }
 
 

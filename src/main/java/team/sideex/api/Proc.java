@@ -55,8 +55,7 @@ public class Proc {
             }
         }
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(reportStr.toString());
-        return jsonNode;
+        return objectMapper.readTree(reportStr.toString());
     }
 }
 

@@ -70,10 +70,4 @@ public class SideexSamplerPanel extends JPanel {
     }
 
 
-//    private void addToPanel(JPanel panel, GridBagConstraints constraints, int col, int row, JComponent component) {
-//        constraints.gridx = col;
-//        constraints.gridy = row;
-//        panel.add(component, constraints);
-//    }
-
 }

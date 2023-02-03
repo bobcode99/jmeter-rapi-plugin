@@ -7,7 +7,6 @@ import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.threads.JMeterContext;
 import org.apache.jmeter.threads.JMeterVariables;
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.sideex.api.Driver;
@@ -25,47 +24,14 @@ import static team.sideex.api.Driver.getBrowserOptions;
 public class SideexSampler extends AbstractSampler {
 
     private static final Logger LOG = LoggerFactory.getLogger(SideexSampler.class);
-
-    private static final String LABEL = "LABEL";
     private static final String RESPONSE_CODE = "RESPONSE_CODE";
-    private static final String SUCCESS = "SUCCESS";
-    private static final String RESPONSE_MESSAGE = "RESPONSE_MESSAGE";
     private static final String TC_FILE_PATH = "TC_FILE_PATH";
 
     private static final String BROWSER_SELECT = "BROWSER_SELECT";
 
-    public String getLabel() {
-        return getPropertyAsString(LABEL, Strings.EMPTY);
-    }
-
-    public void setLabel(String label) {
-        setProperty(LABEL, label);
-    }
-
     public String getResponseCode() {
         return getPropertyAsString(RESPONSE_CODE, "200");
     }
-
-    public void setResponseCode(String responseCode) {
-        setProperty(RESPONSE_CODE, responseCode);
-    }
-
-    public boolean getSuccessful() {
-        return getPropertyAsBoolean(SUCCESS, true);
-    }
-
-    public void setSuccessful(boolean success) {
-        setProperty(SUCCESS, success);
-    }
-
-    public String getResponseMessage() {
-        return getPropertyAsString(RESPONSE_MESSAGE, "success message");
-    }
-
-    public void setResponseMessage(String responseMessage) {
-        setProperty(RESPONSE_MESSAGE, responseMessage);
-    }
-
     public String getTestCaseFilePath() {
         return getPropertyAsString(TC_FILE_PATH, "");
     }
@@ -102,6 +68,7 @@ public class SideexSampler extends AbstractSampler {
         browser.setCapability(caps);
 
 //        System.out.println("browser.getCapability: " + browser.getCapability());
+        LOG.info("browser.getCapability: " + browser.getCapability());
 
         ArrayList<Browser> browsers = new ArrayList<>();
         browsers.add(browser);

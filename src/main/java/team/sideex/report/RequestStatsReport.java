@@ -8,7 +8,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,44 +18,38 @@ public class RequestStatsReport {
 
     private final TimelineReport report = new TimelineReport();
     private final JsonParse jsonParse = new JsonParse();
-    private final ArrayList<String> commandList = new ArrayList<String>();
-    private final ArrayList<Integer> commandSamplesCount = new ArrayList<Integer>();
-    private final ArrayList<Long> commandTotalTime = new ArrayList<Long>();
-    private final ArrayList<ArrayList<Long>> commandTimeData = new ArrayList<ArrayList<Long>>();
-    private final ArrayList<ArrayList<Long>> commandTime = new ArrayList<ArrayList<Long>>();
-    private final ArrayList<Long> All = new ArrayList<Long>();
-    private final ArrayList<Integer> AvgTime = new ArrayList<Integer>();
-    private final ArrayList<Double> Hit = new ArrayList<Double>();
-    private final ArrayList<Long> line_90 = new ArrayList<Long>();
-    private final ArrayList<Long> line_95 = new ArrayList<Long>();
-    private final ArrayList<Long> line_99 = new ArrayList<Long>();
-    private final ArrayList<Long> Min = new ArrayList<Long>();
-    private final ArrayList<Long> Max = new ArrayList<Long>();
-    private final ArrayList<Integer> error = new ArrayList<Integer>();
-    private final ArrayList<Double> errorPercentage = new ArrayList<Double>();
-    private final ArrayList<Long> commandTimeDifference = new ArrayList<Long>();
-    private final String chromeVersionName = "";
-    private String reportPath = "";
-    private File folder = null;
+    private final ArrayList<String> commandList = new ArrayList<>();
+    private final ArrayList<Integer> commandSamplesCount = new ArrayList<>();
+    private final ArrayList<Long> commandTotalTime = new ArrayList<>();
+    private final ArrayList<ArrayList<Long>> commandTimeData = new ArrayList<>();
+    private final ArrayList<ArrayList<Long>> commandTime = new ArrayList<>();
+    private final ArrayList<Long> All = new ArrayList<>();
+    private final ArrayList<Integer> AvgTime = new ArrayList<>();
+    private final ArrayList<Double> Hit = new ArrayList<>();
+    private final ArrayList<Long> line_90 = new ArrayList<>();
+    private final ArrayList<Long> line_95 = new ArrayList<>();
+    private final ArrayList<Long> line_99 = new ArrayList<>();
+    private final ArrayList<Long> Min = new ArrayList<>();
+    private final ArrayList<Long> Max = new ArrayList<>();
+    private final ArrayList<Integer> error = new ArrayList<>();
+    private final ArrayList<Double> errorPercentage = new ArrayList<>();
+    private final ArrayList<Long> commandTimeDifference = new ArrayList<>();
     private ArrayList<String> testResults;
-    private ArrayList<String> browserVersions;
     private int commandAmount = 0;
-    private long timeDifference = 0, AllCommandTimeSum = 0;
+    private long AllCommandTimeSum = 0;
     private String Request_Statistics_Content = "";
 
-    public void startGenerateReport(String path, ArrayList<String> testResults) throws IOException, ParseException, java.text.ParseException {
-        this.reportPath = path;
-        File jsonFolder = new File(this.reportPath);
+    public void startGenerateReport(String path, ArrayList<String> testResults) throws ParseException, java.text.ParseException {
+        File jsonFolder = new File(path);
 
 
-        this.folder = jsonFolder;
         this.testResults = testResults;
 
         parse();
         report.generate_report(Request_Statistics_Content, jsonParse, this.testResults, commandList, path);
     }
 
-    public void preprocessing() throws IOException, ParseException {
+    public void preprocessing() throws ParseException {
 
 
         for (int i = 0; i < testResults.size(); i++) {
@@ -73,9 +66,9 @@ public class RequestStatsReport {
             commandSamplesCount.add(0);
 
 
-        String command = "";
-        int commandCount = 0, totalCommandCount = 0;
-        JSONObject records = null;
+        String command;
+        int commandCount, totalCommandCount = 0;
+        JSONObject records;
 
         for (int i = 0; i < testResults.size(); i++) {
 
@@ -113,24 +106,24 @@ public class RequestStatsReport {
     }
 
 
-    public void parse() throws IOException, ParseException, java.text.ParseException {
+    public void parse() throws ParseException, java.text.ParseException {
 
 
         jsonParse.addTestResults(this.testResults);
 
 
-        browserVersions = jsonParse.getBrowserVersion();
+        ArrayList<String> browserVersions = jsonParse.getBrowserVersion();
 //        
 
 
         preprocessing();
 
-        int position = 0, errorCount = 0;
-        double percentage = 0;
+        int position, errorCount;
+        double percentage;
 
         for (int j = 0; j < commandAmount; j++) {
-            commandTimeData.add(new ArrayList<Long>());
-            commandTime.add(new ArrayList<Long>());
+            commandTimeData.add(new ArrayList<>());
+            commandTime.add(new ArrayList<>());
             error.add(0);
             commandTotalTime.add(0L);
         }
@@ -145,8 +138,8 @@ public class RequestStatsReport {
             // Change records from JSONArray to JSONObject && records has many command
             // element, recordsArray.size() records amount of command
             JSONObject records;
-            Long time = 0L;
-            String status = "";
+            Long time;
+            String status;
 
             String startTime = (String) json.get("startTime");
             String endTime = (String) json.get("endTime");
@@ -156,8 +149,6 @@ public class RequestStatsReport {
 
             currentCalendar.setTime(commandDate);
             commandTime.get(0).add(currentCalendar.getTimeInMillis());
-            commandDate = null;
-
 
             for (int commandIndex = 0; commandIndex < recordsArray.size(); commandIndex++) {
 
@@ -198,19 +189,19 @@ public class RequestStatsReport {
 
         int commandCount = commandTime.get(commandTime.size() - 1).size();
 
-        //Calculate allhit time
-        timeDifference = commandTime.get(commandTime.size() - 1).get(commandCount - 1) - commandTime.get(0).get(0);
+        //Calculate all hit time
+        long timeDifference = commandTime.get(commandTime.size() - 1).get(commandCount - 1) - commandTime.get(0).get(0);
         timeDifference /= 1000;
         if (timeDifference == 0)
             timeDifference = 1;
         commandTimeDifference.add(timeDifference);
 
-        for (int i = 0; i < commandTime.size(); i++) {
+        for (ArrayList<Long> longs : commandTime) {
 
-            commandCount = commandTime.get(i).size();
+            commandCount = longs.size();
 
-            //Calculate commandhit time
-            timeDifference = commandTime.get(i).get(commandCount - 1) - commandTime.get(i).get(0);
+            //Calculate command hit time
+            timeDifference = longs.get(commandCount - 1) - longs.get(0);
             timeDifference /= 1000;
 
             if (timeDifference == 0)
@@ -236,12 +227,10 @@ public class RequestStatsReport {
         }
 
 
-        for (int i = 0; i < commandTimeData.size(); i++)
-            Collections.sort(commandTimeData.get(i));
+        for (ArrayList<Long> commandTimeDatum : commandTimeData) Collections.sort(commandTimeDatum);
         Collections.sort(All);
 
-        for (int i = 0; i < All.size(); i++)
-            AllCommandTimeSum += All.get(i);
+        for (Long aLong : All) AllCommandTimeSum += aLong;
 
 
         commandTotalTime.add(0, AllCommandTimeSum);
@@ -250,8 +239,7 @@ public class RequestStatsReport {
 
         errorCount = 0;
         //Calculate total error count
-        for (int i = 0; i < error.size(); i++)
-            errorCount += error.get(i);
+        for (Integer integer : error) errorCount += integer;
         error.add(0, errorCount);
 
 
@@ -308,27 +296,14 @@ public class RequestStatsReport {
     }
 
 
-    public void generateHtml() throws java.text.ParseException {
+    public void generateHtml() {
 
-        String DataContent = "";
+        StringBuilder DataContent = new StringBuilder();
 
 
         for (int i = 0; i < commandList.size(); i++) {
 
-            DataContent += (
-                    "  </tr>\r\n" +
-                            "  <tr>\r\n" +
-                            "    <td>" + commandList.get(i) + "</td>\r\n" +
-                            "    <td>" + AvgTime.get(i) + "</td>\r\n" +
-                            "    <td>" + Hit.get(i) + "</td>\r\n" +
-                            "    <td>" + commandTimeData.get(i).size() + "</td>\r\n" +
-                            "    <td>" + line_90.get(i) + "</td>\r\n" +
-                            "    <td>" + line_95.get(i) + "</td>\r\n" +
-                            "    <td>" + line_99.get(i) + "</td>\r\n" +
-                            "    <td>" + Min.get(i) + "</td>\r\n" +
-                            "    <td>" + Max.get(i) + "</td>\r\n" +
-                            "    <td>" + errorPercentage.get(i) + "%</td>\r\n"
-            );
+            DataContent.append("  </tr>\r\n" + "  <tr>\r\n" + "    <td>").append(commandList.get(i)).append("</td>\r\n").append("    <td>").append(AvgTime.get(i)).append("</td>\r\n").append("    <td>").append(Hit.get(i)).append("</td>\r\n").append("    <td>").append(commandTimeData.get(i).size()).append("</td>\r\n").append("    <td>").append(line_90.get(i)).append("</td>\r\n").append("    <td>").append(line_95.get(i)).append("</td>\r\n").append("    <td>").append(line_99.get(i)).append("</td>\r\n").append("    <td>").append(Min.get(i)).append("</td>\r\n").append("    <td>").append(Max.get(i)).append("</td>\r\n").append("    <td>").append(errorPercentage.get(i)).append("%</td>\r\n");
 
         }
 

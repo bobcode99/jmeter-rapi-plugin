@@ -8,20 +8,16 @@ import team.sideex.sampler.SideexSamplerResult;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SideexSamplerResultCollector extends AbstractListenerElement implements SampleListener, Clearable, Serializable,
         TestStateListener, Remoteable, NoThreadClone {
 
-    public ArrayList<String> allResponseMessage = new ArrayList<>(); // Create an ArrayList object
+    public final ArrayList<String> allResponseMessage = new ArrayList<>(); // Create an ArrayList object
 
     public boolean isSampleWanted(SampleResult result) {
-        if (result instanceof SideexSamplerResult) {
-//            System.out.println("isSampleWanted true");
-            return true;
-        }
+        //            System.out.println("isSampleWanted true");
+        return result instanceof SideexSamplerResult;
 //        System.out.println("isSampleWanted false");
-        return false;
     }
 
     @Override

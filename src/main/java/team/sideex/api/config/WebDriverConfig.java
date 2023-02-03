@@ -10,8 +10,8 @@ import java.util.ArrayList;
 public class WebDriverConfig {
     private String type = "selenium";
     private String serverUrl = "";
-    private ArrayList<Browser> browsers = new ArrayList<Browser>();
-    private ArrayList<Session> sessions = new ArrayList<Session>();
+    private ArrayList<Browser> browsers = new ArrayList<>();
+    private ArrayList<Session> sessions = new ArrayList<>();
 
     public ArrayList<Browser> getBrowsers() {
         return browsers;

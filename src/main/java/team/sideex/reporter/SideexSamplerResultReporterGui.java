@@ -8,8 +8,7 @@ import java.awt.*;
 
 public class SideexSamplerResultReporterGui extends AbstractListenerGui {
 
-    protected SideexSamplerResultCollector collector = new SideexSamplerResultCollector();
-    private SideexResultPanel sideexResultPanel;
+    protected final SideexSamplerResultCollector collector = new SideexSamplerResultCollector();
 
     public SideexSamplerResultReporterGui() {
         createGui();
@@ -20,7 +19,7 @@ public class SideexSamplerResultReporterGui extends AbstractListenerGui {
         setBorder(makeBorder());
         add(makeTitlePanel(), BorderLayout.NORTH);
 //        add(startGenerate, BorderLayout.SOUTH);
-        sideexResultPanel = new SideexResultPanel();
+        SideexResultPanel sideexResultPanel = new SideexResultPanel();
         add(sideexResultPanel, BorderLayout.CENTER);
     }
 
@@ -37,7 +36,7 @@ public class SideexSamplerResultReporterGui extends AbstractListenerGui {
 
     @Override
     public String getStaticLabel() {
-        return JMeterPluginUtils.prefixLabel("SamplerResultReport");
+        return JMeterPluginUtils.prefixLabel("SideexResultGenerator");
     }
 
     @Override

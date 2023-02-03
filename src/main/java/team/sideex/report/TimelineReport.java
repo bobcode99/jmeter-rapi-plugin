@@ -7,8 +7,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,52 +16,59 @@ import java.util.Random;
 public class TimelineReport {
 
     private final Html html = new Html();
-    private final ArrayList<String> startTimeList = new ArrayList<String>();
-    private final ArrayList<String> endTimeList = new ArrayList<String>();
-    private final ArrayList<String> commandList = new ArrayList<String>();
-    private final ArrayList<ArrayList<String>> commandTimePoint = new ArrayList<ArrayList<String>>();
-    private final ArrayList<Integer> users = new ArrayList<Integer>();
-    private final ArrayList<ArrayList<Integer>> commandUsers = new ArrayList<ArrayList<Integer>>();
-    private final ArrayList<ArrayList<Integer>> Hit = new ArrayList<ArrayList<Integer>>();
-    private final ArrayList<ArrayList<Integer>> Error = new ArrayList<ArrayList<Integer>>();
-    private final ArrayList<String> statisticsName = new ArrayList<String>();
-    private final ArrayList<Double> Avg = new ArrayList<Double>();
-    private final ArrayList<Long> Min = new ArrayList<Long>();
-    private final ArrayList<Long> Max = new ArrayList<Long>();
-    private final ArrayList<Double> Median = new ArrayList<Double>();
-    private final ArrayList<Long> P90 = new ArrayList<Long>();
-    private final ArrayList<Long> P95 = new ArrayList<Long>();
-    private final ArrayList<Long> P99 = new ArrayList<Long>();
-    private final ArrayList<ArrayList<ArrayList<Long>>> eachCommandTestResponseTime = new ArrayList<ArrayList<ArrayList<Long>>>();
-    private final ArrayList<ArrayList<Long>> eachTestResponseTime = new ArrayList<ArrayList<Long>>();
-    private final ArrayList<ArrayList<ArrayList<Double>>> commandAvg = new ArrayList<ArrayList<ArrayList<Double>>>();
-    private final ArrayList<ArrayList<ArrayList<Long>>> commandMin = new ArrayList<ArrayList<ArrayList<Long>>>();
-    private final ArrayList<ArrayList<ArrayList<Long>>> commandMax = new ArrayList<ArrayList<ArrayList<Long>>>();
-    private final ArrayList<ArrayList<ArrayList<Double>>> commandMedian = new ArrayList<ArrayList<ArrayList<Double>>>();
-    private final ArrayList<ArrayList<ArrayList<Long>>> commandP90 = new ArrayList<ArrayList<ArrayList<Long>>>();
-    private final ArrayList<ArrayList<ArrayList<Long>>> commandP95 = new ArrayList<ArrayList<ArrayList<Long>>>();
-    private final ArrayList<ArrayList<ArrayList<Long>>> commandP99 = new ArrayList<ArrayList<ArrayList<Long>>>();
-    private final ArrayList<String> timeStamp = new ArrayList<String>();
-    private final ArrayList<String> xAxisLabel = new ArrayList<String>();
+    private final ArrayList<String> startTimeList = new ArrayList<>();
+    private final ArrayList<String> endTimeList = new ArrayList<>();
+    private final ArrayList<String> commandList = new ArrayList<>();
+    private final ArrayList<ArrayList<String>> commandTimePoint = new ArrayList<>();
+    private final ArrayList<Integer> users = new ArrayList<>();
+    private final ArrayList<ArrayList<Integer>> commandUsers = new ArrayList<>();
+    private final ArrayList<ArrayList<Integer>> Hit = new ArrayList<>();
+    private final ArrayList<ArrayList<Integer>> Error = new ArrayList<>();
+    private final ArrayList<String> statisticsName = new ArrayList<>();
+    private final ArrayList<Double> Avg = new ArrayList<>();
+    private final ArrayList<Long> Min = new ArrayList<>();
+    private final ArrayList<Long> Max = new ArrayList<>();
+    private final ArrayList<Double> Median = new ArrayList<>();
+    private final ArrayList<Long> P90 = new ArrayList<>();
+    private final ArrayList<Long> P95 = new ArrayList<>();
+    private final ArrayList<Long> P99 = new ArrayList<>();
+    private final ArrayList<ArrayList<ArrayList<Long>>> eachCommandTestResponseTime = new ArrayList<>();
+    private final ArrayList<ArrayList<Long>> eachTestResponseTime = new ArrayList<>();
+    private final ArrayList<ArrayList<ArrayList<Double>>> commandAvg = new ArrayList<>();
+    private final ArrayList<ArrayList<ArrayList<Long>>> commandMin = new ArrayList<>();
+    private final ArrayList<ArrayList<ArrayList<Long>>> commandMax = new ArrayList<>();
+    private final ArrayList<ArrayList<ArrayList<Double>>> commandMedian = new ArrayList<>();
+    private final ArrayList<ArrayList<ArrayList<Long>>> commandP90 = new ArrayList<>();
+    private final ArrayList<ArrayList<ArrayList<Long>>> commandP95 = new ArrayList<>();
+    private final ArrayList<ArrayList<ArrayList<Long>>> commandP99 = new ArrayList<>();
+    private final ArrayList<String> timeStamp = new ArrayList<>();
+    private final ArrayList<String> xAxisLabel = new ArrayList<>();
 
 
     // merge EachTestResponseTime into ResponseTime
     //for chartjs
-    private final ArrayList<String> lineColor = new ArrayList<String>();
-    private final ArrayList<String> dataName = new ArrayList<String>();
-    private final ArrayList<String> labelName = new ArrayList<String>();
-    private final ArrayList<String> yaxis = new ArrayList<String>();
+    private final ArrayList<String> lineColor = new ArrayList<>();
+    private final ArrayList<String> dataName = new ArrayList<>();
+    private final ArrayList<String> labelName = new ArrayList<>();
+    private final ArrayList<String> yaxis = new ArrayList<>();
     private JsonParse jsonFile = null;
-    private ArrayList<String> jsonNames = new ArrayList<String>();
-    private String startTime = "", endTime = "", caseStartTime = "", caseEndTime = "";
+    private ArrayList<String> jsonNames = new ArrayList<>();
 
-    private String Timeline_Report_Content = "", Request_Statistics_Content = "", hex = "",
-            checkBox = "", userData = "", hitData = "", errorData = "", responseTimeData = "", dataset = "",
-            yAxisData = "", javascript = "";
+    private String Timeline_Report_Content = "";
+    private String Request_Statistics_Content = "";
+    private String checkBox = "";
+    private String userData = "";
+    private String hitData = "";
+    private String errorData = "";
+    private String responseTimeData = "";
+    private String dataset = "";
+    private String yAxisData = "";
+    private String javascript = "";
 
     private int checkValue = 0;
 
-    private int timePointCount = 0, hitTypeCount = 0, commandNumber = 0;
+    private int hitTypeCount = 0;
+    private int commandNumber = 0;
 
     public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
                                 ArrayList<String> command, String reportPath) throws java.text.ParseException {
@@ -81,12 +86,6 @@ public class TimelineReport {
             parse();
             html.generate(Timeline_Report_Content, reportPath);
 
-        } catch (FileNotFoundException e1) {
-
-            e1.printStackTrace();
-        } catch (IOException e1) {
-
-            e1.printStackTrace();
         } catch (ParseException e1) {
 
             e1.printStackTrace();
@@ -175,7 +174,8 @@ public class TimelineReport {
     }
 
 
-    public void parse() throws IOException, ParseException, java.text.ParseException {
+    @SuppressWarnings("StringConcatenationInLoop")
+    public void parse() throws ParseException, java.text.ParseException {
 
 
         int fileSize = jsonNames.size();
@@ -193,8 +193,8 @@ public class TimelineReport {
         startTimeList.sort(null);
         endTimeList.sort(null);
 
-        startTime = startTimeList.get(0);
-        endTime = endTimeList.get(fileSize - 1);
+        String startTime = startTimeList.get(0);
+        String endTime = endTimeList.get(fileSize - 1);
 
 
         String startDate = startTime.substring(0, 4) + "-" + startTime.substring(4, 6) + "-" + startTime.substring(6, 8);
@@ -211,7 +211,7 @@ public class TimelineReport {
 
         JSONObject json, cases, records;
         JSONArray recordsArray, casesArray;
-        Long commandTime = 0L;
+        Long commandTime;
 
 
         //Calculate total cases HitTypeCount
@@ -220,14 +220,14 @@ public class TimelineReport {
 
 
         //Data of User
-        int userCount = 0;
-        String status = "";
+        int userCount;
+        String status;
 
         //Data of Hit, Error, ResponseTime
-        double timeDifference = 0.0;
-        int dataPosition = 0, commandAmount = 0, errorCount = 0;
+        double timeDifference;
+        int dataPosition, commandAmount, errorCount;
 
-        String year = "", month = "", day = "", EachTimeIntervalPointString = "";
+        String year, month, day, EachTimeIntervalPointString;
 
         String originTime = String.format("%02d", startHour);
         originTime += ":";
@@ -239,17 +239,17 @@ public class TimelineReport {
         endPointTime += String.format("%02d", endMinute + 1);
         endPointTime += ":00";
 
-        Date currentDate = null;
-        Date endPointDate = null;
+        Date currentDate;
+        Date endPointDate;
         Calendar startCalendar = Calendar.getInstance();
         Calendar eachTimeIntervalPoint = Calendar.getInstance();
         Calendar endCalendar = Calendar.getInstance();
 
-        Date caseStartDate = null;
-        Date caseEndDate = null;
-        Date labelDate = null;
-        Date commandDateOne = null;
-        Date commandDateTwo = null;
+        Date caseStartDate;
+        Date caseEndDate;
+        Date labelDate;
+        Date commandDateOne;
+        Date commandDateTwo;
 
         Calendar caseStartCalendar = Calendar.getInstance();
         Calendar caseEndCalendar = Calendar.getInstance();
@@ -265,10 +265,8 @@ public class TimelineReport {
         // Original X point
         startCalendar.setTime(currentDate);
         eachTimeIntervalPoint.setTime(currentDate);
-        currentDate = null;
         // Final X point
         endCalendar.setTime(endPointDate);
-        endPointDate = null;
 
 
         // Add x point in every 30 seconds to create X axis points
@@ -291,7 +289,7 @@ public class TimelineReport {
             eachTimeIntervalPoint.add(Calendar.SECOND, 1);
         }
 
-        //final timepoint
+        //final time-point
         month = eachTimeIntervalPoint.getTime().toString().substring(4, 7);
         month = monthStringToString(month);
         year = eachTimeIntervalPoint.getTime().toString().substring(timeLength - 4, timeLength);
@@ -305,13 +303,13 @@ public class TimelineReport {
         // initial Hit Data
         hitTypeCount = commandList.size();
         commandNumber = hitTypeCount + 1;
-        timePointCount = timeStamp.size();
+        int timePointCount = timeStamp.size();
 
 
         for (int i = 0; i < hitTypeCount; i++) {
 
-            Integer commandCount = 2;
-            String newCommand = "";
+            int commandCount = 2;
+            String newCommand;
 
 
             for (int j = 0; j < hitTypeCount; j++) {
@@ -319,7 +317,7 @@ public class TimelineReport {
                 if (commandList.get(i).equals(commandList.get(j)) && i != j) {
 
                     newCommand = commandList.get(j);
-                    newCommand += commandCount.toString();
+                    newCommand += Integer.toString(commandCount);
                     commandList.set(j, newCommand);
                     commandCount++;
                 }
@@ -332,12 +330,12 @@ public class TimelineReport {
 
         for (int i = 0; i < timePointCount; i++) {
 
-            commandUsers.add(new ArrayList<Integer>());
-            Hit.add(new ArrayList<Integer>());
-            Error.add(new ArrayList<Integer>());
+            commandUsers.add(new ArrayList<>());
+            Hit.add(new ArrayList<>());
+            Error.add(new ArrayList<>());
 
-            eachTestResponseTime.add(new ArrayList<Long>());
-            eachCommandTestResponseTime.add(new ArrayList<ArrayList<Long>>());
+            eachTestResponseTime.add(new ArrayList<>());
+            eachCommandTestResponseTime.add(new ArrayList<>());
 
 
             for (int j = 0; j < hitTypeCount; j++) {
@@ -346,7 +344,7 @@ public class TimelineReport {
                 Hit.get(i).add(0);
                 Error.get(i).add(0);
 
-                eachCommandTestResponseTime.get(i).add(new ArrayList<Long>());
+                eachCommandTestResponseTime.get(i).add(new ArrayList<>());
 
             }
         }
@@ -357,7 +355,7 @@ public class TimelineReport {
 
 
         for (int i = 0; i < fileSize; i++)
-            commandTimePoint.add(new ArrayList<String>());
+            commandTimePoint.add(new ArrayList<>());
 
 
         //Data of VirtualUser
@@ -367,17 +365,16 @@ public class TimelineReport {
             JSONObject eachJson = jsonFile.getJson(i);
 
 
-            caseStartTime = eachJson.get("startTime").toString();
+            String caseStartTime = eachJson.get("startTime").toString();
             caseStartTime += ":000";
             caseStartDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(caseStartTime);
             caseStartCalendar.setTime(caseStartDate);
 
 
-            caseEndTime = eachJson.get("endTime").toString();
+            String caseEndTime = eachJson.get("endTime").toString();
             caseEndTime += ":000";
             caseEndDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(caseEndTime);
             caseEndCalendar.setTime(caseEndDate);
-            caseEndDate = null;
 
             casesArray = (JSONArray) eachJson.get("cases");
             cases = (JSONObject) casesArray.get(0);
@@ -387,7 +384,6 @@ public class TimelineReport {
             //Add each command time interval
             Calendar caseCommandTime = Calendar.getInstance();
             caseCommandTime.setTime(caseStartDate);
-            caseStartDate = null;
 
             SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS");
             commandTimePoint.get(i).add(simpleFormat.format(caseStartCalendar.getTime()));
@@ -416,8 +412,6 @@ public class TimelineReport {
 
             }
 
-            simpleFormat = null;
-
 
             for (int j = 0; j < timeStamp.size(); j++) {
 
@@ -425,7 +419,6 @@ public class TimelineReport {
 
                 currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStamp.get(j));
                 eachTimeIntervalPoint.setTime(currentDate);
-                currentDate = null;
 
                 if (eachTimeIntervalPoint.equals(caseStartCalendar) || eachTimeIntervalPoint.equals(caseEndCalendar)) {
 
@@ -462,9 +455,6 @@ public class TimelineReport {
                     commandCalendarOne.setTime(commandDateOne);
                     commandCalendarTwo.setTime(commandDateTwo);
 
-                    commandDateOne = null;
-                    commandDateTwo = null;
-
                     if (eachTimeIntervalPoint.before(commandCalendarOne) || eachTimeIntervalPoint.after(commandCalendarTwo))
                         continue;
                     else {
@@ -491,7 +481,6 @@ public class TimelineReport {
             startTime += ":000";
             caseStartDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(startTime);
             caseStartCalendar.setTime(caseStartDate);
-            caseStartDate = null;
 
             casesArray = (JSONArray) json.get("cases");
             cases = (JSONObject) casesArray.get(0);
@@ -505,80 +494,27 @@ public class TimelineReport {
                 commandTime = (Long) records.get("time");
 
 
-                if (j == 0) {
+                //Error
+                timeDifference = (double) (caseStartCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+                timeDifference /= 1000;
+                timeDifference = Math.round(timeDifference);
+                dataPosition = (int) timeDifference;
+                eachTestResponseTime.get(dataPosition).add(commandTime);
+                eachCommandTestResponseTime.get(dataPosition).get(j).add(commandTime);
+                if (!xAxisLabel.contains(timeStamp.get(dataPosition)))
+                    xAxisLabel.add(timeStamp.get(dataPosition));
+                commandAmount = Hit.get(dataPosition).get(j);
+                commandAmount++;
+                Hit.get(dataPosition).set(j, commandAmount);
+                if (status.equals("fail")) {
 
-
-                    timeDifference = (double) (caseStartCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-
-                    // transfer milisecond to second
-                    timeDifference /= 1000;
-
-                    timeDifference = Math.round(timeDifference);
-                    dataPosition = (int) timeDifference;
-
-                    eachTestResponseTime.get(dataPosition).add(commandTime);
-
-                    eachCommandTestResponseTime.get(dataPosition).get(j).add(commandTime);
-
-                    if (xAxisLabel.contains(timeStamp.get(dataPosition)) != true)
-                        xAxisLabel.add(timeStamp.get(dataPosition));
-
-                    //Hit Data
-                    commandAmount = Hit.get(dataPosition).get(j);
-                    commandAmount++;
-                    Hit.get(dataPosition).set(j, commandAmount);
-
-
-                    if (status.equals("fail")) {
-
-                        //Error Data
-                        errorCount = Error.get(dataPosition).get(j);
-                        errorCount++;
-                        Error.get(dataPosition).set(j, errorCount);
-
-                    }
-
-
-                    caseStartCalendar.add(Calendar.MILLISECOND, commandTime.intValue());
-
-                } else {
-
-
-                    timeDifference = (double) (caseStartCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-
-                    // transfer milisecond to second
-                    timeDifference /= 1000;
-
-                    timeDifference = Math.round(timeDifference);
-                    dataPosition = (int) timeDifference;
-
-
-                    eachTestResponseTime.get(dataPosition).add(commandTime);
-
-
-                    eachCommandTestResponseTime.get(dataPosition).get(j).add(commandTime);
-
-                    if (xAxisLabel.contains(timeStamp.get(dataPosition)) != true)
-                        xAxisLabel.add(timeStamp.get(dataPosition));
-
-                    //Hit Data
-                    commandAmount = Hit.get(dataPosition).get(j);
-                    commandAmount++;
-                    Hit.get(dataPosition).set(j, commandAmount);
-
-                    if (status.equals("fail")) {
-
-                        //Error
-                        errorCount = Error.get(dataPosition).get(j);
-                        errorCount++;
-                        Error.get(dataPosition).set(j, errorCount);
-
-
-                    }
-
-                    caseStartCalendar.add(Calendar.MILLISECOND, commandTime.intValue());
+                    //Error Data
+                    errorCount = Error.get(dataPosition).get(j);
+                    errorCount++;
+                    Error.get(dataPosition).set(j, errorCount);
 
                 }
+                caseStartCalendar.add(Calendar.MILLISECOND, commandTime.intValue());
 
             }
         }
@@ -588,43 +524,43 @@ public class TimelineReport {
 
 
         //AllResponseTime statistics
-        for (int i = 0; i < eachTestResponseTime.size(); i++) {
+        for (ArrayList<Long> longs : eachTestResponseTime) {
 
 
-            eachTestResponseTime.get(i).sort(null);
+            longs.sort(null);
 
-            if (eachTestResponseTime.get(i).size() != 0) {
+            if (longs.size() != 0) {
 
-                int medianPosition = (eachTestResponseTime.get(i).size() / 2),
-                        p90Position = (int) Math.round(eachTestResponseTime.get(i).size() * 0.9),
-                        p95Position = (int) Math.round(eachTestResponseTime.get(i).size() * 0.95),
-                        p99Position = (int) Math.round(eachTestResponseTime.get(i).size() * 0.99);
+                int medianPosition = (longs.size() / 2),
+                        p90Position = (int) Math.round(longs.size() * 0.9),
+                        p95Position = (int) Math.round(longs.size() * 0.95),
+                        p99Position = (int) Math.round(longs.size() * 0.99);
 
                 p90Position--;
                 p95Position--;
                 p99Position--;
 
-                if (p90Position == eachTestResponseTime.get(i).size())
+                if (p90Position == longs.size())
                     p90Position--;
-                if (p95Position == eachTestResponseTime.get(i).size())
+                if (p95Position == longs.size())
                     p95Position--;
-                if (p99Position == eachTestResponseTime.get(i).size())
+                if (p99Position == longs.size())
                     p99Position--;
 
-                double average = 0.0, medianValue = 0.0;
+                double average = 0.0, medianValue;
 
-                Long minValue = eachTestResponseTime.get(i).get(0),
-                        maxValue = eachTestResponseTime.get(i).get(eachTestResponseTime.get(i).size() - 1),
-                        p90Value = eachTestResponseTime.get(i).get(p90Position),
-                        p95Value = eachTestResponseTime.get(i).get(p95Position),
-                        p99Value = eachTestResponseTime.get(i).get(p99Position);
+                Long minValue = longs.get(0),
+                        maxValue = longs.get(longs.size() - 1),
+                        p90Value = longs.get(p90Position),
+                        p95Value = longs.get(p95Position),
+                        p99Value = longs.get(p99Position);
 
 
-                if (eachTestResponseTime.get(i).size() % 2 == 0)
-                    medianValue = ((double) (eachTestResponseTime.get(i).get(medianPosition)
-                            + eachTestResponseTime.get(i).get(medianPosition - 1)) / 2);
+                if (longs.size() % 2 == 0)
+                    medianValue = ((double) (longs.get(medianPosition)
+                            + longs.get(medianPosition - 1)) / 2);
                 else
-                    medianValue = eachTestResponseTime.get(i).get(medianPosition);
+                    medianValue = longs.get(medianPosition);
 
 
                 Min.add(minValue);
@@ -635,11 +571,10 @@ public class TimelineReport {
                 P99.add(p99Value);
 
 
-                for (int j = 0; j < eachTestResponseTime.get(i).size(); j++)
-                    average += eachTestResponseTime.get(i).get(j);
+                for (Long aLong : longs) average += aLong;
 
-                if (eachTestResponseTime.get(i).size() != 0)
-                    average = average / eachTestResponseTime.get(i).size();
+                if (longs.size() != 0)
+                    average = average / longs.size();
 
                 Avg.add(average);
 
@@ -649,23 +584,23 @@ public class TimelineReport {
 
         for (int i = 0; i < xAxisLabel.size(); i++) {
 
-            commandAvg.add(new ArrayList<ArrayList<Double>>());
-            commandMin.add(new ArrayList<ArrayList<Long>>());
-            commandMax.add(new ArrayList<ArrayList<Long>>());
-            commandMedian.add(new ArrayList<ArrayList<Double>>());
-            commandP90.add(new ArrayList<ArrayList<Long>>());
-            commandP95.add(new ArrayList<ArrayList<Long>>());
-            commandP99.add(new ArrayList<ArrayList<Long>>());
+            commandAvg.add(new ArrayList<>());
+            commandMin.add(new ArrayList<>());
+            commandMax.add(new ArrayList<>());
+            commandMedian.add(new ArrayList<>());
+            commandP90.add(new ArrayList<>());
+            commandP95.add(new ArrayList<>());
+            commandP99.add(new ArrayList<>());
 
             for (int j = 0; j < hitTypeCount; j++) {
 
-                commandAvg.get(i).add(new ArrayList<Double>());
-                commandMin.get(i).add(new ArrayList<Long>());
-                commandMax.get(i).add(new ArrayList<Long>());
-                commandMedian.get(i).add(new ArrayList<Double>());
-                commandP90.get(i).add(new ArrayList<Long>());
-                commandP95.get(i).add(new ArrayList<Long>());
-                commandP99.get(i).add(new ArrayList<Long>());
+                commandAvg.get(i).add(new ArrayList<>());
+                commandMin.get(i).add(new ArrayList<>());
+                commandMax.get(i).add(new ArrayList<>());
+                commandMedian.get(i).add(new ArrayList<>());
+                commandP90.get(i).add(new ArrayList<>());
+                commandP95.get(i).add(new ArrayList<>());
+                commandP99.get(i).add(new ArrayList<>());
 
             }
         }
@@ -703,7 +638,7 @@ public class TimelineReport {
                     if (p99Position == eachCommandTestResponseTime.get(i).get(j).size())
                         p99Position--;
 
-                    double average = 0.0, medianValue = 0.0;
+                    double average = 0.0, medianValue;
 
                     Long minValue = eachCommandTestResponseTime.get(i).get(j).get(0),
                             maxValue = eachCommandTestResponseTime.get(i).get(j)
@@ -747,12 +682,11 @@ public class TimelineReport {
                 checkBox += "<label for=\"Virtual Users\"><b> Virtual Users</b></label><br>\r\n";
             else if (i == 1)
                 checkBox += "<label for=\"Hits\"><b> Hits</b></label><br>\r\n";
-            else if (i == 2)
-                checkBox += "<label for=\"Errors\"><b> Errors</b></label><br>\r\n";
+            else checkBox += "<label for=\"Errors\"><b> Errors</b></label><br>\r\n";
 
             for (int j = 0; j < (hitTypeCount + 1); j++) {
 
-                String commandName = "";
+                String commandName;
 
                 if (j == 0)
                     commandName = "ALL";
@@ -807,8 +741,7 @@ public class TimelineReport {
                     checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
                 else if (j == 5)
                     checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else if (j == 6)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label><br>\r\n";
+                else checkBox += "<label>" + statisticsName.get(j) + "</label><br>\r\n";
 
                 checkValue++;
 
@@ -821,14 +754,10 @@ public class TimelineReport {
         userData += "const allUsers = [";
 
 
-        for (int i = 0; i < xAxisLabel.size(); i++) {
-
-            String labelTime = xAxisLabel.get(i);
-
+        for (String labelTime : xAxisLabel) {
 
             labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(labelTime);
             labelCalendar.setTime(labelDate);
-            labelDate = null;
 
             timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
             timeDifference /= 1000;
@@ -845,14 +774,10 @@ public class TimelineReport {
 
             userData += "const " + dataName.get(i + 1) + " = [";
 
-            for (int j = 0; j < xAxisLabel.size(); j++) {
-
-                String labelTime = xAxisLabel.get(j);
-
+            for (String labelTime : xAxisLabel) {
 
                 labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(labelTime);
                 labelCalendar.setTime(labelDate);
-                labelDate = null;
 
                 timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
                 timeDifference /= 1000;
@@ -873,15 +798,12 @@ public class TimelineReport {
 
             hitData += "const " + dataName.get(hitTypeCount + 1 + i) + " = [";
 
-            for (int j = 0; j < xAxisLabel.size(); j++) {
+            for (String s : xAxisLabel) {
 
                 int allCount = 0;
 
-                String labelTime = xAxisLabel.get(j);
-
-                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(labelTime);
+                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
                 labelCalendar.setTime(labelDate);
-                labelDate = null;
 
                 timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
                 timeDifference /= 1000;
@@ -917,16 +839,13 @@ public class TimelineReport {
 
             errorData += "const " + dataName.get((hitTypeCount + 1) * 2 + i) + " = [";
 
-            for (int j = 0; j < xAxisLabel.size(); j++) {
+            for (String s : xAxisLabel) {
 
                 int allCount = 0, hitCount = 0;
 
-                String labelTime = xAxisLabel.get(j);
 
-
-                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(labelTime);
+                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
                 labelCalendar.setTime(labelDate);
-                labelDate = null;
 
                 timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
                 timeDifference /= 1000;
@@ -992,8 +911,7 @@ public class TimelineReport {
                     responseTimeData += P90.get(j);
                 else if (i == 5)
                     responseTimeData += P95.get(j);
-                else if (i == 6)
-                    responseTimeData += P99.get(j);
+                else responseTimeData += P99.get(j);
 
                 responseTimeData += " ,";
             }
@@ -1030,7 +948,7 @@ public class TimelineReport {
                     } else if (j == 5) {
                         if (commandP95.get(k).get(i).size() != 0)
                             responseTimeData += commandP95.get(k).get(i).get(0);
-                    } else if (j == 6) {
+                    } else {
                         if (commandP99.get(k).get(i).size() != 0)
                             responseTimeData += commandP99.get(k).get(i).get(0);
                     }
@@ -1050,7 +968,7 @@ public class TimelineReport {
         //Generate line color
         for (int i = 0; i < ((hitTypeCount + 1) * 3 + (hitTypeCount + 1) * 7); i++) {
 
-            hex = "";
+            String hex = "";
 
             hex += "#" + Integer.toHexString(rgb.nextInt(255)) + Integer.toHexString(rgb.nextInt(255))
                     + Integer.toHexString(rgb.nextInt(255));
@@ -1342,31 +1260,32 @@ public class TimelineReport {
 
     public String monthStringToString(String month) {
 
-        if (month.equals("Jan")) {
-            return "01";
-        } else if (month.equals("Feb")) {
+        switch (month) {
+            case "Jan":
+                return "01";
+            case "Feb":
 
-            return "02";
-        } else if (month.equals("Mar")) {
-            return "03";
-        } else if (month.equals("Apr")) {
-            return "04";
-        } else if (month.equals("May")) {
-            return "05";
-        } else if (month.equals("Jun")) {
-            return "06";
-        } else if (month.equals("Jul")) {
-            return "07";
-        } else if (month.equals("Aug")) {
-            return "08";
-        } else if (month.equals("Sep")) {
-            return "09";
-        } else if (month.equals("Oct")) {
-            return "10";
-        } else if (month.equals("Nov")) {
-            return "11";
-        } else if (month.equals("Dec")) {
-            return "12";
+                return "02";
+            case "Mar":
+                return "03";
+            case "Apr":
+                return "04";
+            case "May":
+                return "05";
+            case "Jun":
+                return "06";
+            case "Jul":
+                return "07";
+            case "Aug":
+                return "08";
+            case "Sep":
+                return "09";
+            case "Oct":
+                return "10";
+            case "Nov":
+                return "11";
+            case "Dec":
+                return "12";
         }
 
 

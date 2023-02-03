@@ -8,9 +8,9 @@ package team.sideex.api.config;
 import java.util.ArrayList;
 
 public class Input {
-    private ArrayList<String> testSuites = new ArrayList<String>();
-    private ArrayList<String> variables = new ArrayList<String>();
-    private ArrayList<String> dataDriven = new ArrayList<String>();
+    private ArrayList<String> testSuites = new ArrayList<>();
+    private ArrayList<String> variables = new ArrayList<>();
+    private ArrayList<String> dataDriven = new ArrayList<>();
 
     public ArrayList<String> getDataDriven() {
         return dataDriven;
