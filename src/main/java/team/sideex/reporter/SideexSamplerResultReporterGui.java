@@ -4,11 +4,29 @@ import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.visualizers.gui.AbstractListenerGui;
 import team.sideex.JMeterPluginUtils;
 
-public class TestSamplerResultReporter extends AbstractListenerGui {
+import java.awt.*;
+
+public class SideexSamplerResultReporterGui extends AbstractListenerGui {
+
+    private SideexResultPanel sideexResultPanel;
+
+    public SideexSamplerResultReporterGui() {
+        createGui();
+    }
+
+    private void createGui(){
+        setLayout(new BorderLayout(0, 5));
+        setBorder(makeBorder());
+        add(makeTitlePanel(), BorderLayout.NORTH);
+//        add(startGenerate, BorderLayout.SOUTH);
+        sideexResultPanel = new SideexResultPanel();
+        add(sideexResultPanel, BorderLayout.CENTER);
+    }
+
+    protected SideexSamplerResultCollector collector = new SideexSamplerResultCollector();
 
     @Override
     public TestElement createTestElement() {
-        TestSamplerResultCollector collector = new TestSamplerResultCollector();
         modifyTestElement(collector);
         return collector;
     }
@@ -26,7 +44,6 @@ public class TestSamplerResultReporter extends AbstractListenerGui {
     @Override
     public void modifyTestElement(TestElement element) {
         super.configureTestElement(element);
-
     }
 
     @Override

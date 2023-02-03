@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TestSamplerResultCollector extends AbstractListenerElement implements SampleListener, Clearable, Serializable,
+public class SideexSamplerResultCollector extends AbstractListenerElement implements SampleListener, Clearable, Serializable,
         TestStateListener, Remoteable, NoThreadClone {
 
     public ArrayList<String> allResponseMessage = new ArrayList<>(); // Create an ArrayList object
@@ -26,31 +26,30 @@ public class TestSamplerResultCollector extends AbstractListenerElement implemen
 
     @Override
     public void testEnded() {
-        System.out.println("testEnded 1");
-        System.out.println("Here's allResponseMessage: " + allResponseMessage);
+//        System.out.println("testEnded 1");
+//        System.out.println("Here's allResponseMessage: " + allResponseMessage);
     }
 
     @Override
     public void testEnded(String host) {
-        System.out.println("testEnded 2");
-
+//        System.out.println("testEnded 2");
     }
 
     @Override
     public void testStarted() {
-        System.out.println("testStarted 1");
+//        System.out.println("testStarted 1");
 
     }
 
     @Override
     public void testStarted(String host) {
-        System.out.println("testStarted 2");
+//        System.out.println("testStarted 2");
 
     }
 
     @Override
     public void clearData() {
-        System.out.println("clearData");
+//        System.out.println("clearData");
     }
 
     @Override
@@ -73,12 +72,12 @@ public class TestSamplerResultCollector extends AbstractListenerElement implemen
 
     @Override
     public void sampleStarted(SampleEvent event) {
-        System.out.println("sampleStarted");
+//        System.out.println("sampleStarted");
     }
 
     @Override
     public void sampleStopped(SampleEvent event) {
-        System.out.println("sampleStopped");
+//        System.out.println("sampleStopped");
 
     }
 
