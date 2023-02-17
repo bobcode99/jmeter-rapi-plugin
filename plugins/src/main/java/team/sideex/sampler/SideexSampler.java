@@ -32,6 +32,7 @@ public class SideexSampler extends AbstractSampler {
     public String getResponseCode() {
         return getPropertyAsString(RESPONSE_CODE, "200");
     }
+
     public String getTestCaseFilePath() {
         return getPropertyAsString(TC_FILE_PATH, "");
     }

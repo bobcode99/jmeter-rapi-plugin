@@ -28,14 +28,15 @@ public class ReportGenerator {
             throw new RuntimeException(ex);
         }
     }
+
     public static void checkCsvContentIsEmpty(ArrayList<String> arrayList) {
-        if(arrayList.size() == 0)  {
+        if (arrayList.size() == 0) {
             throw new RuntimeException("Please choose a .csv file that have sideex result.");
         }
     }
 
     public static void checkCsvFileExist(String path) throws FileNotFoundException {
-        if(!new File(path).isFile()){
+        if (!new File(path).isFile()) {
             throw new FileNotFoundException("This .csv file not found.");
         }
     }
