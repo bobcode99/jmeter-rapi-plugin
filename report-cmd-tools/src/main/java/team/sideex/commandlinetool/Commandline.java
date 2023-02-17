@@ -8,7 +8,7 @@ import static team.sideex.report.ReportGenerator.*;
 public class Commandline {
     public static void main(String[] args) {
         System.out.println("hii there");
-        String csvFilePath = "/path/to/report.csv";
+        String csvFilePath = args[0];
         try {
             checkCsvFileExist(csvFilePath);
         } catch (FileNotFoundException ex) {
