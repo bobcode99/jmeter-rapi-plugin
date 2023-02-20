@@ -21,11 +21,20 @@ public class Driver {
         this.config = config;
     }
 
-    public static ArrayList<String> getBrowserArgs(String browserName) {
+    public static ArrayList<String> getBrowserArgs(String browserName, boolean enableDevShmUsage) {
+        ArrayList<String> chromeArgsList = new ArrayList<>(Arrays.asList("headless", "disable-gpu", "window-size=1080,720", "no-sandbox"));
+        ArrayList<String> firefoxArgsList = new ArrayList<>(Arrays.asList("-headless", "-disable-gpu", "-window-size=1080,720"));
+        ArrayList<String> msEdgeArgsList = new ArrayList<>(Arrays.asList("headless", "disable-gpu", "window-size=1080,720", "no-sandbox"));
+
+        if(enableDevShmUsage) {
+            chromeArgsList.add("--disable-dev-shm-usage");
+            msEdgeArgsList.add("--disable-dev-shm-usage");
+        }
+
         HashMap<String, ArrayList<String>> browserArgs = new HashMap<>();
-        browserArgs.put("chrome", new ArrayList<>(Arrays.asList("headless", "disable-gpu", "window-size=1080,720", "no-sandbox")));
-        browserArgs.put("firefox", new ArrayList<>(Arrays.asList("-headless", "-disable-gpu", "-window-size=1080,720")));
-        browserArgs.put("MicrosoftEdge", new ArrayList<>(Arrays.asList("headless", "disable-gpu", "window-size=1080,720", "no-sandbox")));
+        browserArgs.put("chrome", chromeArgsList);
+        browserArgs.put("firefox", firefoxArgsList);
+        browserArgs.put("MicrosoftEdge", msEdgeArgsList);
 
         return browserArgs.get(browserName);
     }

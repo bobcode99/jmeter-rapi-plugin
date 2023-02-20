@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import team.sideex.api.Driver;
 import team.sideex.api.config.Browser;
 import team.sideex.api.config.Config;
+import team.sideex.api.config.Play;
 import team.sideex.api.config.WebDriverConfig;
 
 import java.util.ArrayList;
@@ -50,6 +51,10 @@ public class SideexSampler extends AbstractSampler {
     }
 
     private ResultSideex startRunSideex(String testCase, String browserName) throws Exception {
+        // For get config settings
+        JMeterContext context = getThreadContext();
+        JMeterVariables jMeterVariables = context.getVariables();
+
         ArrayList<String> testSuites = new ArrayList<>();
         testSuites.add(testCase);
 
@@ -61,7 +66,7 @@ public class SideexSampler extends AbstractSampler {
         HashMap<String, ArrayList<String>> browserArgs = new HashMap<>();
 
         // setBrowserArgs: "args": ["-headless","-disable-gpu", "-window-size=1080,720"]
-        browserArgs.put("args", getBrowserArgs(browserName));
+        browserArgs.put("args", getBrowserArgs(browserName, Boolean.parseBoolean(jMeterVariables.get("STATUS_DEV_SHM_USAGE_FOR_SIDEEX_USE"))));
 
         // set browserOptions: "moz:firefoxOptions": {"args": ["-headless","-disable-gpu", "-window-size=1080,720"]}
         caps.put(getBrowserOptions(browserName), browserArgs);
@@ -77,8 +82,7 @@ public class SideexSampler extends AbstractSampler {
         WebDriverConfig webDriverConfig = new WebDriverConfig();
         webDriverConfig.setBrowsers(browsers);
 
-        JMeterContext context = getThreadContext();
-        JMeterVariables jMeterVariables = context.getVariables();
+
 
 //        System.out.println("jMeterVariables RUNNER_EXE_PATH: " + jMeterVariables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"));
 //        System.out.println("jMeterVariables SELENIUM_PORT: " + jMeterVariables.get("SELENIUM_PORT_FOR_SIDEEX_USE"));
@@ -90,6 +94,8 @@ public class SideexSampler extends AbstractSampler {
         Config config = new Config();
         config.getInput().setTestSuites(testSuites);
         config.getWebdriver().setConfigs(webDriverConfigs);
+        config.getPlay().setAutoWaitTimeout(30);
+        config.getPlay().setMode(2);
 
         // Note that if executable path doesn't exist, it will not print any warning message.
         // TODO: add file check exist
