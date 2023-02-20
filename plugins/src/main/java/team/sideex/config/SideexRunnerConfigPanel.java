@@ -10,8 +10,7 @@ public class SideexRunnerConfigPanel extends JPanel {
 
     private JTextField runnerExePath;
     private JTextField seleniumPath;
-    private JCheckBox enableDevShmUsage;
-//    private JTextField browserArgs;
+    private JTextField browserArgs;
 
     public SideexRunnerConfigPanel() {
         super(new GridBagLayout());
@@ -21,7 +20,7 @@ public class SideexRunnerConfigPanel extends JPanel {
         if (element instanceof SideexRunnerConfig sideexRunnerConfig) {
             runnerExePath.setText(sideexRunnerConfig.getRunnerExePath());
             seleniumPath.setText(sideexRunnerConfig.getSeleniumPort());
-            enableDevShmUsage.setSelected(sideexRunnerConfig.getDevShmUsage());
+            browserArgs.setText(sideexRunnerConfig.getBrowserAdditionalArgs());
         }
     }
 
@@ -29,14 +28,14 @@ public class SideexRunnerConfigPanel extends JPanel {
         if (element instanceof SideexRunnerConfig sideexRunnerConfig) {
             sideexRunnerConfig.setRunnerExePath(runnerExePath.getText());
             sideexRunnerConfig.setSeleniumPort(seleniumPath.getText());
-            sideexRunnerConfig.setDevShmUsage(enableDevShmUsage.isSelected());
+            sideexRunnerConfig.setBrowserAdditionalArgs(browserArgs.getText());
         }
     }
 
     public void initFields() {
         runnerExePath.setText("/path/to/sideex-runner-exe");
         seleniumPath.setText("http://127.0.0.1:4444");
-        enableDevShmUsage.setSelected(true);
+        browserArgs.setText("headless, disable-gpu, window-size=1080,720, no-sandbox, disable-dev-shm-usage");
     }
 
     public JPanel init() {
@@ -56,9 +55,11 @@ public class SideexRunnerConfigPanel extends JPanel {
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 2, seleniumPath = new JTextField());
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 3, new JLabel("Follow the example. Example: http://127.0.0.1:4445"));
 
-        JMeterPluginUtils.addToPanel(this, labelConstraints, 0, 4, new JLabel("Enable DEV SHM USAGE: ", JLabel.RIGHT));
-        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 4, enableDevShmUsage = new JCheckBox());
-        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 5, new JLabel("If using docker environment, need to enable, will add --disable-dev-shm-usage to browser"));
+        JMeterPluginUtils.addToPanel(this, labelConstraints, 0, 4, new JLabel("Browser additional argument: ", JLabel.RIGHT));
+        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 4, browserArgs = new JTextField());
+        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 5, new JLabel("If using docker environment, need to add \"disable-dev-shm-usage\" to browser."));
+        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 6, new JLabel("If using Firefox, need to add \"-\" on each args." +
+                "Note that some args browser will not supported"));
 
         JPanel container = new JPanel(new BorderLayout());
         container.add(this, BorderLayout.NORTH);

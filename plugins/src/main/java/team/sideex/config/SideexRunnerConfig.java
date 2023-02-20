@@ -10,7 +10,7 @@ public class SideexRunnerConfig extends ConfigTestElement implements LoopIterati
 
     private static final String RUNNER_EXE_PATH = "RUNNER_EXE_PATH";
     private static final String SELENIUM_PORT = "SELENIUM_PORT";
-    private static final String DEV_SHM_USAGE = "DEV_SHM_USAGE";
+    private static final String BROWSER_ADDITIONAL_ARGS = "BROWSER_ADDITIONAL_ARGS";
 
     public String getRunnerExePath() {
         return getPropertyAsString(RUNNER_EXE_PATH);
@@ -28,12 +28,12 @@ public class SideexRunnerConfig extends ConfigTestElement implements LoopIterati
         setProperty(SELENIUM_PORT, port);
     }
 
-    public boolean getDevShmUsage(){
-        return getPropertyAsBoolean(DEV_SHM_USAGE);
+    public String getBrowserAdditionalArgs(){
+        return getPropertyAsString(BROWSER_ADDITIONAL_ARGS);
     }
 
-    public void setDevShmUsage(boolean enabled){
-        setProperty(DEV_SHM_USAGE,enabled);
+    public void setBrowserAdditionalArgs(String args){
+        setProperty(BROWSER_ADDITIONAL_ARGS, args);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SideexRunnerConfig extends ConfigTestElement implements LoopIterati
         JMeterVariables variables = new JMeterVariables();
         variables.put("RUNNER_EXE_PATH_FOR_SIDEEX_USE", getRunnerExePath());
         variables.put("SELENIUM_PORT_FOR_SIDEEX_USE", getSeleniumPort());
-        variables.put("STATUS_DEV_SHM_USAGE_FOR_SIDEEX_USE", String.valueOf(getDevShmUsage()));
+        variables.put("BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE", getBrowserAdditionalArgs());
 
 //        System.out.println("variables.get RUNNER_EXE_PATH:" + variables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"));
 //        System.out.println(("variables.get SELENIUM_PORT:" +variables.get("SELENIUM_PORT_FOR_SIDEEX_USE")));

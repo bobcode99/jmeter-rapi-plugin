@@ -66,7 +66,7 @@ public class SideexSampler extends AbstractSampler {
         HashMap<String, ArrayList<String>> browserArgs = new HashMap<>();
 
         // setBrowserArgs: "args": ["-headless","-disable-gpu", "-window-size=1080,720"]
-        browserArgs.put("args", getBrowserArgs(browserName, Boolean.parseBoolean(jMeterVariables.get("STATUS_DEV_SHM_USAGE_FOR_SIDEEX_USE"))));
+        browserArgs.put("args", getBrowserArgs(browserName, jMeterVariables.get("BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE")));
 
         // set browserOptions: "moz:firefoxOptions": {"args": ["-headless","-disable-gpu", "-window-size=1080,720"]}
         caps.put(getBrowserOptions(browserName), browserArgs);
@@ -81,8 +81,6 @@ public class SideexSampler extends AbstractSampler {
 
         WebDriverConfig webDriverConfig = new WebDriverConfig();
         webDriverConfig.setBrowsers(browsers);
-
-
 
 //        System.out.println("jMeterVariables RUNNER_EXE_PATH: " + jMeterVariables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"));
 //        System.out.println("jMeterVariables SELENIUM_PORT: " + jMeterVariables.get("SELENIUM_PORT_FOR_SIDEEX_USE"));
