@@ -37,7 +37,7 @@ public class SideexRunnerConfigPanel extends JPanel {
     public void initFields() {
         runnerExePath.setText("/path/to/sideex-runner-exe");
         seleniumPath.setText("http://127.0.0.1:4444");
-        browserArgs.setText("headless, disable-gpu, window-size=1080,720, no-sandbox, disable-dev-shm-usage");
+        browserArgs.setText("headless, disable-gpu, no-sandbox, disable-dev-shm-usage");
     }
 
     public JPanel init() {
@@ -60,10 +60,11 @@ public class SideexRunnerConfigPanel extends JPanel {
         JMeterPluginUtils.addToPanel(this, labelConstraints, 0, 4, new JLabel("Browser additional argument: ", JLabel.RIGHT));
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 4, browserArgs = new JTextField());
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 5, new JLabel("If using docker environment, need to add \"disable-dev-shm-usage\" to browser."));
-        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 6, new JLabel("If using Firefox, need to add \"-\" on each args." +
-                "Note that some args browser will not supported"));
+        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 6, new JLabel("If using Firefox, need to add \"-\" on each args."));
+        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 7, new JLabel("Note that some args browser will not supported"));
 
-        JPanel container = new JPanel(new BorderLayout());
+
+                JPanel container = new JPanel(new BorderLayout());
         container.add(this, BorderLayout.NORTH);
         return container;
     }
