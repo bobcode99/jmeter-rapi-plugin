@@ -28,11 +28,11 @@ public class SideexRunnerConfig extends ConfigTestElement implements LoopIterati
         setProperty(SELENIUM_PORT, port);
     }
 
-    public String getBrowserAdditionalArgs(){
+    public String getBrowserAdditionalArgs() {
         return getPropertyAsString(BROWSER_ADDITIONAL_ARGS);
     }
 
-    public void setBrowserAdditionalArgs(String args){
+    public void setBrowserAdditionalArgs(String args) {
         setProperty(BROWSER_ADDITIONAL_ARGS, args);
     }
 

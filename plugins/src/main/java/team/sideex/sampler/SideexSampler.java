@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import team.sideex.api.Driver;
 import team.sideex.api.config.Browser;
 import team.sideex.api.config.Config;
-import team.sideex.api.config.Play;
 import team.sideex.api.config.WebDriverConfig;
 
 import java.util.ArrayList;
