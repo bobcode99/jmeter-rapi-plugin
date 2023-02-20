@@ -17,7 +17,8 @@ public class SideexRunnerConfigPanel extends JPanel {
     }
 
     public void configure(TestElement element) {
-        if (element instanceof SideexRunnerConfig sideexRunnerConfig) {
+        if (element instanceof SideexRunnerConfig) {
+            SideexRunnerConfig sideexRunnerConfig = (SideexRunnerConfig) element;
             runnerExePath.setText(sideexRunnerConfig.getRunnerExePath());
             seleniumPath.setText(sideexRunnerConfig.getSeleniumPort());
             browserArgs.setText(sideexRunnerConfig.getBrowserAdditionalArgs());
@@ -25,7 +26,8 @@ public class SideexRunnerConfigPanel extends JPanel {
     }
 
     public void modifyTestElement(TestElement element) {
-        if (element instanceof SideexRunnerConfig sideexRunnerConfig) {
+        if (element instanceof SideexRunnerConfig) {
+            SideexRunnerConfig sideexRunnerConfig = (SideexRunnerConfig) element;
             sideexRunnerConfig.setRunnerExePath(runnerExePath.getText());
             sideexRunnerConfig.setSeleniumPort(seleniumPath.getText());
             sideexRunnerConfig.setBrowserAdditionalArgs(browserArgs.getText());
