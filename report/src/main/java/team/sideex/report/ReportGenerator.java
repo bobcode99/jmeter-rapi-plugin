@@ -12,10 +12,26 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class ReportGenerator {
-    public static void generateReport(ArrayList<String> arrayList, String csvFilePath) {
+
+    public static ArrayList<String> doDecodeArrayList(ArrayList<String> needDecodeArrayList) {
+        ArrayList<String> afterDecode = new ArrayList<>();
+
+        for (String jsonResultString : needDecodeArrayList) {
+            byte[] decodedBytes = Base64.getDecoder().decode(jsonResultString);
+            String decodedJsonResultString = new String(decodedBytes);
+            afterDecode.add(decodedJsonResultString);
+        }
+        System.out.println("needDecodeArrayList: " + needDecodeArrayList);
+        System.out.println("afterDecode: " + afterDecode);
+
+        return afterDecode;
+    }
+
+    public static void generateReport(ArrayList<String> reportArrayList, String csvFilePath) {
         String generateReportPath = csvFilePath.substring(0, csvFilePath.lastIndexOf('/'));
 
         if (generateReportPath.contains("/"))
@@ -24,9 +40,11 @@ public class ReportGenerator {
             generateReportPath += "\\";
         }
 
+        ArrayList<String> decodeReportArrayList = doDecodeArrayList(reportArrayList);
+
         try {
             RequestStatsReport requestStatsReport = new RequestStatsReport();
-            requestStatsReport.startGenerateReport(generateReportPath, arrayList);
+            requestStatsReport.startGenerateReport(generateReportPath, decodeReportArrayList);
         } catch (java.text.ParseException | ParseException ex) {
             throw new RuntimeException(ex);
         }
