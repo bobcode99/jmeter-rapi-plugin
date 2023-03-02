@@ -1,6 +1,9 @@
 package team.sideex.report;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.RFC4180Parser;
+import com.opencsv.RFC4180ParserBuilder;
 import com.opencsv.exceptions.CsvException;
 import org.json.simple.parser.ParseException;
 
@@ -44,10 +47,14 @@ public class ReportGenerator {
     public static ArrayList<String> getSideexReportArrayList(String path) {
         ArrayList<String> sideexReportArrayList = new ArrayList<>();
 
+        RFC4180Parser rfc4180Parser = new RFC4180ParserBuilder().build();
         try {
-            CSVReader reader = new CSVReader(new FileReader(path));
 
-            List<String[]> records = reader.readAll();
+            CSVReaderBuilder csvReaderBuilder = new CSVReaderBuilder(new FileReader(path));
+            csvReaderBuilder.withCSVParser(rfc4180Parser);
+            CSVReader csvReader = csvReaderBuilder.build();
+
+            List<String[]> records = csvReader.readAll();
             for (String[] record : records) {
                 // process each record
                 Character firstCharacter = record[4].charAt(0);
@@ -55,7 +62,6 @@ public class ReportGenerator {
                     sideexReportArrayList.add(record[4]);
                 }
             }
-
             checkCsvContentIsEmpty(sideexReportArrayList);
         } catch (IOException e) {
             e.printStackTrace();
