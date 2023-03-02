@@ -7,7 +7,7 @@ import static team.sideex.report.ReportGenerator.*;
 
 public class Commandline {
     public static void main(String[] args) {
-        System.out.println("hii there");
+        System.out.println("Processing");
         String csvFilePath = args[0];
         try {
             checkCsvFileExist(csvFilePath);
@@ -15,7 +15,7 @@ public class Commandline {
             throw new RuntimeException(ex);
         }
         ArrayList<String> sideexReportArrayList = getSideexReportArrayList(csvFilePath);
-
         generateReport(sideexReportArrayList, csvFilePath);
+        System.out.println("Finish generating report.");
     }
 }
