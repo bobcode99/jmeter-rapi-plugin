@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sideexsampler-jmeter-plugins</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
     <parent>
         <artifactId>sideexsampler-jmeter-plugin</artifactId>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>team.sideex</groupId>
             <artifactId>report</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>

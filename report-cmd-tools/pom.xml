@@ -3,7 +3,6 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>team.sideex</groupId>
     <artifactId>report-cmd-tools</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
@@ -18,7 +17,7 @@
         <dependency>
             <groupId>team.sideex</groupId>
             <artifactId>report</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
     <build>
