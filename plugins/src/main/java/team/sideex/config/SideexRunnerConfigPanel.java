@@ -64,7 +64,7 @@ public class SideexRunnerConfigPanel extends JPanel {
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 7, new JLabel("Note that some args browser will not supported"));
 
 
-                JPanel container = new JPanel(new BorderLayout());
+        JPanel container = new JPanel(new BorderLayout());
         container.add(this, BorderLayout.NORTH);
         return container;
     }
