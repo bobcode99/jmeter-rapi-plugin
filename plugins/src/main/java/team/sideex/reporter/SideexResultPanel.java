@@ -23,14 +23,14 @@ public class SideexResultPanel extends JPanel {
 
         startGenerateReportButton.addActionListener(e -> {
             String csvFilePath = filePanel.getFilename();
-            reportGenerator = new ReportGenerator();
+            reportGenerator = new ReportGenerator(true);
             try {
-                reportGenerator.checkCsvFileExist(csvFilePath);
+                ReportGenerator.checkCsvFileExist(csvFilePath);
             } catch (FileNotFoundException ex) {
                 throw new RuntimeException(ex);
             }
             ArrayList<String> sideexReportArrayList = reportGenerator.getSideexReportArrayList(csvFilePath);
-            reportGenerator.generateReport(sideexReportArrayList, csvFilePath);
+            ReportGenerator.generateReport(sideexReportArrayList, csvFilePath);
         });
         add(filePanel, BorderLayout.NORTH);
     }

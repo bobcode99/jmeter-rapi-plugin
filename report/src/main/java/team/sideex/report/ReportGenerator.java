@@ -16,6 +16,11 @@ import java.util.Base64;
 import java.util.List;
 
 public class ReportGenerator {
+    public static boolean useBase64;
+
+    public ReportGenerator(boolean useBase64) {
+        ReportGenerator.useBase64 = useBase64;
+    }
 
     public static ArrayList<String> doDecodeArrayList(ArrayList<String> needDecodeArrayList) {
         ArrayList<String> afterDecode = new ArrayList<>();
@@ -25,8 +30,8 @@ public class ReportGenerator {
             String decodedJsonResultString = new String(decodedBytes);
             afterDecode.add(decodedJsonResultString);
         }
-        System.out.println("needDecodeArrayList: " + needDecodeArrayList);
-        System.out.println("afterDecode: " + afterDecode);
+//        System.out.println("needDecodeArrayList: " + needDecodeArrayList);
+//        System.out.println("afterDecode: " + afterDecode);
 
         return afterDecode;
     }
@@ -39,12 +44,12 @@ public class ReportGenerator {
         else {
             generateReportPath += "\\";
         }
-
-        ArrayList<String> decodeReportArrayList = doDecodeArrayList(reportArrayList);
+        ArrayList<String> afterProcessReportArrayList;
+        afterProcessReportArrayList = useBase64 ? doDecodeArrayList(reportArrayList) : reportArrayList;
 
         try {
             RequestStatsReport requestStatsReport = new RequestStatsReport();
-            requestStatsReport.startGenerateReport(generateReportPath, decodeReportArrayList);
+            requestStatsReport.startGenerateReport(generateReportPath, afterProcessReportArrayList);
         } catch (java.text.ParseException | ParseException ex) {
             throw new RuntimeException(ex);
         }
@@ -62,7 +67,7 @@ public class ReportGenerator {
         }
     }
 
-    public static ArrayList<String> getSideexReportArrayList(String path) {
+    public ArrayList<String> getSideexReportArrayList(String path) {
         ArrayList<String> sideexReportArrayList = new ArrayList<>();
 
         RFC4180Parser rfc4180Parser = new RFC4180ParserBuilder().build();
@@ -73,10 +78,17 @@ public class ReportGenerator {
             CSVReader csvReader = csvReaderBuilder.build();
 
             List<String[]> records = csvReader.readAll();
+
             for (String[] record : records) {
                 // process each record
                 Character firstCharacter = record[4].charAt(0);
-                if (firstCharacter.equals('{')) {
+                Character secondCharacter = record[4].charAt(1);
+
+                // ey stands for { in base64
+                boolean isEy = (firstCharacter.equals('e') && secondCharacter.equals('y'));
+                boolean condition = (useBase64) ? isEy : firstCharacter.equals('{');
+
+                if (condition) {
                     sideexReportArrayList.add(record[4]);
                 }
             }

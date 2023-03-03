@@ -27,10 +27,11 @@ public class SideexSampler extends AbstractSampler {
     private static final Logger LOG = LoggerFactory.getLogger(SideexSampler.class);
     private static final String RESPONSE_CODE = "RESPONSE_CODE";
     private static final String TC_FILE_PATH = "TC_FILE_PATH";
-
     private static final String BROWSER_SELECT = "BROWSER_SELECT";
+    private static final boolean USE_BASE64_CODEC = true;
 
     public static String doEncodeString(String needEncodeString) {
+        // encode to base64
         return Base64.getEncoder().encodeToString(needEncodeString.getBytes());
     }
 
@@ -116,7 +117,7 @@ public class SideexSampler extends AbstractSampler {
 
 //        System.out.println("resultSuite: " + resultSuite);
 
-        resultSideex.jsonReport = doEncodeString(objectMapper.writeValueAsString(report));
+        resultSideex.jsonReport = USE_BASE64_CODEC ? doEncodeString(objectMapper.writeValueAsString(report)) : objectMapper.writeValueAsString(report);
         resultSideex.successfulStatus = resultSuite.equals("success");
 
         return resultSideex;
