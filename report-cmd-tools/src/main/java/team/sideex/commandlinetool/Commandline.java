@@ -10,16 +10,17 @@ import java.util.Arrays;
 
 public class Commandline {
     public static void main(String[] args) {
-        if(Arrays.asList(args).contains("-help") ||  args.length != 2)
+        if(Arrays.asList(args).contains("-help") ||  args.length != 1)
         {
             System.out.println("Proper Usage is: java -jar cmd-tools.jar /path/to/csv true");
-            System.out.println("The second args set to false if the csv result file is not useBase64");
+//            System.out.println("The second args set to false if the csv result file is not useBase64");
             System.exit(0);
         }
 
         System.out.println("Processing");
         String csvFilePath = args[0];
-        boolean useBase64 = Boolean.parseBoolean(args[1]);
+//        boolean useBase64 = Boolean.parseBoolean(args[1]);
+        boolean useBase64 = false;
 
         ReportGenerator reportGenerator = new ReportGenerator(useBase64);
 

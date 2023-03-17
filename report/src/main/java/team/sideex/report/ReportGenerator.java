@@ -79,16 +79,24 @@ public class ReportGenerator {
 
             List<String[]> records = csvReader.readAll();
 
+//            for (String[] record : records) {
+//                // process each record
+//                Character firstCharacter = record[4].charAt(0);
+//                Character secondCharacter = record[4].charAt(1);
+//
+//                // ey stands for { in base64
+//                boolean isEy = (firstCharacter.equals('e') && secondCharacter.equals('y'));
+//                boolean condition = (useBase64) ? isEy : firstCharacter.equals('{');
+//
+//                if (condition) {
+//                    sideexReportArrayList.add(record[4]);
+//                }
+//            }
+
             for (String[] record : records) {
                 // process each record
                 Character firstCharacter = record[4].charAt(0);
-                Character secondCharacter = record[4].charAt(1);
-
-                // ey stands for { in base64
-                boolean isEy = (firstCharacter.equals('e') && secondCharacter.equals('y'));
-                boolean condition = (useBase64) ? isEy : firstCharacter.equals('{');
-
-                if (condition) {
+                if (firstCharacter.equals('{')) {
                     sideexReportArrayList.add(record[4]);
                 }
             }

@@ -13,6 +13,7 @@ public class SideexResultPanel extends JPanel {
     private static final String[] ONLY_ACCEPT = {".jtl", ".csv"};
     private final FilePanel filePanel;
     private ReportGenerator reportGenerator;
+    boolean useBase64 = false;
 
     public SideexResultPanel() {
         setLayout(new BorderLayout(0, 5));
@@ -23,7 +24,7 @@ public class SideexResultPanel extends JPanel {
 
         startGenerateReportButton.addActionListener(e -> {
             String csvFilePath = filePanel.getFilename();
-            reportGenerator = new ReportGenerator(true);
+            reportGenerator = new ReportGenerator(useBase64);
             try {
                 ReportGenerator.checkCsvFileExist(csvFilePath);
             } catch (FileNotFoundException ex) {

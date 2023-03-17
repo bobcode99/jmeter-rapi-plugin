@@ -28,7 +28,7 @@ public class SideexSampler extends AbstractSampler {
     private static final String RESPONSE_CODE = "RESPONSE_CODE";
     private static final String TC_FILE_PATH = "TC_FILE_PATH";
     private static final String BROWSER_SELECT = "BROWSER_SELECT";
-    private static final boolean USE_BASE64_CODEC = true;
+    private static final boolean USE_BASE64_CODEC = false;
 
     public static String doEncodeString(String needEncodeString) {
         // encode to base64
