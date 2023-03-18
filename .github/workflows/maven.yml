@@ -34,7 +34,7 @@ jobs:
     - name: Archive Jar file to artifact
       uses: actions/upload-artifact@v3
       with:
-        name: jarfiles
+        name: jarFiles
         path: |
           ./plugins/target/*-jar-with-dependencies.jar
           ./report-cmd-tools/target/*-jar-with-dependencies.jar
@@ -52,7 +52,7 @@ jobs:
       - name: Download jar files
         uses: actions/download-artifact@v3
         with:
-          name: jarfile
+          name: jarFiles
       - name: Display structure of downloaded files
         run: ls -R
       - name: Release jar file to tag
