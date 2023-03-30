@@ -11,6 +11,8 @@ import java.util.Map;
 
 public class WebDriver {
     private ArrayList<WebDriverConfig> configs = new ArrayList<>();
+
+    private Boolean bmp = true;
     private Map<String, String> i18n = Collections.emptyMap();
 
     public ArrayList<WebDriverConfig> getConfigs() {
@@ -27,5 +29,12 @@ public class WebDriver {
 
     public void setI18n(Map<String, String> i18n) {
         this.i18n = i18n;
+    }
+
+    public Boolean getBmp() {
+        return bmp;
+    }
+    public void setBmp(boolean bmp) {
+        this.bmp = bmp;
     }
 }
