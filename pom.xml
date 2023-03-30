@@ -7,7 +7,7 @@
     <groupId>team.sideex</groupId>
     <artifactId>sideexsampler-jmeter-plugin</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
