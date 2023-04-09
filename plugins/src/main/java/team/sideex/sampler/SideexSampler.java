@@ -2,6 +2,8 @@ package team.sideex.sampler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
@@ -14,6 +16,8 @@ import team.sideex.api.config.Browser;
 import team.sideex.api.config.Config;
 import team.sideex.api.config.WebDriverConfig;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -111,6 +115,29 @@ public class SideexSampler extends AbstractSampler {
 //        System.out.println("report.get(browserNameInJsonReport): " + report.get(browserNameInJsonReport));
 
         String resultSuite = report.get(browserNameInJsonReport).get(0).get("suites").get(0).get("status").asText();
+        try {
+            // requestsNode =  {"requests":["GET https://search.yahoo.com/","GET https://s.yimg.com/oa/consent.js"],"ammountOfRequest":22}
+            JsonNode requestsNode = report.at("/" + browserNameInJsonReport  + "/0/requestResult");
+
+            String requstsFilePath = "/tmp/requests.json";
+            // Write the contents of requestsNode into a file named "requests.txt"
+            File file = new File(requstsFilePath);
+            FileWriter writer = new FileWriter(file);
+            writer.write(requestsNode.toString());
+            writer.close();
+
+            LOG.info("Successful write requests file to " + requstsFilePath);
+
+            ArrayNode reportContent = (ArrayNode) report.get(browserNameInJsonReport);
+            // remove requests
+            for (JsonNode node : reportContent) {
+                ObjectNode requestResultObject = (ObjectNode) node.get("requestResult");
+                requestResultObject.remove("requests");
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            LOG.error("Generate requests step error: " + e);
+        }
 
         ResultSideex resultSideex = new ResultSideex();
         ObjectMapper objectMapper = new ObjectMapper();
