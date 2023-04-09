@@ -10,6 +10,7 @@ import java.util.Objects;
 public class SideexSamplerPanel extends JPanel {
     private JTextField tcFilePath;
     private JComboBox<String> browserSelect;
+    private JCheckBox isEnableLog;
 
     public SideexSamplerPanel() {
         super(new GridBagLayout());
@@ -24,6 +25,7 @@ public class SideexSamplerPanel extends JPanel {
             SideexSampler sideexSampler = (SideexSampler) element;
             tcFilePath.setText(sideexSampler.getTestCaseFilePath());
             browserSelect.setSelectedItem(sideexSampler.getBrowserSelect());
+            isEnableLog.setSelected(sideexSampler.getEnableLog());
         }
 
     }
@@ -36,6 +38,7 @@ public class SideexSamplerPanel extends JPanel {
             SideexSampler sideexSampler = (SideexSampler) element;
             sideexSampler.setTestCaseFilePath(tcFilePath.getText());
             sideexSampler.setBrowserSelect(Objects.requireNonNull(browserSelect.getSelectedItem()).toString());
+            sideexSampler.setEnableLog(isEnableLog.isSelected());
         }
 
     }
@@ -43,6 +46,7 @@ public class SideexSamplerPanel extends JPanel {
     public void initFields() {
         tcFilePath.setText("path/to/testCase.json");
         browserSelect.setSelectedItem("Firefox");
+        isEnableLog.setSelected(false);
     }
 
 
@@ -63,6 +67,9 @@ public class SideexSamplerPanel extends JPanel {
 
         browserSelect = new JComboBox<>(browserList);
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 1, browserSelect);
+
+        JMeterPluginUtils.addToPanel(this, labelConstraints, 0, 2, new JLabel("Enable log: ", JLabel.RIGHT));
+        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 2, isEnableLog = new JCheckBox());
 
         JPanel container = new JPanel(new BorderLayout());
         container.add(this, BorderLayout.NORTH);

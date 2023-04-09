@@ -32,7 +32,16 @@ public class SideexSampler extends AbstractSampler {
     private static final String RESPONSE_CODE = "RESPONSE_CODE";
     private static final String TC_FILE_PATH = "TC_FILE_PATH";
     private static final String BROWSER_SELECT = "BROWSER_SELECT";
+    private static final String ENABLE_LOG = "ENABLE_LOG";
     private static final boolean USE_BASE64_CODEC = false;
+
+    public boolean getEnableLog() {
+        return getPropertyAsBoolean(ENABLE_LOG);
+    }
+
+    public void setEnableLog(boolean isEnable) {
+        setProperty(ENABLE_LOG, isEnable);
+    }
 
     public static String doEncodeString(String needEncodeString) {
         // encode to base64
@@ -115,6 +124,17 @@ public class SideexSampler extends AbstractSampler {
 //        System.out.println("report.get(browserNameInJsonReport): " + report.get(browserNameInJsonReport));
 
         String resultSuite = report.get(browserNameInJsonReport).get(0).get("suites").get(0).get("status").asText();
+        ArrayNode reportContent = (ArrayNode) report.get(browserNameInJsonReport);
+
+        // if enable log is false will remove the report's logs.
+        if(!getEnableLog()) {
+            // remove logs
+            for (JsonNode node : reportContent) {
+                ObjectNode object = (ObjectNode) node;
+                object.remove("logs");
+            }
+        }
+
         try {
             // requestsNode =  {"requests":["GET https://search.yahoo.com/","GET https://s.yimg.com/oa/consent.js"],"ammountOfRequest":22}
             JsonNode requestsNode = report.at("/" + browserNameInJsonReport  + "/0/requestResult");
@@ -128,7 +148,6 @@ public class SideexSampler extends AbstractSampler {
 
             LOG.info("Successful write requests file to " + requstsFilePath);
 
-            ArrayNode reportContent = (ArrayNode) report.get(browserNameInJsonReport);
             // remove requests
             for (JsonNode node : reportContent) {
                 ObjectNode requestResultObject = (ObjectNode) node.get("requestResult");
