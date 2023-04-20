@@ -16,6 +16,13 @@ public class JsonParse {
     private final ArrayList<String> browserVersions = new ArrayList<>();
     private ArrayList<String> testResults = new ArrayList<>();
 
+    public long getAmountOfRequest(int index) throws ParseException {
+        JSONObject json = getJson(index);
+        JSONObject requestResult = (JSONObject) json.get("requestResult");
+
+        return (long) requestResult.get("ammountOfRequest");
+    }
+
 
     public ArrayList<String> getBrowserVersion() throws ParseException {
 

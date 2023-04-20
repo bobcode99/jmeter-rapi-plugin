@@ -34,6 +34,11 @@ public class RequestStatsReport {
     private final ArrayList<Integer> error = new ArrayList<>();
     private final ArrayList<Double> errorPercentage = new ArrayList<>();
     private final ArrayList<Long> commandTimeDifference = new ArrayList<>();
+
+    private final ArrayList<Long> allAmountOfRequest = new ArrayList<>();
+
+    // all test results
+    // [{ "chrome 107.0.5304.87": [] },{...}]
     private ArrayList<String> testResults;
     private int commandAmount = 0;
     private long AllCommandTimeSum = 0;
@@ -46,7 +51,7 @@ public class RequestStatsReport {
         this.testResults = testResults;
 
         parse();
-        report.generate_report(Request_Statistics_Content, jsonParse, this.testResults, commandList, path);
+        report.generate_report(Request_Statistics_Content, jsonParse, this.testResults, commandList, this.allAmountOfRequest , path);
     }
 
     public void preprocessing() throws ParseException {
@@ -55,6 +60,8 @@ public class RequestStatsReport {
         for (int i = 0; i < testResults.size(); i++) {
 
             JSONArray recordsArray = jsonParse.getRecordsArray(i);
+
+            allAmountOfRequest.add(jsonParse.getAmountOfRequest(i));
 
             if (commandAmount < recordsArray.size())
                 commandAmount = recordsArray.size();
@@ -111,9 +118,9 @@ public class RequestStatsReport {
 
         jsonParse.addTestResults(this.testResults);
 
-
+        // don't delete
         ArrayList<String> browserVersions = jsonParse.getBrowserVersion();
-//        
+//
 
 
         preprocessing();
