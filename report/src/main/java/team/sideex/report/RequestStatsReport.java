@@ -7,7 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-import java.io.File;
+//import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,7 +45,7 @@ public class RequestStatsReport {
     private String Request_Statistics_Content = "";
 
     public void startGenerateReport(String path, ArrayList<String> testResults) throws ParseException, java.text.ParseException {
-        File jsonFolder = new File(path);
+//        File jsonFolder = new File(path);
 
 
         this.testResults = testResults;
@@ -56,12 +56,24 @@ public class RequestStatsReport {
 
     public void preprocessing() throws ParseException {
 
+        // experimental use
+        boolean haveAmmountOfRequest = true;
+        try {
+            jsonParse.getAmountOfRequest(0);
+        } catch (Exception e) {
+            haveAmmountOfRequest = false;
+        }
+        // experimental use
 
         for (int i = 0; i < testResults.size(); i++) {
 
             JSONArray recordsArray = jsonParse.getRecordsArray(i);
 
-            allAmountOfRequest.add(jsonParse.getAmountOfRequest(i));
+            // experimental use
+            if(haveAmmountOfRequest) {
+                allAmountOfRequest.add(jsonParse.getAmountOfRequest(i));
+            }
+            // experimental use
 
             if (commandAmount < recordsArray.size())
                 commandAmount = recordsArray.size();
@@ -149,7 +161,7 @@ public class RequestStatsReport {
             String status;
 
             String startTime = (String) json.get("startTime");
-            String endTime = (String) json.get("endTime");
+//            String endTime = (String) json.get("endTime");
             startTime += ":000";
             Date commandDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(startTime);
             Calendar currentCalendar = Calendar.getInstance();
@@ -191,8 +203,9 @@ public class RequestStatsReport {
         }
 
 
-        for (int i = 0; i < commandTime.size(); i++)
-            commandTime.get(i).sort(null);
+        for (ArrayList<Long> longArrayList : commandTime) {
+            longArrayList.sort(null);
+        }
 
         int commandCount = commandTime.get(commandTime.size() - 1).size();
 
