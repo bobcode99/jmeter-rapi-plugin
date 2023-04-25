@@ -38,7 +38,7 @@ public class RequestStatsReport {
     private final ArrayList<Long> allAmountOfRequest = new ArrayList<>();
 
     // all test results
-    // [{ "chrome 107.0.5304.87": [] },{...}]
+    // [{"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] },{...}]
     private ArrayList<String> testResults;
     private int commandAmount = 0;
     private long AllCommandTimeSum = 0;
@@ -130,10 +130,8 @@ public class RequestStatsReport {
 
         jsonParse.addTestResults(this.testResults);
 
-        // don't delete
-        ArrayList<String> browserVersions = jsonParse.getBrowserVersion();
-//
 
+//        ArrayList<String> browserVersions = jsonParse.getBrowserVersion(); // no use this
 
         preprocessing();
 

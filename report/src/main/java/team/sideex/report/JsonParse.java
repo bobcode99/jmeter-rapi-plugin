@@ -13,7 +13,9 @@ import java.util.ArrayList;
 
 public class JsonParse {
 
-    private final ArrayList<String> browserVersions = new ArrayList<>();
+//    private final ArrayList<String> browserVersions = new ArrayList<>(); // no use this
+
+    // all test results [{}, {}, {}]
     private ArrayList<String> testResults = new ArrayList<>();
 
     public long getAmountOfRequest(int index) throws ParseException {
@@ -24,37 +26,25 @@ public class JsonParse {
     }
 
 
-    public ArrayList<String> getBrowserVersion() throws ParseException {
-
-
-        for (String testResult : testResults) {
-
-
-//            Object browserObj = new JSONParser().parse(new FileReader(testResults.get(i)));
-            Object browserObj = new JSONParser().parse(testResult);
-
-
-            int pos = browserObj.toString().indexOf("\"");
-
-            String browserVersionName = browserObj.toString();
-            browserVersionName = browserVersionName.substring(pos + 1);
-
-            int pos2 = browserVersionName.indexOf("\"");
-
-
-            browserVersionName = browserVersionName.substring(0, pos2);
-
-            if (browserVersions.contains(browserVersionName))
-                continue;
-
-            browserVersions.add(browserVersionName);
-
-
-        }
-
-        return browserVersions;
-
-    }
+//    public ArrayList<String> getBrowserVersion() throws ParseException {
+//
+//        // only get index 0, that non index 0 browsers result will be ignored
+//        String testResult = testResults.get(0);
+//        Object browserObj = new JSONParser().parse(testResult);
+//
+//        JSONObject jsonBrowserObj = (JSONObject) browserObj;
+//
+//        System.out.println("jsonBrowserObj: " + jsonBrowserObj);
+//        JSONArray jsonArray = (JSONArray) jsonBrowserObj.get("reports");
+//
+//        for (Object o : jsonArray) {
+//            JSONObject jsonReportContent = (JSONObject) o;
+//            String browserVersionName = (String) jsonReportContent.get("browser");
+//            browserVersions.add(browserVersionName);
+//        }
+//
+//        return browserVersions;
+//    }
 
     public JSONObject getJson(int index) throws ParseException {
 
@@ -62,18 +52,21 @@ public class JsonParse {
 
         JSONObject json = (JSONObject) obj;
 
-        for (String browserVersion : browserVersions) {
+        // former format :
+        // {"chrome 112.0.5615.137": [], "firefox 112.0": []}
 
-            JSONArray jsonArray = (JSONArray) json.get(browserVersion);
+        // format now:
+        // {"version": {"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}, {"title": "date 16-13-30", "browserName": "firefox 112.0", ...}] }
+        // but usually will only have one browser if using this plugins
+        // {"version": {"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] }
 
-            if (jsonArray != null) {
-                json = (JSONObject) jsonArray.get(0);
-                break;
-            }
-
+        JSONArray jsonArray = (JSONArray) json.get("reports");
+        JSONObject resultContent = null;
+        if (jsonArray != null) {
+            resultContent = (JSONObject) jsonArray.get(0);
         }
 
-        return json;
+        return resultContent;
 
     }
 
