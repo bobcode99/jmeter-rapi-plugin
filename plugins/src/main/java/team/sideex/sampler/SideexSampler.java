@@ -19,7 +19,6 @@ import team.sideex.api.config.WebDriverConfig;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +32,6 @@ public class SideexSampler extends AbstractSampler {
     private static final String TC_FILE_PATH = "TC_FILE_PATH";
     private static final String BROWSER_SELECT = "BROWSER_SELECT";
     private static final String ENABLE_LOG = "ENABLE_LOG";
-    private static final boolean USE_BASE64_CODEC = false;
 
     public boolean getEnableLog() {
         return getPropertyAsBoolean(ENABLE_LOG);
@@ -41,11 +39,6 @@ public class SideexSampler extends AbstractSampler {
 
     public void setEnableLog(boolean isEnable) {
         setProperty(ENABLE_LOG, isEnable);
-    }
-
-    public static String doEncodeString(String needEncodeString) {
-        // encode to base64
-        return Base64.getEncoder().encodeToString(needEncodeString.getBytes());
     }
 
     public String getResponseCode() {
@@ -163,7 +156,7 @@ public class SideexSampler extends AbstractSampler {
 
 //        System.out.println("resultSuite: " + resultSuite);
 
-        resultSideex.jsonReport = USE_BASE64_CODEC ? doEncodeString(objectMapper.writeValueAsString(report)) : objectMapper.writeValueAsString(report);
+        resultSideex.jsonReport = objectMapper.writeValueAsString(report);
         resultSideex.successfulStatus = resultSuite.equals("success");
 
         return resultSideex;
