@@ -61,6 +61,18 @@ public class SideexSampler extends AbstractSampler {
         setProperty(BROWSER_SELECT, browserName);
     }
 
+    private String getBrowserArgsContent(String browserName) {
+        switch (browserName) {
+            case "chrome":
+                return "BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE_CHROME_CONFIG";
+            case "firefox":
+                return "BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE_FIREFOX_CONFIG";
+            case "MicrosoftEdge":
+                return "BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE_EDGE_CONFIG";
+        }
+        return browserName;
+    }
+
     private ResultSideex startRunSideex(String testCase, String browserName) throws Exception {
         // For get config settings
         JMeterContext context = getThreadContext();
@@ -77,7 +89,18 @@ public class SideexSampler extends AbstractSampler {
         HashMap<String, ArrayList<String>> browserArgs = new HashMap<>();
 
         // setBrowserArgs: "args": ["-headless","-disable-gpu", "-window-size=1080,720"]
-        browserArgs.put("args", getBrowserArgs(browserName, jMeterVariables.get("BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE")));
+
+        String variableNameJmeterGet = getBrowserArgsContent(browserName);
+
+        LOG.info("variableNameJmeterGet: " + variableNameJmeterGet);
+        LOG.info("jMeterVariables.get chrome: " + jMeterVariables.get("BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE_CHROME_CONFIG"));
+        LOG.info("jMeterVariables.get firefox: " + jMeterVariables.get("BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE_FIREFOX_CONFIG"));
+        LOG.info("jMeterVariables.get edge: " + jMeterVariables.get("BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE_EDGE_CONFIG"));
+
+        LOG.info("jMeterVariables.get(variableNameJmeterGet): " + jMeterVariables.get(variableNameJmeterGet));
+
+
+        browserArgs.put("args", getBrowserArgs(browserName, jMeterVariables.get( variableNameJmeterGet )));
 
         // set browserOptions: "moz:firefoxOptions": {"args": ["-headless","-disable-gpu", "-window-size=1080,720"]}
         caps.put(getBrowserOptions(browserName), browserArgs);
