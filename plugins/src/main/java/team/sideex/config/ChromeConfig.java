@@ -4,6 +4,7 @@ import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jmeter.engine.event.LoopIterationEvent;
 import org.apache.jmeter.engine.event.LoopIterationListener;
 import org.apache.jmeter.testelement.ThreadListener;
+import org.apache.jmeter.threads.JMeterContextService;
 import org.apache.jmeter.threads.JMeterVariables;
 
 public class ChromeConfig extends ConfigTestElement implements LoopIterationListener, ThreadListener {
@@ -18,15 +19,13 @@ public class ChromeConfig extends ConfigTestElement implements LoopIterationList
     }
 
     @Override
-    public void iterationStart(LoopIterationEvent iterEvent) {
-
+    public void iterationStart(LoopIterationEvent loopIterationEvent) {
+//        System.out.println("chorme iterationStart getBrowserAdditionalArgs(): " + getBrowserAdditionalArgs());
+        JMeterContextService.getContext().getVariables().put("BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE_CHROME_CONFIG", getBrowserAdditionalArgs());
     }
 
     @Override
     public void threadStarted() {
-        JMeterVariables variables = new JMeterVariables();
-
-        variables.put("BROWSER_ADDITIONAL_ARGS_FOR_SIDEEX_USE_GOOGLE_CHROME", getBrowserAdditionalArgs());
 
     }
 

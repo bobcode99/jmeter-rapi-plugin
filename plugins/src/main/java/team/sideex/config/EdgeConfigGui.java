@@ -56,7 +56,7 @@ public class EdgeConfigGui extends AbstractConfigGui {
     public String getStaticLabel() {
         //set display name
 //        System.out.println("getStaticLabel");
-        return JMeterPluginUtils.prefixLabel("EdgeConfig");
+        return JMeterPluginUtils.prefixLabel("Edge Config");
     }
 
     @Override

@@ -29,8 +29,7 @@ public class FirefoxConfigPanel extends JPanel {
     }
 
     public void initFields() {
-
-//        browserArgs.setText("headless, disable-gpu, no-sandbox, disable-dev-shm-usage");
+        browserArgs.setText("-headless");
     }
 
     public JPanel init() {
@@ -45,7 +44,7 @@ public class FirefoxConfigPanel extends JPanel {
         JMeterPluginUtils.addToPanel(this, labelConstraints, 0, 4, new JLabel("Browser additional argument: ", JLabel.RIGHT));
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 4, browserArgs = new JTextField());
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 5, new JLabel("If using docker environment, need to add \"disable-dev-shm-usage\" to browser."));
-        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 6, new JLabel("If using Firefox, need to add \"-\" on each args."));
+//        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 6, new JLabel("If using Firefox, need to add \"-\" on each args."));
 
         JPanel container = new JPanel(new BorderLayout());
         container.add(this, BorderLayout.NORTH);
