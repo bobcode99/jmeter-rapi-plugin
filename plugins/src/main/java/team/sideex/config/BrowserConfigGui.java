@@ -8,10 +8,9 @@ import java.awt.*;
 
 public abstract class BrowserConfigGui extends AbstractConfigGui {
 
-    private BrowserConfigPanel browserConfigPanel;
+    protected BrowserConfigPanel browserConfigPanel;
 
-    public BrowserConfigGui(BrowserConfigPanel browserConfigPanel) {
-        this.browserConfigPanel = browserConfigPanel;
+    public BrowserConfigGui() {
         createGui();
     }
 
@@ -19,34 +18,30 @@ public abstract class BrowserConfigGui extends AbstractConfigGui {
         setLayout(new BorderLayout(0, 5));
         setBorder(makeBorder());
         add(makeTitlePanel(), BorderLayout.NORTH);
-//        this.browserConfigPanel = new BrowserConfigPanel();
-        add(this.browserConfigPanel.init(), BorderLayout.CENTER);
-        this.browserConfigPanel.initFields();
+        browserConfigPanel = createBrowserConfigPanel();
+        add(browserConfigPanel.init(), BorderLayout.CENTER);
+        browserConfigPanel.initFields();
     }
+
+    protected abstract BrowserConfigPanel createBrowserConfigPanel();
 
     @Override
     public void configure(TestElement element) {
         super.configure(element);
-        this.browserConfigPanel.configure(element);
+        browserConfigPanel.configure(element);
     }
 
     @Override
     public void modifyTestElement(TestElement element) {
         super.configureTestElement(element);
-        this.browserConfigPanel.modifyTestElement(element);
+        browserConfigPanel.modifyTestElement(element);
     }
 
     @Override
     public void clearGui() {
         super.clearGui();
-        this.browserConfigPanel.initFields();
+        browserConfigPanel.initFields();
     }
-
-
-//    @Override
-//    public void itemStateChanged(ItemEvent e) {
-//
-//    }
 
     @Override
     public String getLabelResource() {
@@ -56,14 +51,18 @@ public abstract class BrowserConfigGui extends AbstractConfigGui {
     @Override
     public String getStaticLabel() {
         //set display name
-//        System.out.println("getStaticLabel");
-        return JMeterPluginUtils.prefixLabel("ChromeConfig");
+        return JMeterPluginUtils.prefixLabel(getBrowserName() + " Config");
     }
+
+    protected abstract String getBrowserName();
 
     @Override
     public TestElement createTestElement() {
-        ChromeConfig element = new ChromeConfig();
+        BrowserConfig element = createBrowserConfig();
         modifyTestElement(element);
         return element;
     }
+
+    protected abstract BrowserConfig createBrowserConfig();
+
 }
