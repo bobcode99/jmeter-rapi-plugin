@@ -35,7 +35,6 @@ public class RequestStatsReport {
     private final ArrayList<Double> errorPercentage = new ArrayList<>();
     private final ArrayList<Long> commandTimeDifference = new ArrayList<>();
 
-    private final ArrayList<Long> allAmountOfRequest = new ArrayList<>();
 
     // all test results
     // [{"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] },{...}]
@@ -51,29 +50,16 @@ public class RequestStatsReport {
         this.testResults = testResults;
 
         parse();
-        report.generate_report(Request_Statistics_Content, jsonParse, this.testResults, commandList, this.allAmountOfRequest , path);
+        report.generate_report(Request_Statistics_Content, jsonParse, this.testResults, commandList, path);
     }
 
     public void preprocessing() throws ParseException {
 
-        // experimental use
-        boolean haveAmmountOfRequest = true;
-        try {
-            jsonParse.getAmountOfRequest(0);
-        } catch (Exception e) {
-            haveAmmountOfRequest = false;
-        }
-        // experimental use
+
 
         for (int i = 0; i < testResults.size(); i++) {
 
             JSONArray recordsArray = jsonParse.getRecordsArray(i);
-
-            // experimental use
-            if(haveAmmountOfRequest) {
-                allAmountOfRequest.add(jsonParse.getAmountOfRequest(i));
-            }
-            // experimental use
 
             if (commandAmount < recordsArray.size())
                 commandAmount = recordsArray.size();

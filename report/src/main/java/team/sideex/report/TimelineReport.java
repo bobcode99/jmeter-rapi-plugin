@@ -71,25 +71,12 @@ public class TimelineReport {
     private int hitTypeCount = 0;
     private int commandNumber = 0;
 
-    public String totalSumAmountOfRequest;
-
-    public String stringRepresentationAmountOfRequest;
-
-
     public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
-                                ArrayList<String> command, ArrayList<Long> allAmountOfRequest,String reportPath) throws java.text.ParseException {
+                                ArrayList<String> command, String reportPath) throws java.text.ParseException {
 
         jsonNames = testResults;
         Request_Statistics_Content = requestStats;
         jsonFile = jsonParseFile;
-
-        stringRepresentationAmountOfRequest = allAmountOfRequest.stream().map(String::valueOf).collect(Collectors.joining(", ", "[", "]"));
-
-        long sumAll = 0;
-        for (Long amount : allAmountOfRequest) {
-            sumAll += amount;
-        }
-        totalSumAmountOfRequest = Long.toString(sumAll);
 
         for (int i = 1; i < command.size(); i++)
             commandList.add(command.get(i));
@@ -1189,12 +1176,6 @@ public class TimelineReport {
                 + "		margin-bottom: 20px;\r\n"
                 + "		font-size: 30px;\r\n"
                 + "	}\r\n"
-                + " .contentAmountOfRequest{\r\n"
-                + "		margin-top: 20px;\r\n"
-                + "		margin-left: 700px;\r\n"
-                + "		margin-bottom: 20px;\r\n"
-                + "		font-size: 20px;\r\n"
-                + "	}\r\n"
                 + "\r\n"
                 + "	.timelineTitle{\r\n"
                 + "		margin-top: 20px;\r\n"
@@ -1251,19 +1232,6 @@ public class TimelineReport {
                 + "<div class=\"img\">\r\n"
                 + "	<img src=\"https://sideex.io/static/media/sideex_logo.2728ffac.png\" >\r\n"
                 + "</div>"
-
-                + "<div class=\"requestTitle\">\r\n"
-                + "	<label><b> Amount Of Request</b></label><br>\r\n"
-                + "</div>\r\n"
-
-                + "<div class=\"contentAmountOfRequest\">\r\n"
-
-                + stringRepresentationAmountOfRequest
-                + "<p> after sum: </p>"
-                + totalSumAmountOfRequest
-
-                + "</div>\r\n"
-
 
                 + "<div  class=\"requestTitle\">\r\n"
                 + "\r\n"
