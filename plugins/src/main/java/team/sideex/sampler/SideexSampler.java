@@ -151,29 +151,6 @@ public class SideexSampler extends AbstractSampler {
             }
         }
 
-        try {
-            // requestsNode =  {"requests":["GET https://search.yahoo.com/","GET https://s.yimg.com/oa/consent.js"],"ammountOfRequest":22}
-            JsonNode requestsNode = report.at("/" + reportFieldNames  + "/0/requestResult");
-
-            String requstsFilePath = "/tmp/requests.json";
-            // Write the contents of requestsNode into a file named "requests.txt"
-            File file = new File(requstsFilePath);
-            FileWriter writer = new FileWriter(file);
-            writer.write(requestsNode.toString());
-            writer.close();
-
-            LOG.info("Successful write requests file to " + requstsFilePath);
-
-            // remove requests
-            for (JsonNode node : reportContent) {
-                ObjectNode requestResultObject = (ObjectNode) node.get("requestResult");
-                requestResultObject.remove("requests");
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-            LOG.error("Generate requests step error: " + e);
-        }
-
         ResultSideex resultSideex = new ResultSideex();
         ObjectMapper objectMapper = new ObjectMapper();
 
