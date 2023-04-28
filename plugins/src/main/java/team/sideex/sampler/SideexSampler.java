@@ -135,12 +135,12 @@ public class SideexSampler extends AbstractSampler {
                 jMeterVariables.get("RUNNER_EXE_PATH_FOR_SIDEEX_USE"), config);
 
         JsonNode report = driver.run();
-        String browserNameInJsonReport = report.fieldNames().next();
-//        System.out.println("report: " + report);
-//        System.out.println("report.get(browserNameInJsonReport): " + report.get(browserNameInJsonReport));
 
-        String resultSuite = report.get(browserNameInJsonReport).get(0).get("suites").get(0).get("status").asText();
-        ArrayNode reportContent = (ArrayNode) report.get(browserNameInJsonReport);
+        // runner report format: {"version":{"sideex":[4,0,0],"format":[1,0,1]},"reports":[{}]}
+        String reportFieldNames = "reports";
+
+        String resultSuite = report.get(reportFieldNames).get(0).get("suites").get(0).get("status").asText();
+        ArrayNode reportContent = (ArrayNode) report.get(reportFieldNames);
 
         // if enable log is false will remove the report's logs.
         if(!getEnableLog()) {
@@ -153,7 +153,7 @@ public class SideexSampler extends AbstractSampler {
 
         try {
             // requestsNode =  {"requests":["GET https://search.yahoo.com/","GET https://s.yimg.com/oa/consent.js"],"ammountOfRequest":22}
-            JsonNode requestsNode = report.at("/" + browserNameInJsonReport  + "/0/requestResult");
+            JsonNode requestsNode = report.at("/" + reportFieldNames  + "/0/requestResult");
 
             String requstsFilePath = "/tmp/requests.json";
             // Write the contents of requestsNode into a file named "requests.txt"
