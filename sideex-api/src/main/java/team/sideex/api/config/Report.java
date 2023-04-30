@@ -9,7 +9,6 @@ public class Report {
     private String type = "json";
     private int snapshot = 0;
     private int snapshotQuality = 20;
-    private boolean oneLine = true;
 
     public int getSnapshot() {
         return snapshot;
@@ -47,11 +46,4 @@ public class Report {
         }
     }
 
-    public boolean getOneLine() {
-        return oneLine;
-    }
-
-    public void setOneLine(boolean oneLine){
-        this.oneLine = oneLine;
-    }
 }
