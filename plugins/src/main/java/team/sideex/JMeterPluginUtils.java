@@ -6,7 +6,7 @@ import java.awt.*;
 public class JMeterPluginUtils {
 
     public static String prefixLabel(String label) {
-        String PLUGINS_PREFIX = "@sideex - ";
+        String PLUGINS_PREFIX = "@rapi - ";
         return PLUGINS_PREFIX + label;
     }
 
