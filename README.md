@@ -1,4 +1,4 @@
-# Sideex sampler Jmeter plugin
+# Rapi plugin for Jmeter
 
 ### How to compile
 
