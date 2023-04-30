@@ -6,7 +6,7 @@ public class FirefoxConfigGui extends BrowserConfigGui {
 
     @Override
     protected BrowserConfigPanel createBrowserConfigPanel() {
-        return new ChromeConfigPanel();
+        return new FirefoxConfigPanel();
     }
 
     @Override
@@ -16,7 +16,7 @@ public class FirefoxConfigGui extends BrowserConfigGui {
 
     @Override
     protected BrowserConfig createBrowserConfig() {
-        return new ChromeConfig();
+        return new FirefoxConfig();
     }
 
     @Override

@@ -6,7 +6,7 @@ public class EdgeConfigGui extends BrowserConfigGui {
 
     @Override
     protected BrowserConfigPanel createBrowserConfigPanel() {
-        return new ChromeConfigPanel();
+        return new EdgeConfigPanel();
     }
 
     @Override
@@ -16,7 +16,7 @@ public class EdgeConfigGui extends BrowserConfigGui {
 
     @Override
     protected BrowserConfig createBrowserConfig() {
-        return new ChromeConfig();
+        return new EdgeConfig();
     }
 
     @Override
