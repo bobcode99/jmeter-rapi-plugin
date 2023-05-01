@@ -64,12 +64,19 @@ public class TimelineReport {
     private int hitTypeCount = 0;
     private final Map<String, Object> reportContentMap = new HashMap<>();
 
-
     public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
-                                ArrayList<String> command, String reportPath) throws java.text.ParseException {
+                                ArrayList<String> command, ArrayList<Long> allAmountOfRequest,String reportPath) throws java.text.ParseException {
 
         jsonNames = testResults;
         jsonFile = jsonParseFile;
+
+        stringRepresentationAmountOfRequest = allAmountOfRequest.stream().map(String::valueOf).collect(Collectors.joining(", ", "[", "]"));
+
+        long sumAll = 0;
+        for (Long amount : allAmountOfRequest) {
+            sumAll += amount;
+        }
+        totalSumAmountOfRequest = Long.toString(sumAll);
 
         for (int i = 1; i < command.size(); i++)
             commandList.add(command.get(i));
@@ -1013,6 +1020,245 @@ public class TimelineReport {
 
         dataset += "\t]\r\n";
         reportContentMap.put("datasets", dataset);
+    }
+
+
+    public void generateHtml() {
+
+
+        javascript += "<div>\r\n"
+                + "      <canvas id=\"line-chart\" class=\"chart\" width=\"1250\" height=\"900\"></canvas>\r\n"
+                + "    </div>"
+                + "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script> \r\n <script>\r\n"
+                + "var  commandNumber = "
+                + commandNumber
+                + ";\n"
+                + yAxisData
+                + "var report = new Chart(document.getElementById(\"line-chart\"), {\r\n"
+                + "  type: 'line',\r\n"
+                + "  data: {\r\n";
+
+
+        javascript += "labels: [";
+
+        for (int i = 0; i < xAxisLabel.size(); i++) {
+
+            javascript += "\"" + xAxisLabel.get(i) + "\",";
+
+            if (i == xAxisLabel.size() / 2)
+                javascript += "\n\t\t";
+
+        }
+
+        javascript += "],\r\n";
+
+        javascript += dataset
+                + "  },\r\n"
+                + "  options: {\r\n"
+                + "	   responsive: false,"
+                + "    spanGaps: true,\r\n"
+                + "    plugins: {\r\n"
+                + "  legend: {\r\n"
+                + "		   onClick: (e) => e.stopPropagation(),\r\n"
+                + "		   position: 'bottom',\r\n"
+                + "		   labels: {\r\n"
+                + "			filter: function(legendItem, chartData) {\r\n"
+                + "                if (legendItem.datasetIndex === 0 || legendItem.datasetIndex === (commandNumber) || \r\n"
+                + "					legendItem.datasetIndex === (commandNumber * 2) || legendItem.datasetIndex === (commandNumber * 3))\r\n"
+                + "                    return true;\r\n"
+                + "            return false;\r\n"
+                + "            }\r\n"
+                + "		   }\r\n"
+                + "      }\r\n"
+                + "    },"
+                + "    scales: {\r\n"
+                + "	  y1: {\r\n"
+                + "        type: 'linear',\r\n"
+                + "        display: true,\r\n"
+                + "        position: 'left',\r\n"
+                + "	  title: {\r\n"
+                + "			display: true,\r\n"
+                + "	   font: {\r\n"
+                + "			size: 20,\r\n"
+                + "            family: \"Times New Roman\"\r\n"
+                + "        },"
+                + "			text: \"Virtual  Users\"\r\n"
+                + "		},"
+                + "		beginAtZero: true\r\n"
+                + "      },\r\n"
+                + "	  y2: {\r\n"
+                + "        type: 'linear',\r\n"
+                + "        display: true,\r\n"
+                + "        position: 'right',\r\n"
+                + "	  title: {\r\n"
+                + "			display: true,\r\n"
+                + "	   font: {\r\n"
+                + "			size: 20,\r\n"
+                + "            family: \"Times New Roman\"\r\n"
+                + "        },"
+                + "			text: \"Response  Time (ms)\"\r\n"
+                + "		},"
+                + "		beginAtZero: true\r\n"
+                + "      },\r\n"
+                + "	  y3: {\r\n"
+                + "        type: 'linear',\r\n"
+                + "        display: true,\r\n"
+                + "        position: 'right',\r\n"
+                + "	  title: {\r\n"
+                + "			display: true,\r\n"
+                + "	   font: {\r\n"
+                + "			size: 20,\r\n"
+                + "            family: \"Times New Roman\"\r\n"
+                + "        },"
+                + "			text: \"Hit/s\"\r\n"
+                + "		},"
+                + "		beginAtZero: true\r\n"
+                + "      }"
+                + "	}\r\n"
+                + "  }\r\n"
+                + "});\r\n\n";
+
+
+        javascript += "var index;\r\n"
+                + "\r\n"
+                + "var filterLegend = function(item, chart) {\r\n"
+                + "\r\n"
+                + "	\r\n"
+                + "\r\n"
+                + "	if(report.data.datasets[item.datasetIndex].hidden == true)		\r\n"
+                + "		return false;\r\n"
+                + "	\r\n"
+                + "    else if(report.data.datasets[item.datasetIndex].hidden == false) \r\n"
+                + " 		return true;\r\n"
+                + "\r\n"
+                + "}\r\n"
+                + "\r\n"
+                + "\r\n"
+                + "\r\n"
+                + "function updataChart(data){\r\n"
+                + "  \r\n"
+                + "	index = data.value;\r\n"
+                + "\r\n"
+                + "	report.data.datasets[index].hidden = !(report.data.datasets[index].hidden);\r\n"
+                + "	\r\n"
+                + "	report.options.plugins.legend.labels.filter = filterLegend;\r\n"
+                + "\r\n"
+                + "    \r\n"
+                + "  report.update();\r\n"
+                + "} "
+                + "</script>\r\n";
+
+
+        Timeline_Report_Content += "<!DOCTYPE html>\r\n"
+                + "<html>\r\n"
+                + "  <head>\r\n"
+                + "    <!-- Required meta tags -->\r\n"
+                + "    <meta charset=\"utf-8\">\r\n"
+                + "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
+                + "    <title>Chart.js Integration</title>\r\n"
+                + "    <!--Chart.js JS CDN--> \r\n"
+                + "    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js\"></script> \r\n"
+                + "\r\n"
+                + "  \r\n"
+                + "  <style>\r\n"
+
+                + "	 .reportTitle{\r\n"
+                + "		position: absolute;\r\n"
+                + "\r\n"
+                + "		font-size: 25px;\r\n"
+                + "	  }\r\n"
+                + "	  	img {\r\n"
+                + "		position: absolute;\r\n"
+                + "		margin-top: 30px;\r\n"
+                + "		width: 200px;\r\n"
+                + "  		height: 200px;\r\n"
+                + "		\r\n"
+                + "	}"
+
+                + " .requestTitle{\r\n"
+                + "		margin-top: 20px;\r\n"
+                + "		margin-left: 700px;\r\n"
+                + "		margin-bottom: 20px;\r\n"
+                + "		font-size: 30px;\r\n"
+                + "	}\r\n"
+                + "\r\n"
+                + "	.timelineTitle{\r\n"
+                + "		margin-top: 20px;\r\n"
+                + "		margin-left: 730px;\r\n"
+                + "		margin-bottom: 20px;\r\n"
+                + "		font-size: 30px;\r\n"
+                + "	}"
+                + "	  .request {\r\n"
+                + "    margin-left: 240px;\r\n"
+                + "	  border-top: 30px solid DodgerBlue;\r\n"
+                + "	  border-bottom: 1px solid gray;\r\n"
+                + "	  border-left: 1px solid gray;\r\n"
+                + "	  border-right: 1px solid gray;\r\n"
+                + "      border-radius: 10px;\r\n"
+                + "	  \r\n"
+                + "	}\r\n"
+                + "    .checkbox {\r\n"
+                + "	\r\n"
+                + "  	  margin-top: 40px;"
+                + "      position: absolute;\r\n"
+                + "      left: 0px;\r\n"
+                + "      width: 100%;\r\n"
+                + "    }\r\n"
+                + "    .chart {\r\n"
+                + "		background-color: white;\r\n"
+                + "	  border-top: 50px solid DodgerBlue;\r\n"
+                + "	  border-bottom: 1px solid gray;\r\n"
+                + "	  border-left: 1px solid gray;\r\n"
+                + "	  border-right: 1px solid gray;\r\n"
+                + "   border-radius: 10px;\r\n"
+                + "	  margin-top: 20px;\r\n"
+                + "	  margin-left: 240px;\r\n"
+                + "\r\n"
+                + "      position: absolute;\r\n"
+                + "      width: 100%;\r\n"
+                + "    }\r\n"
+                + "\r\n"
+                + "	table, th, td {\r\n"
+                + "		background-color: white;\r\n"
+                + "  		border: 1px solid black;\r\n"
+                + "	}\r\n"
+                + "\r\n"
+                + "body {\r\n"
+                + "  background-color: rgb(246, 239, 239);\r\n"
+                + "}"
+                + "  </style>\r\n"
+                + "\r\n"
+                + "</head>\n"
+                + "<body>\n\n\n"
+
+                + "<div class=\"reportTitle\">\r\n"
+                + "	<label><b>Rapi-JMeter Report</b></label>\r\n"
+                + "</div>\r\n"
+                + "<div class=\"img\">\r\n"
+                + "	<img src=\"https://sideex.io/static/media/sideex_logo.2728ffac.png\" >\r\n"
+                + "</div>"
+
+                + "<div  class=\"requestTitle\">\r\n"
+                + "\r\n"
+                + "	<label><b> Request Stats Report</b></label><br>\r\n"
+                + "\r\n"
+                + "</div>\n"
+
+                + Request_Statistics_Content
+
+                + "\n<div  class=\"timelineTitle\">\r\n"
+                + "\r\n"
+                + "	<label><b> Timeline Report</b></label><br>\r\n"
+                + "\r\n"
+                + "</div>\n"
+
+                + checkBox
+                + javascript
+
+                + "</body>\r\n"
+                + "</html>";
+
+
     }
 
 

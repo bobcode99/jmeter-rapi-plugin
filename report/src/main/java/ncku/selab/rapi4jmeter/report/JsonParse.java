@@ -18,6 +18,13 @@ public class JsonParse {
     // all test results [{}, {}, {}]
     private ArrayList<String> testResults = new ArrayList<>();
 
+    public long getAmountOfRequest(int index) throws ParseException {
+        JSONObject json = getJson(index);
+        JSONObject requestResult = (JSONObject) json.get("requestResult");
+
+        return (long) requestResult.get("ammountOfRequest");
+    }
+
 //    public ArrayList<String> getBrowserVersion() throws ParseException {
 //
 //        // only get index 0, that non index 0 browsers result will be ignored

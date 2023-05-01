@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.Map;
 
 public class WebDriver {
+    private Boolean bmp = true;
+
     private ArrayList<WebDriverConfig> configs = new ArrayList<>();
 
     private Map<String, String> i18n = Collections.emptyMap();
@@ -30,4 +32,10 @@ public class WebDriver {
         this.i18n = i18n;
     }
 
+    public Boolean getBmp() {
+        return bmp;
+    }
+    public void setBmp(boolean bmp) {
+        this.bmp = bmp;
+    }
 }
