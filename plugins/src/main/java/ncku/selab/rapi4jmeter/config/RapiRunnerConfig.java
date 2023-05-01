@@ -9,7 +9,7 @@ import org.apache.jmeter.threads.JMeterVariables;
 public class RapiRunnerConfig extends ConfigTestElement implements LoopIterationListener, ThreadListener {
 
     private static final String RUNNER_EXE_PATH = "RUNNER_EXE_PATH";
-    private static final String SELENIUM_PORT = "SELENIUM_PORT";
+    private static final String SELENIUM_URL = "SELENIUM_URL";
 
     public String getRunnerExePath() {
         return getPropertyAsString(RUNNER_EXE_PATH);
@@ -19,12 +19,12 @@ public class RapiRunnerConfig extends ConfigTestElement implements LoopIteration
         setProperty(RUNNER_EXE_PATH, path);
     }
 
-    public String getSeleniumPort() {
-        return getPropertyAsString(SELENIUM_PORT);
+    public String getSeleniumURL() {
+        return getPropertyAsString(SELENIUM_URL);
     }
 
     public void setSeleniumPort(String port) {
-        setProperty(SELENIUM_PORT, port);
+        setProperty(SELENIUM_URL, port);
     }
 
 
@@ -36,12 +36,9 @@ public class RapiRunnerConfig extends ConfigTestElement implements LoopIteration
     @Override
     public void threadStarted() {
 
-//        getThreadContext().getVariables().putObject("RUNNER_EXE_PATH", getRunnerExePath());
-//        getThreadContext().getVariables().putObject("SELENIUM_PORT", getSeleniumPort());
-
         JMeterVariables variables = new JMeterVariables();
         variables.put("RUNNER_EXE_PATH_FOR_RAPI_USE", getRunnerExePath());
-        variables.put("SELENIUM_URL_FOR_RAPI_USE", getSeleniumPort());
+        variables.put("SELENIUM_URL_FOR_RAPI_USE", getSeleniumURL());
 
         getThreadContext().setVariables(variables);
 

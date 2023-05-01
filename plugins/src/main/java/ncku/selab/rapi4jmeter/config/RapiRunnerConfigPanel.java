@@ -9,7 +9,7 @@ import java.awt.*;
 public class RapiRunnerConfigPanel extends JPanel {
 
     private JTextField runnerExePath;
-    private JTextField seleniumPath;
+    private JTextField seleniumURL;
 //    private JTextField browserArgs;
 
     public RapiRunnerConfigPanel() {
@@ -20,7 +20,7 @@ public class RapiRunnerConfigPanel extends JPanel {
         if (element instanceof RapiRunnerConfig) {
             RapiRunnerConfig rapiRunnerConfig = (RapiRunnerConfig) element;
             runnerExePath.setText(rapiRunnerConfig.getRunnerExePath());
-            seleniumPath.setText(rapiRunnerConfig.getSeleniumPort());
+            seleniumURL.setText(rapiRunnerConfig.getSeleniumURL());
 //            browserArgs.setText(rapiRunnerConfig.getBrowserAdditionalArgs());
         }
     }
@@ -29,14 +29,14 @@ public class RapiRunnerConfigPanel extends JPanel {
         if (element instanceof RapiRunnerConfig) {
             RapiRunnerConfig rapiRunnerConfig = (RapiRunnerConfig) element;
             rapiRunnerConfig.setRunnerExePath(runnerExePath.getText());
-            rapiRunnerConfig.setSeleniumPort(seleniumPath.getText());
+            rapiRunnerConfig.setSeleniumPort(seleniumURL.getText());
 //            rapiRunnerConfig.setBrowserAdditionalArgs(browserArgs.getText());
         }
     }
 
     public void initFields() {
         runnerExePath.setText("/path/to/rapi-runner-exe");
-        seleniumPath.setText("http://127.0.0.1:4444");
+        seleniumURL.setText("http://127.0.0.1:4444");
 //        browserArgs.setText("headless, disable-gpu, no-sandbox, disable-dev-shm-usage");
     }
 
@@ -54,7 +54,7 @@ public class RapiRunnerConfigPanel extends JPanel {
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 1, new JLabel("Make sure the path is correct. Example: /path/to/rapi-runner-linux"));
 
         JMeterPluginUtils.addToPanel(this, labelConstraints, 0, 2, new JLabel("Selenium URL: ", JLabel.RIGHT));
-        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 2, seleniumPath = new JTextField());
+        JMeterPluginUtils.addToPanel(this, editConstraints, 1, 2, seleniumURL = new JTextField());
         JMeterPluginUtils.addToPanel(this, editConstraints, 1, 3, new JLabel("Follow the example. Example: http://127.0.0.1:4444"));
 
 
