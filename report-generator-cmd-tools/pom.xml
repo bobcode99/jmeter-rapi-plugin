@@ -3,15 +3,23 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>rapi-jmeter-plugins</artifactId>
-    <version>1.0.3</version>
+    <artifactId>report-generator-cmd-tools</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
+
     <parent>
         <groupId>ncku.selab</groupId>
         <artifactId>jmeter-rapi-plugin</artifactId>
         <version>1.0.1</version>
     </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>ncku.selab</groupId>
+            <artifactId>jmeter-rapi-report</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -28,6 +36,11 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
+                            <archive>
+                                <manifest>
+                                    <mainClass>ncku.selab.rapi4jmeter.commandlinetool.Commandline</mainClass>
+                                </manifest>
+                            </archive>
                         </configuration>
                     </execution>
                 </executions>
@@ -35,34 +48,4 @@
         </plugins>
     </build>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.jmeter</groupId>
-            <artifactId>ApacheJMeter_core</artifactId>
-            <scope>provided</scope>
-            <version>5.5</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>ncku.selab</groupId>
-            <artifactId>jmeter-rapi-report</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ncku.selab</groupId>
-            <artifactId>rapi-api-java</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-    </dependencies>
 </project>
