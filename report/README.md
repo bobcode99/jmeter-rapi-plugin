@@ -1,3 +1,3 @@
-# SideeX load testing report
+# Rapi load testing report
 
 Original author: HSU

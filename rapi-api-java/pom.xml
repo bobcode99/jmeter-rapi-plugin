@@ -2,27 +2,27 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>ncku.selab</groupId>
         <artifactId>jmeter-rapi-plugin</artifactId>
         <version>1.0.1</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ncku.selab</groupId>
-    <artifactId>jmeter-rapi-report</artifactId>
-    <version>1.0.2</version>
+    <!--
+    /*
+     * @link    https://github.com/RapiTest/rapi-api
+     * @author  fourcolor
+     */
+    -->
+    <artifactId>rapi-api-java</artifactId>
+    <version>1.0.1</version>
 
     <dependencies>
         <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>5.7.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.14.1</version>
         </dependency>
     </dependencies>
 
