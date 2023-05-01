@@ -37,7 +37,7 @@ jobs:
         name: jarFiles
         path: |
           ./plugins/target/*-jar-with-dependencies.jar
-          ./report-cmd-tools/target/*-jar-with-dependencies.jar
+          ./report-generator-cmd-tools/target/*-jar-with-dependencies.jar
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
@@ -60,6 +60,6 @@ jobs:
         with:
           files: |
             ./plugins/target/*-jar-with-dependencies.jar
-            ./report-cmd-tools/target/*-jar-with-dependencies.jar
+            ./report-generator-cmd-tools/target/*-jar-with-dependencies.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
