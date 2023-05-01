@@ -14,11 +14,11 @@ public class Html {
 
     public void generate(String report, String reportPath) {
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd--HH-mm-ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
         LocalDateTime localDateTimeNow = LocalDateTime.now();
         System.out.println(dtf.format(localDateTimeNow));
         //flexible path
-        File file = new File(reportPath + "rapiReport-" + localDateTimeNow + ".html");
+        File file = new File(reportPath + "rapiReport-" + dtf.format(localDateTimeNow) + ".html");
 
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
