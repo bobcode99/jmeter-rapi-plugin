@@ -83,6 +83,8 @@ public class TimelineReport {
         try {
 
             parse();
+
+            // start generate report at here
             html.generate(Timeline_Report_Content, reportPath);
 
         } catch (ParseException e1) {
