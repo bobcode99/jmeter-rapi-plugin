@@ -21,20 +21,7 @@ public class Driver {
         this.config = config;
     }
 
-    public static ArrayList<String> getBrowserArgs(String browserName, String browserArgsString) {
-        ArrayList<String> browserArgsList= new ArrayList<>(Arrays.asList(browserArgsString.split(",")));
-//        ArrayList<String> chromeArgsList = new ArrayList<>(Arrays.asList("headless", "disable-gpu", "window-size=1080,720", "no-sandbox"));
-//        ArrayList<String> firefoxArgsList = new ArrayList<>(Arrays.asList("-headless", "-disable-gpu", "-window-size=1080,720"));
-//        ArrayList<String> msEdgeArgsList = new ArrayList<>(Arrays.asList("headless", "disable-gpu", "window-size=1080,720", "no-sandbox"));
 
-        System.out.println("browserArgsList: "+  browserArgsList);
-        HashMap<String, ArrayList<String>> browserArgs = new HashMap<>();
-        browserArgs.put("chrome", browserArgsList);
-        browserArgs.put("firefox", browserArgsList);
-        browserArgs.put("MicrosoftEdge", browserArgsList);
-
-        return browserArgs.get(browserName);
-    }
 
     public static String getBrowserOptions(String browserName) {
         HashMap<String, String> browserOptions = new HashMap<>();

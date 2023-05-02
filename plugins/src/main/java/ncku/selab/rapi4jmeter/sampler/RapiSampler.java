@@ -17,6 +17,7 @@ import ncku.selab.rapi.api.config.Config;
 import ncku.selab.rapi.api.config.WebDriverConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,7 +82,6 @@ public class RapiSampler extends AbstractSampler {
 
         // browserName: {"chrome", "firefox", "MicrosoftEdge"}
         caps.put("browserName", browserName);
-        HashMap<String, ArrayList<String>> browserArgs = new HashMap<>();
 
         // setBrowserArgs: "args": ["-headless","-disable-gpu", "-window-size=1080,720"]
 
@@ -91,11 +91,22 @@ public class RapiSampler extends AbstractSampler {
         LOG.info("jMeterVariables.get chrome: " + jMeterVariables.get("BROWSER_ADDITIONAL_ARGS_FOR_RAPI_USE_CHROME_CONFIG"));
         LOG.info("jMeterVariables.get firefox: " + jMeterVariables.get("BROWSER_ADDITIONAL_ARGS_FOR_RAPI_USE_FIREFOX_CONFIG"));
         LOG.info("jMeterVariables.get edge: " + jMeterVariables.get("BROWSER_ADDITIONAL_ARGS_FOR_RAPI_USE_EDGE_CONFIG"));
+        String browserArgsString = jMeterVariables.get(variableNameJmeterGet);
 
-        LOG.info("jMeterVariables.get(variableNameJmeterGet): " + jMeterVariables.get(variableNameJmeterGet));
+        LOG.info("jMeterVariables.get(variableNameJmeterGet): " + browserArgsString);
+        ArrayList<String> browserArgsList = new ArrayList<String>();
 
+        if(browserArgsString == null ) {
+            LOG.info("You may want to add " + browserName + " config.");
+        } else {
+            if (!stringToCheck.isEmpty()) {
+                browserArgsList = new ArrayList<>(Arrays.asList(browserArgsString.split(",")));
+            }
+        }
 
-        browserArgs.put("args", Driver.getBrowserArgs(browserName, jMeterVariables.get( variableNameJmeterGet )));
+        HashMap<String, ArrayList<String>> browserArgs = new HashMap<>();
+        browserArgs.put("args", browserArgsList);
+        LOG.info("browserArgs: " + browserArgs);
 
         // set browserOptions: "moz:firefoxOptions": {"args": ["-headless","-disable-gpu", "-window-size=1080,720"]}
         caps.put(Driver.getBrowserOptions(browserName), browserArgs);
