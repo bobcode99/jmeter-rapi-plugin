@@ -8,7 +8,7 @@ public class FirefoxConfigPanel extends BrowserConfigPanel {
 
     @Override
     public void initFields() {
-        // Set the default arguments for Edge
+        // Set the default arguments for Firefox
         browserArgs.setText("-headless");
     }
 }

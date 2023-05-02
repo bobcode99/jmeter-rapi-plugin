@@ -29,7 +29,7 @@ public class BrowserConfigPanel extends JPanel {
     }
 
     public void initFields() {
-        browserArgs.setText("headless, disable-gpu, no-sandbox, disable-dev-shm-usage");
+
     }
 
     public JPanel init() {
