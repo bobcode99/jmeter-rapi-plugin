@@ -99,7 +99,7 @@ public class RapiSampler extends AbstractSampler {
         if(browserArgsString == null ) {
             LOG.info("You may want to add " + browserName + " config.");
         } else {
-            if (!stringToCheck.isEmpty()) {
+            if (!browserArgsString.isEmpty()) {
                 browserArgsList = new ArrayList<>(Arrays.asList(browserArgsString.split(",")));
             }
         }
