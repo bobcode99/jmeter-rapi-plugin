@@ -9,6 +9,6 @@ public class ChromeConfigPanel extends BrowserConfigPanel {
     @Override
     public void initFields() {
         // Set the default arguments for Chrome
-        browserArgs.setText("--headles, --disable-gpu, --no-sandbox, --disable-dev-shm-usage");
+        browserArgs.setText("--headless, --disable-gpu, --no-sandbox, --disable-dev-shm-usage");
     }
 }
