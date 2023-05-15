@@ -64,10 +64,15 @@ public class TimelineReport {
     private int hitTypeCount = 0;
     private final Map<String, Object> reportContentMap = new HashMap<>();
 
-    public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
+    public String stringRepresentationAmountOfRequest;
+
+    private String WebVitalsAnalyzeResultTable;
+    public void generate_report(String requestStats, String webVitalsAnalyzeResultTable, JsonParse jsonParseFile, ArrayList<String> testResults,
                                 ArrayList<String> command, ArrayList<Long> allAmountOfRequest,String reportPath) throws java.text.ParseException {
 
         jsonNames = testResults;
+        Request_Statistics_Content = requestStats;
+        WebVitalsAnalyzeResultTable = webVitalsAnalyzeResultTable;
         jsonFile = jsonParseFile;
 
         stringRepresentationAmountOfRequest = allAmountOfRequest.stream().map(String::valueOf).collect(Collectors.joining(", ", "[", "]"));
@@ -1237,6 +1242,15 @@ public class TimelineReport {
                 + "<div class=\"img\">\r\n"
                 + "	<img src=\"https://sideex.io/static/media/sideex_logo.2728ffac.png\" >\r\n"
                 + "</div>"
+
+                + "<div  class=\"requestTitle\">\r\n"
+                + "\r\n"
+                + "	<label><b> Web Vitals Stats Report</b></label><br>\r\n"
+                + "\r\n"
+                + "</div>\n"
+
+                + WebVitalsAnalyzeResultTable
+
 
                 + "<div  class=\"requestTitle\">\r\n"
                 + "\r\n"

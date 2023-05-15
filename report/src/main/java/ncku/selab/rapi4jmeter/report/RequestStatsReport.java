@@ -7,11 +7,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RequestStatsReport {
 
@@ -54,6 +54,15 @@ public class RequestStatsReport {
     private final ArrayList<Long> commandTimeDifference = new ArrayList<>();
 
     private final ArrayList<Long> allAmountOfRequest = new ArrayList<>();
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+
+    // experimental use
+    JSONObject webVitalsAnalyzeResult = new JSONObject();
+
+    private String webVitalsAnalyzeResultTable = "";
+    // experimental use
+
     /**
      * all test results
      * [{"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] },{...}]
@@ -64,13 +73,10 @@ public class RequestStatsReport {
     private String Request_Statistics_Content = "";
 
     public void startGenerateReport(String path, ArrayList<String> testResults) throws ParseException, java.text.ParseException {
-//        File jsonFolder = new File(path);
-
-
         this.testResults = testResults;
 
         parse();
-        report.generate_report(Request_Statistics_Content, jsonParse, this.testResults, commandList, this.allAmountOfRequest , path);
+        report.generate_report(Request_Statistics_Content, webVitalsAnalyzeResultTable, jsonParse, this.testResults, commandList, this.allAmountOfRequest , path);
     }
 
     public void preprocessing() throws ParseException {
@@ -140,8 +146,35 @@ public class RequestStatsReport {
 
         commandSamplesCount.add(0, totalCommandCount);
 
-
     }
+
+
+    // Combine allResults and rating data for each metric
+    Map<String, List<Double>> wvAllResultsMap = new HashMap<>();
+    Map<String, Map<String, Integer>> wvRatingMap = new HashMap<>();
+
+    // experimental use
+    private void analyzeWebVitals(JSONObject needAnalyzeWVObject) {
+
+        for (String metric : new String[] { "FCP", "LCP", "CLS", "TTFB", "FID", "INP" }) {
+            if (needAnalyzeWVObject.containsKey(metric)) {
+                JSONObject metricObject = (JSONObject) needAnalyzeWVObject.get(metric);
+                JSONArray allResultsArray = (JSONArray) metricObject.get("allResults");
+                List<Double> allResultsList = wvAllResultsMap.computeIfAbsent(metric, k -> new ArrayList<>());
+                allResultsList.addAll((Collection<? extends Double>) allResultsArray.stream().map(obj2 -> ((Number) obj2).doubleValue()).collect(Collectors.toList()));
+
+//                System.out.println("allResultsList: " + allResultsList);
+                JSONObject ratingObject = (JSONObject) metricObject.get("rating");
+                Map<String, Integer> ratingCountMap = wvRatingMap.computeIfAbsent(metric, k -> new HashMap<>());
+                for (Object key : ratingObject.keySet()) {
+                    String rating = (String) key;
+                    Integer count = ratingCountMap.getOrDefault(rating, 0);
+                    ratingCountMap.put(rating, count + ((Long) ratingObject.get(key)).intValue());
+                }
+            }
+        }
+    }
+    // experimental use
 
     private int getPercentilePosition(double rankFloat, int arraySize) {
         int position = (int) Math.round(arraySize * rankFloat);
@@ -180,6 +213,16 @@ public class RequestStatsReport {
 
         for (int i = 0; i < testResults.size(); i++) {
             JSONObject json = jsonParse.getJson(i);
+
+            // experimental use
+
+            JSONObject webVitalsResultAnalyze = (JSONObject) json.get("webVitalsResultAnalyze");
+//            System.out.println("webVitalsResultAnalyze: " + webVitalsResultAnalyze.toString());
+            analyzeWebVitals(webVitalsResultAnalyze);
+            // experimental use
+
+
+
             JSONArray casesArray = (JSONArray) json.get("cases");
             JSONObject cases = (JSONObject) casesArray.get(0);
             JSONArray recordsArray = (JSONArray) cases.get("records");
@@ -230,6 +273,59 @@ public class RequestStatsReport {
             }
 
         }
+
+        // experimental use
+        // Calculate average, min, med, max, p90, p95, p99 for each metric
+        Map<String, Double> avgMap = new HashMap<>();
+        Map<String, Double> minMap = new HashMap<>();
+        Map<String, Double> medMap = new HashMap<>();
+        Map<String, Double> maxMap = new HashMap<>();
+        Map<String, Double> p90Map = new HashMap<>();
+        Map<String, Double> p95Map = new HashMap<>();
+        Map<String, Double> p99Map = new HashMap<>();
+        for (String metric : wvAllResultsMap.keySet()) {
+            List<Double> allResultsList = wvAllResultsMap.get(metric);
+            Collections.sort(allResultsList);
+            double avg =  allResultsList.stream().mapToDouble(Double::doubleValue).average().orElse(Double.NaN);
+            double min = allResultsList.get(0);
+            double med = allResultsList.get(allResultsList.size() / 2);
+            double max = allResultsList.get(allResultsList.size() - 1);
+            double p90 = allResultsList.get((int) Math.ceil(allResultsList.size() * 0.9) - 1);
+            double p95 = allResultsList.get((int) Math.ceil(allResultsList.size() * 0.95) - 1);
+            double p99 = allResultsList.get((int) Math.ceil(allResultsList.size() * 0.99) - 1);
+            avgMap.put(metric, avg);
+            minMap.put(metric, min);
+            medMap.put(metric, med);
+            maxMap.put(metric, max);
+            p90Map.put(metric, p90);
+            p95Map.put(metric, p95);
+            p99Map.put(metric, p99);
+        }
+
+        // Add metrics data to final JSON object
+        for (String metric : wvAllResultsMap.keySet()) {
+            JSONObject metricObject = new JSONObject();
+            metricObject.put("avg", avgMap.get(metric));
+            metricObject.put("min", minMap.get(metric));
+            metricObject.put("med", medMap.get(metric));
+            metricObject.put("max", maxMap.get(metric));
+            metricObject.put("p90", p90Map.get(metric));
+            metricObject.put("p95", p95Map.get(metric));
+            metricObject.put("p99", p99Map.get(metric));
+            Map<String, Integer> ratingCountMap = wvRatingMap.get(metric);
+            if (ratingCountMap != null) {
+                JSONObject ratingObject = new JSONObject();
+                for (String rating : ratingCountMap.keySet()) {
+                    ratingObject.put(rating, ratingCountMap.get(rating));
+                }
+                metricObject.put("rating", ratingObject);
+            }
+            webVitalsAnalyzeResult.put(metric, metricObject);
+        }
+//        System.out.println("webVitalsAnalyzeResult: " + webVitalsAnalyzeResult);
+        // experimental use
+
+
 
 
         for (ArrayList<Long> longArrayList : commandTime) {
@@ -326,6 +422,85 @@ public class RequestStatsReport {
 
     }
 
+    // experimental use
+    private static String getRating(Object ratingObj) {
+        if (ratingObj instanceof JSONObject) {
+            JSONObject ratingJson = (JSONObject) ratingObj;
+            if (ratingJson.containsKey("good")) {
+                return "good";
+            } else if (ratingJson.containsKey("needs-improvement")) {
+                return "needs-improvement";
+            } else if (ratingJson.containsKey("poor")) {
+                return "poor";
+            }
+        }
+        return "";
+    }
+
+    public static String wvObjToTable(JSONObject jsonObj){
+        df.setRoundingMode(RoundingMode.UP);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table  width = \"1250\"  class=\"request\"><tr>");
+        sb.append("<th>Metric</th><th>avg</th><th>min</th><th>med</th><th>max</th><th>p90</th><th>p95</th><th>p99</th><th>rating</th></tr>");
+
+        // loop through each metric in the JSON object
+        for (Object key : jsonObj.keySet()) {
+            String metric = key.toString();
+            JSONObject values = (JSONObject) jsonObj.get(key);
+            String avg = df.format(values.get("avg")).toString();
+            String min = df.format(values.get("min")).toString();
+            String med = df.format(values.get("med")).toString();
+            String max = df.format(values.get("max")).toString();
+            String p90 = df.format(values.get("p90")).toString();
+            String p95 = df.format(values.get("p95")).toString();
+            String p99 = df.format(values.get("p99")).toString();
+
+            // get the rating values
+            JSONObject rating = (JSONObject) values.get("rating");
+            String good = rating.containsKey("good") ? rating.get("good").toString() : "";
+            String needsImp = rating.containsKey("needs-improvement") ? rating.get("needs-improvement").toString() : "";
+            String poor = rating.containsKey("poor") ? rating.get("poor").toString() : "";
+
+            // build the HTML table row
+            sb.append("<tr>");
+            sb.append("<td>").append(metric).append("</td>");
+            sb.append("<td>").append(avg).append("</td>");
+            sb.append("<td>").append(min).append("</td>");
+            sb.append("<td>").append(med).append("</td>");
+            sb.append("<td>").append(max).append("</td>");
+            sb.append("<td>").append(p90).append("</td>");
+            sb.append("<td>").append(p95).append("</td>");
+            sb.append("<td>").append(p99).append("</td>");
+            StringBuilder ratingString = new StringBuilder();
+            ratingString.append("<td>");
+            boolean needAddBreak = false;
+            if(!good.isEmpty()){
+                needAddBreak = true;
+                ratingString.append("good: ").append(good);
+            }
+            if (!needsImp.isEmpty()) {
+                if(needAddBreak) {
+                    ratingString.append("<br/>");
+                }
+                needAddBreak = true;
+                ratingString.append("needs-improvement: ").append(needsImp);
+            }
+            if (!poor.isEmpty()) {
+                if(needAddBreak) {
+                    ratingString.append("<br/>");
+                }
+                ratingString.append("poor: ").append(poor);
+            }
+            ratingString.append("</td>");
+            sb.append(ratingString);
+            sb.append("</tr>");
+        }
+        sb.append("</table>");
+        return sb.toString();
+    }
+    // experimental use
+
 
     public void generateHtml() {
 
@@ -338,6 +513,7 @@ public class RequestStatsReport {
 
         }
 
+        webVitalsAnalyzeResultTable = wvObjToTable(this.webVitalsAnalyzeResult);
         Request_Statistics_Content = requestStatisticsContentStringBuilder.toString();
 
 
