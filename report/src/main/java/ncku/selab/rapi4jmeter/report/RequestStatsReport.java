@@ -58,7 +58,7 @@ public class RequestStatsReport {
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     // experimental use
-    JSONObject webVitalsAnalyzeResult = new JSONObject();
+    final JSONObject webVitalsAnalyzeResult = new JSONObject();
 
     private String webVitalsAnalyzeResultTable = "";
     // experimental use
@@ -82,11 +82,11 @@ public class RequestStatsReport {
     public void preprocessing() throws ParseException {
 
         // experimental use
-        boolean haveAmmountOfRequest = true;
+        boolean haveAmountOfRequest = true;
         try {
             jsonParse.getAmountOfRequest(0);
         } catch (Exception e) {
-            haveAmmountOfRequest = false;
+            haveAmountOfRequest = false;
         }
         // experimental use
 
@@ -95,7 +95,7 @@ public class RequestStatsReport {
             JSONArray recordsArray = jsonParse.getRecordsArray(i);
 
             // experimental use
-            if(haveAmmountOfRequest) {
+            if(haveAmountOfRequest) {
                 allAmountOfRequest.add(jsonParse.getAmountOfRequest(i));
             }
             // experimental use
@@ -150,8 +150,8 @@ public class RequestStatsReport {
 
 
     // Combine allResults and rating data for each metric
-    Map<String, List<Double>> wvAllResultsMap = new HashMap<>();
-    Map<String, Map<String, Integer>> wvRatingMap = new HashMap<>();
+    final Map<String, List<Double>> wvAllResultsMap = new HashMap<>();
+    final Map<String, Map<String, Integer>> wvRatingMap = new HashMap<>();
 
     // experimental use
     private void analyzeWebVitals(JSONObject needAnalyzeWVObject) {
@@ -160,7 +160,7 @@ public class RequestStatsReport {
             if (needAnalyzeWVObject.containsKey(metric)) {
                 JSONObject metricObject = (JSONObject) needAnalyzeWVObject.get(metric);
                 JSONArray allResultsArray = (JSONArray) metricObject.get("allResults");
-                List<Double> allResultsList = wvAllResultsMap.computeIfAbsent(metric, k -> new ArrayList<>());
+                var allResultsList = wvAllResultsMap.computeIfAbsent(metric, k -> new ArrayList<>());
                 allResultsList.addAll((Collection<? extends Double>) allResultsArray.stream().map(obj2 -> ((Number) obj2).doubleValue()).collect(Collectors.toList()));
 
 //                System.out.println("allResultsList: " + allResultsList);
@@ -423,20 +423,6 @@ public class RequestStatsReport {
     }
 
     // experimental use
-    private static String getRating(Object ratingObj) {
-        if (ratingObj instanceof JSONObject) {
-            JSONObject ratingJson = (JSONObject) ratingObj;
-            if (ratingJson.containsKey("good")) {
-                return "good";
-            } else if (ratingJson.containsKey("needs-improvement")) {
-                return "needs-improvement";
-            } else if (ratingJson.containsKey("poor")) {
-                return "poor";
-            }
-        }
-        return "";
-    }
-
     public static String wvObjToTable(JSONObject jsonObj){
         df.setRoundingMode(RoundingMode.UP);
 
@@ -448,13 +434,13 @@ public class RequestStatsReport {
         for (Object key : jsonObj.keySet()) {
             String metric = key.toString();
             JSONObject values = (JSONObject) jsonObj.get(key);
-            String avg = df.format(values.get("avg")).toString();
-            String min = df.format(values.get("min")).toString();
-            String med = df.format(values.get("med")).toString();
-            String max = df.format(values.get("max")).toString();
-            String p90 = df.format(values.get("p90")).toString();
-            String p95 = df.format(values.get("p95")).toString();
-            String p99 = df.format(values.get("p99")).toString();
+            String avg = df.format(values.get("avg"));
+            String min = df.format(values.get("min"));
+            String med = df.format(values.get("med"));
+            String max = df.format(values.get("max"));
+            String p90 = df.format(values.get("p90"));
+            String p95 = df.format(values.get("p95"));
+            String p99 = df.format(values.get("p99"));
 
             // get the rating values
             JSONObject rating = (JSONObject) values.get("rating");
