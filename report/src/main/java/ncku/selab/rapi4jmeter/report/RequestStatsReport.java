@@ -23,7 +23,7 @@ public class RequestStatsReport {
     private final ArrayList<Long> commandTotalTime = new ArrayList<>();
     private final ArrayList<ArrayList<Long>> commandTimeData = new ArrayList<>();
     private final ArrayList<ArrayList<Long>> commandTime = new ArrayList<>();
-    private final ArrayList<Long> All = new ArrayList<>();
+    private final ArrayList<Long> AllTime = new ArrayList<>();
     private final ArrayList<Integer> AvgTime = new ArrayList<>();
     private final ArrayList<Double> Hit = new ArrayList<>();
     private final ArrayList<Long> line_90 = new ArrayList<>();
@@ -161,8 +161,8 @@ public class RequestStatsReport {
 
                 time = (Long) records.get("time");
                 commandTimeData.get(commandIndex).add(time);
-                // All records first row data
-                All.add(time);
+                // AllTime records first row data
+                AllTime.add(time);
 
                 time = (Long) records.get("time");
                 currentCalendar.add(Calendar.MILLISECOND, time.intValue());
@@ -218,7 +218,7 @@ public class RequestStatsReport {
 
 
         // Calculate Hit Data
-        double hit = (double) All.size() / commandTimeDifference.get(0);
+        double hit = (double) AllTime.size() / commandTimeDifference.get(0);
         hit = Math.round(hit * 100.0) / 100.0;
         Hit.add(hit);
 
@@ -232,13 +232,13 @@ public class RequestStatsReport {
 
 
         for (ArrayList<Long> commandTimeDatum : commandTimeData) Collections.sort(commandTimeDatum);
-        Collections.sort(All);
+        Collections.sort(AllTime);
 
-        for (Long aLong : All) AllCommandTimeSum += aLong;
+        for (Long aLong : AllTime) AllCommandTimeSum += aLong;
 
 
         commandTotalTime.add(0, AllCommandTimeSum);
-        commandTimeData.add(0, All);
+        commandTimeData.add(0, AllTime);
 
 
         errorCount = 0;
@@ -254,6 +254,8 @@ public class RequestStatsReport {
             int avg = (int) Math.round((double) commandTotalTime.get(i) / commandSamplesCount.get(i));
             AvgTime.add(avg);
 
+            System.out.println("avg: " + avg);
+            System.out.println("AvgTime: " + AvgTime);
 
             //P90
             position = (int) Math.round(commandTimeData.get(i).size() * 0.9);
@@ -264,6 +266,9 @@ public class RequestStatsReport {
                 position = 0;
             line_90.add(commandTimeData.get(i).get(position));
 
+            System.out.println("line_90: " + line_90);
+            System.out.println("position: " + position);
+
             //P95
             position = (int) Math.round(commandTimeData.get(i).size() * 0.95);
             position--;
@@ -273,6 +278,8 @@ public class RequestStatsReport {
                 position = 0;
             line_95.add(commandTimeData.get(i).get(position));
 
+            System.out.println("line_95: " + line_95);
+            System.out.println("position: " + position);
 
             //P99
             position = (int) Math.round(commandTimeData.get(i).size() * 0.99);
@@ -283,6 +290,9 @@ public class RequestStatsReport {
                 position = 0;
             line_99.add(commandTimeData.get(i).get(position));
 
+            System.out.println("line_99: " + line_99);
+            System.out.println("position: " + position);
+
             Min.add(commandTimeData.get(i).get(0));
             Max.add(commandTimeData.get(i).get(commandTimeData.get(i).size() - 1));
 
@@ -290,6 +300,8 @@ public class RequestStatsReport {
             percentage = (float) error.get(i) / commandSamplesCount.get(i);
             percentage = Math.round(percentage * 1000.0);
             percentage /= 10;
+
+            System.out.println("error percentage: " + percentage);
             errorPercentage.add(percentage);
 
         }
