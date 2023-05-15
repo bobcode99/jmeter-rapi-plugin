@@ -215,7 +215,6 @@ public class RequestStatsReport {
             JSONObject json = jsonParse.getJson(i);
 
             // experimental use
-
             JSONObject webVitalsResultAnalyze = (JSONObject) json.get("webVitalsResultAnalyze");
 //            System.out.println("webVitalsResultAnalyze: " + webVitalsResultAnalyze.toString());
             analyzeWebVitals(webVitalsResultAnalyze);
@@ -398,15 +397,15 @@ public class RequestStatsReport {
 
             //P90
             int positionP90 = getPercentilePosition(0.9, sizeCommandTimeDataArrayNow);
-            line_90.add(commandTimeData.get(i).get(positionP90));
+            line_90.add( commandTimeData.get(i).get(positionP90) );
 
             //P95
             int positionP95 = getPercentilePosition(0.95, sizeCommandTimeDataArrayNow);
-            line_95.add(commandTimeData.get(i).get(positionP95));
+            line_95.add( commandTimeData.get(i).get(positionP95) );
 
             //P99
             int positionP99 = getPercentilePosition(0.99, sizeCommandTimeDataArrayNow);
-            line_99.add(commandTimeData.get(i).get(positionP99));
+            line_99.add( commandTimeData.get(i).get(positionP99) );
 
             Min.add(commandTimeData.get(i).get(0));
             Max.add(commandTimeData.get(i).get(sizeCommandTimeDataArrayNow - 1));
