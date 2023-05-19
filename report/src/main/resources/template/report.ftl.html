@@ -102,33 +102,6 @@
 		body {
 			background-color: rgb(246, 239, 239);
 		}
-
-		.tooltip {
-			position: relative;
-		}
-
-		.tooltip .tooltiptext {
-			visibility: hidden;
-			width: 120px;
-			background-color: white;
-			color: black;
-			opacity: 0.7;
-			text-align: center;
-			border-radius: 6px;
-			padding: 5px 0;
-
-			/* Position the tooltip */
-			position: absolute;
-			z-index: 1;
-			bottom: 100%;
-			/* Change from top to bottom */
-			left: 50%;
-			transform: translateX(-50%);
-		}
-
-		.tooltip:hover .tooltiptext {
-			visibility: visible;
-		}
 	</style>
 </head>
 
@@ -141,68 +114,26 @@
 </div>
 
 <div class="requestTitle">
+    <label><b> Amount Of Request</b></label><br />
+</div>
+
+<div class="contentAmountOfRequest">
+    ${stringRepresentationAmountOfRequest}
+    <p>after sum:</p>
+    ${totalSumAmountOfRequest}
+</div>
+
+
+<div class="requestTitle">
+    <label><b> Web Vitals Stats Report</b></label><br />
+</div>
+
+<!--web-vitals table-->
+${webVitalsTable}
+
+
+<div class="requestTitle">
     <label><b> Request Stats Report</b></label><br />
-</div>
-
-<!--Request Stats Report table-->
-
-<table width="1250" class="request">
-    <tr>
-        <th class="tooltip">
-            <span class="tooltiptext">The name of the Rapi command.</span>
-            Element Label&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        <th class="tooltip">
-            <span class="tooltiptext">Average timing of the command execute.</span>
-            Avg. Time(ms)&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        <th class="tooltip">
-            <span class="tooltiptext">Average timing of the command started.</span>
-            Avg. Hits/s&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        <th class="tooltip">
-            <span class="tooltiptext">The total number of commands executed.</span>
-            #Samples&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        <th class="tooltip">
-				<span class="tooltiptext">90th percentile: Time value with 90% of samples below or
-					equal.</span>
-            90% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        <th class="tooltip">
-				<span class="tooltiptext">95th percentile: Time value with 95% of samples below or
-					equal.</span>
-            95% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        <th class="tooltip">
-				<span class="tooltiptext">99th percentile: Time value with 99% of samples below or
-					equal.</span>
-            99% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        <th class="tooltip">
-            <span class="tooltiptext">The shortest time of the samples.</span>
-            Min Time(ms)&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        <th class="tooltip">
-            <span class="tooltiptext">The maximum time of the samples.</span>
-            Max Time(ms)&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        <th class="tooltip">
-            <span class="tooltiptext">Error Percentage of the samples.</span>
-            Error Percentage&nbsp;&nbsp;&nbsp;&nbsp;
-        </th>
-        ${requestStatisticsContent}
-    </tr>
-</table>
-
-<div class="timelineTitle">
-    <label><b> Timeline Report</b></label><br />
-</div>
-
-${checkBox}
-
-<div>
-    <canvas id="line-chart" class="chart" width="1250" height="900"></canvas>
 </div>
 
 <div>
@@ -214,10 +145,11 @@ ${checkBox}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
 
-<script>
-		var commandNumber = ${ commandNumber };
-            ${ yAxisData }
+${requestStatisticsContent}
 
+<div class="timelineTitle">
+    <label><b> Timeline Report</b></label><br />
+</div>
     var report = new Chart(document.getElementById("line-chart"), {
 			type: 'line',
 			data: {
@@ -295,13 +227,9 @@ ${checkBox}
 		});
       var index;
 
-		var filterLegend = function (item, chart) {
-			if (report.data.datasets[item.datasetIndex].hidden == true)
-				return false;
+${checkBox}
 
-			else if (report.data.datasets[item.datasetIndex].hidden == false)
-				return true;
-		}
+${scriptTag}
 
 		function updateChart(data) {
 			index = data.value;

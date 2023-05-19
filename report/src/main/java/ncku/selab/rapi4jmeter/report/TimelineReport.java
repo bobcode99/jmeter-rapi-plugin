@@ -11,6 +11,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TimelineReport {
 
@@ -67,6 +68,8 @@ public class TimelineReport {
     public String stringRepresentationAmountOfRequest;
 
     private String WebVitalsAnalyzeResultTable;
+    private Map<String, Object> reportContentMap = new HashMap<>();
+
     public void generate_report(String requestStats, String webVitalsAnalyzeResultTable, JsonParse jsonParseFile, ArrayList<String> testResults,
                                 ArrayList<String> command, ArrayList<Long> allAmountOfRequest,String reportPath) throws java.text.ParseException {
 
@@ -86,7 +89,10 @@ public class TimelineReport {
         for (int i = 1; i < command.size(); i++)
             commandList.add(command.get(i));
 
-        reportContentMap.put("requestStatisticsContent", requestStats);
+        reportContentMap.put("stringRepresentationAmountOfRequest", stringRepresentationAmountOfRequest);
+        reportContentMap.put("webVitalsTable", WebVitalsAnalyzeResultTable);
+        reportContentMap.put("totalSumAmountOfRequest", totalSumAmountOfRequest);
+        reportContentMap.put("requestStatisticsContent", Request_Statistics_Content);
 
 
         try {
@@ -1153,6 +1159,7 @@ public class TimelineReport {
                 + "} "
                 + "</script>\r\n";
 
+        reportContentMap.put("scriptTag", javascript);
 
         Timeline_Report_Content += "<!DOCTYPE html>\r\n"
                 + "<html>\r\n"
@@ -1185,6 +1192,12 @@ public class TimelineReport {
                 + "		margin-left: 700px;\r\n"
                 + "		margin-bottom: 20px;\r\n"
                 + "		font-size: 30px;\r\n"
+                + "	}\r\n"
+                + " .contentAmountOfRequest{\r\n"
+                + "		margin-top: 20px;\r\n"
+                + "		margin-left: 700px;\r\n"
+                + "		margin-bottom: 20px;\r\n"
+                + "		font-size: 20px;\r\n"
                 + "	}\r\n"
                 + "\r\n"
                 + "	.timelineTitle{\r\n"
@@ -1242,6 +1255,18 @@ public class TimelineReport {
                 + "<div class=\"img\">\r\n"
                 + "	<img src=\"https://sideex.io/static/media/sideex_logo.2728ffac.png\" >\r\n"
                 + "</div>"
+
+                + "<div class=\"requestTitle\">\r\n"
+                + "	<label><b> Amount Of Request</b></label><br>\r\n"
+                + "</div>\r\n"
+
+                + "<div class=\"contentAmountOfRequest\">\r\n"
+
+                + stringRepresentationAmountOfRequest
+                + "<p> after sum: </p>"
+                + totalSumAmountOfRequest
+
+                + "</div>\r\n"
 
                 + "<div  class=\"requestTitle\">\r\n"
                 + "\r\n"
