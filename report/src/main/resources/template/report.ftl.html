@@ -123,14 +123,12 @@
     ${totalSumAmountOfRequest}
 </div>
 
-
 <div class="requestTitle">
     <label><b> Web Vitals Stats Report</b></label><br />
 </div>
 
 <!--web-vitals table-->
 ${webVitalsTable}
-
 
 <div class="requestTitle">
     <label><b> Request Stats Report</b></label><br />
@@ -235,67 +233,66 @@ ${checkBox}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    var commandNumber = ${commandNumber};
-    ${yAxisData}
+		var commandNumber = ${ commandNumber };
+        ${ yAxisData }
 
-    var report = new Chart(document.getElementById("line-chart"), {
+		var report = new Chart(document.getElementById("line-chart"), {
 			type: 'line',
 			data: {
-				labels: ${listXAxisLabel},
-				datasets: ${datasets}
-			},
-			options: {
-				responsive: false, spanGaps: true,
+				labels: ${ listXAxisLabel },
+			datasets: ${ datasets }
+      	},
+		options: {
+			responsive: false, spanGaps: true,
 				plugins: {
-					legend: {
-						onClick: (e) => e.stopPropagation(),
+				legend: {
+					onClick: (e) => e.stopPropagation(),
 						position: 'bottom',
-						labels: {
-							filter: function (legendItem, chartData) {
-								if (legendItem.datasetIndex === 0 || legendItem.datasetIndex === (commandNumber) ||
-									legendItem.datasetIndex === (commandNumber * 2) || legendItem.datasetIndex === (commandNumber * 3))
-									return true;
-								return false;
-							}
+							labels: {
+						filter: function (legendItem, chartData) {
+							if (legendItem.datasetIndex === 0 || legendItem.datasetIndex === (commandNumber) ||
+								legendItem.datasetIndex === (commandNumber * 2) || legendItem.datasetIndex === (commandNumber * 3))
+								return true;
+							return false;
 						}
 					}
-				}, scales: {
-					y1: {
-						type: 'linear',
+				}
+			}, scales: {
+				y1: {
+					type: 'linear',
 						display: true,
-						position: 'left',
-						title: {
-							display: true,
-							font: {
-								size: 20,
-								family: "Times New Roman"
-							}, text: "Virtual  Users"
-						}, beginAtZero: true
-					},
-					y2: {
-						type: 'linear',
+							position: 'left',
+								title: {
 						display: true,
-						position: 'right',
-						title: {
-							display: true,
 							font: {
-								size: 20,
+							size: 20,
 								family: "Times New Roman"
-							}, text: "Response  Time (ms)"
-						}, beginAtZero: true
-					},
-					y3: {
-						type: 'linear',
+						}, text: "Virtual  Users"
+					}, beginAtZero: true
+				},
+				y2: {
+					type: 'linear',
 						display: true,
-						position: 'right',
-						title: {
-							display: true,
+							position: 'right',
+								title: {
+						display: true,
 							font: {
-								size: 20,
+							size: 20,
 								family: "Times New Roman"
-							}, text: "Hit/s"
-						}, beginAtZero: true
-					}
+						}, text: "Response  Time (ms)"
+					}, beginAtZero: true
+				},
+				y3: {
+					type: 'linear',
+						display: true,
+							position: 'right',
+								title: {
+						display: true,
+							font: {
+							size: 20,
+								family: "Times New Roman"
+						}, text: "Hit/s"
+					}, beginAtZero: true
 				}
 			}
 		});
