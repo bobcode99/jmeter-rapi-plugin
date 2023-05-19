@@ -310,6 +310,9 @@ public class TimelineReport {
         // initial Hit Data
         hitTypeCount = commandList.size();
         commandNumber = hitTypeCount + 1;
+        reportContentMap.put("commandNumber", commandNumber);
+
+
         int timePointCount = timeStamp.size();
 
 
@@ -528,6 +531,14 @@ public class TimelineReport {
 
 
         xAxisLabel.sort(null);
+
+        StringJoiner stringJoiner = new StringJoiner(", ", "[", "]");
+        for (String element : xAxisLabel) {
+            stringJoiner.add("\"" + element + "\"");
+        }
+        String listXAxisLabel = stringJoiner.toString();
+//        System.out.println("listXAxisLabel: " + listXAxisLabel);
+        reportContentMap.put("listXAxisLabel", listXAxisLabel);
 
 
         //AllResponseTime statistics
@@ -971,9 +982,11 @@ public class TimelineReport {
 
 
         yAxisData += userData + hitData + errorData + responseTimeData;
+        reportContentMap.put("yAxisData", yAxisData);
+
 
         //Dataset information
-        dataset += "datasets: [\r\n";
+        dataset += "[\r\n";
 
         int numberOfShow = 0;
 
@@ -1011,141 +1024,9 @@ public class TimelineReport {
                 dataset += "\t}\r\n";
         }
 
-
         dataset += "\t]\r\n";
 
-        generateHtml();
-
-
-    }
-
-
-    public void generateHtml() {
-
-
-        javascript += "<div>\r\n"
-                + "      <canvas id=\"line-chart\" class=\"chart\" width=\"1250\" height=\"900\"></canvas>\r\n"
-                + "    </div>"
-                + "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script> \r\n <script>\r\n"
-                + "var  commandNumber = "
-                + commandNumber
-                + ";\n"
-                + yAxisData
-                + "var report = new Chart(document.getElementById(\"line-chart\"), {\r\n"
-                + "  type: 'line',\r\n"
-                + "  data: {\r\n";
-
-
-        javascript += "labels: [";
-
-        for (int i = 0; i < xAxisLabel.size(); i++) {
-
-            javascript += "\"" + xAxisLabel.get(i) + "\",";
-
-            if (i == xAxisLabel.size() / 2)
-                javascript += "\n\t\t";
-
-        }
-
-        javascript += "],\r\n";
-
-        javascript += dataset
-                + "  },\r\n"
-                + "  options: {\r\n"
-                + "	   responsive: false,"
-                + "    spanGaps: true,\r\n"
-                + "    plugins: {\r\n"
-                + "  legend: {\r\n"
-                + "		   onClick: (e) => e.stopPropagation(),\r\n"
-                + "		   position: 'bottom',\r\n"
-                + "		   labels: {\r\n"
-                + "			filter: function(legendItem, chartData) {\r\n"
-                + "                if (legendItem.datasetIndex === 0 || legendItem.datasetIndex === (commandNumber) || \r\n"
-                + "					legendItem.datasetIndex === (commandNumber * 2) || legendItem.datasetIndex === (commandNumber * 3))\r\n"
-                + "                    return true;\r\n"
-                + "            return false;\r\n"
-                + "            }\r\n"
-                + "		   }\r\n"
-                + "      }\r\n"
-                + "    },"
-                + "    scales: {\r\n"
-                + "	  y1: {\r\n"
-                + "        type: 'linear',\r\n"
-                + "        display: true,\r\n"
-                + "        position: 'left',\r\n"
-                + "	  title: {\r\n"
-                + "			display: true,\r\n"
-                + "	   font: {\r\n"
-                + "			size: 20,\r\n"
-                + "            family: \"Times New Roman\"\r\n"
-                + "        },"
-                + "			text: \"Virtual  Users\"\r\n"
-                + "		},"
-                + "		beginAtZero: true\r\n"
-                + "      },\r\n"
-                + "	  y2: {\r\n"
-                + "        type: 'linear',\r\n"
-                + "        display: true,\r\n"
-                + "        position: 'right',\r\n"
-                + "	  title: {\r\n"
-                + "			display: true,\r\n"
-                + "	   font: {\r\n"
-                + "			size: 20,\r\n"
-                + "            family: \"Times New Roman\"\r\n"
-                + "        },"
-                + "			text: \"Response  Time (ms)\"\r\n"
-                + "		},"
-                + "		beginAtZero: true\r\n"
-                + "      },\r\n"
-                + "	  y3: {\r\n"
-                + "        type: 'linear',\r\n"
-                + "        display: true,\r\n"
-                + "        position: 'right',\r\n"
-                + "	  title: {\r\n"
-                + "			display: true,\r\n"
-                + "	   font: {\r\n"
-                + "			size: 20,\r\n"
-                + "            family: \"Times New Roman\"\r\n"
-                + "        },"
-                + "			text: \"Hit/s\"\r\n"
-                + "		},"
-                + "		beginAtZero: true\r\n"
-                + "      }"
-                + "	}\r\n"
-                + "  }\r\n"
-                + "});\r\n\n";
-
-
-        javascript += "var index;\r\n"
-                + "\r\n"
-                + "var filterLegend = function(item, chart) {\r\n"
-                + "\r\n"
-                + "	\r\n"
-                + "\r\n"
-                + "	if(report.data.datasets[item.datasetIndex].hidden == true)		\r\n"
-                + "		return false;\r\n"
-                + "	\r\n"
-                + "    else if(report.data.datasets[item.datasetIndex].hidden == false) \r\n"
-                + " 		return true;\r\n"
-                + "\r\n"
-                + "}\r\n"
-                + "\r\n"
-                + "\r\n"
-                + "\r\n"
-                + "function updataChart(data){\r\n"
-                + "  \r\n"
-                + "	index = data.value;\r\n"
-                + "\r\n"
-                + "	report.data.datasets[index].hidden = !(report.data.datasets[index].hidden);\r\n"
-                + "	\r\n"
-                + "	report.options.plugins.legend.labels.filter = filterLegend;\r\n"
-                + "\r\n"
-                + "    \r\n"
-                + "  report.update();\r\n"
-                + "} "
-                + "</script>\r\n";
-
-        reportContentMap.put("scriptTag", javascript);
+        reportContentMap.put("datasets", dataset);
 
         Timeline_Report_Content += "<!DOCTYPE html>\r\n"
                 + "<html>\r\n"
