@@ -7,7 +7,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-//import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,13 +53,11 @@ public class RequestStatsReport {
     private final ArrayList<Double> errorPercentage = new ArrayList<>();
     private final ArrayList<Long> commandTimeDifference = new ArrayList<>();
 
-
-    private static final DecimalFormat df = new DecimalFormat("0.00");
     /**
      * all test results
      * [{"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] },{...}]
      */
-     private ArrayList<String> testResults;
+    private ArrayList<String> testResults;
     private int commandAmount = 0;
     private long AllCommandTimeSum = 0;
     private String Request_Statistics_Content = "";
@@ -76,7 +73,6 @@ public class RequestStatsReport {
     }
 
     public void preprocessing() throws ParseException {
-
 
 
         for (int i = 0; i < testResults.size(); i++) {
@@ -291,15 +287,15 @@ public class RequestStatsReport {
 
             //P90
             int positionP90 = getPercentilePosition(0.9, sizeCommandTimeDataArrayNow);
-            line_90.add( commandTimeData.get(i).get(positionP90) );
+            line_90.add(commandTimeData.get(i).get(positionP90));
 
             //P95
             int positionP95 = getPercentilePosition(0.95, sizeCommandTimeDataArrayNow);
-            line_95.add( commandTimeData.get(i).get(positionP95) );
+            line_95.add(commandTimeData.get(i).get(positionP95));
 
             //P99
             int positionP99 = getPercentilePosition(0.99, sizeCommandTimeDataArrayNow);
-            line_99.add( commandTimeData.get(i).get(positionP99) );
+            line_99.add(commandTimeData.get(i).get(positionP99));
 
             Min.add(commandTimeData.get(i).get(0));
             Max.add(commandTimeData.get(i).get(sizeCommandTimeDataArrayNow - 1));
@@ -328,7 +324,6 @@ public class RequestStatsReport {
         }
 
         Request_Statistics_Content = requestStatisticsContentStringBuilder.toString();
-
 
 
     }

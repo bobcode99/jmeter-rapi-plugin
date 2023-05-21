@@ -9,11 +9,15 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.TimeZone;
+
 public class Html {
 
     public void generate(String reportPath, Map<String, Object> reportDataMap) throws IOException, TemplateException {
@@ -52,7 +56,7 @@ public class Html {
             template.process(reportDataMap, writer);
             writer.close();
 
-            if(!Desktop.isDesktopSupported())//check if Desktop is supported by Platform or not
+            if (!Desktop.isDesktopSupported())//check if Desktop is supported by Platform or not
             {
                 System.out.println("not supported open file");
                 return;
@@ -60,7 +64,7 @@ public class Html {
             Desktop desktop = Desktop.getDesktop();
 
             //checks file exists or not
-            if(file.exists()){
+            if (file.exists()) {
                 desktop.open(file);              //opens the specified file
             }
 

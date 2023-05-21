@@ -11,7 +11,6 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TimelineReport {
 
@@ -60,13 +59,13 @@ public class TimelineReport {
     private String responseTimeData = "";
     private String dataset = "";
     private String yAxisData = "";
-    private String javascript = "";
+    private final String javascript = "";
 
     private int checkValue = 0;
 
     private int hitTypeCount = 0;
     private int commandNumber = 0;
-    private Map<String, Object> reportContentMap = new HashMap<>();
+    private final Map<String, Object> reportContentMap = new HashMap<>();
 
 
     public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
