@@ -123,25 +123,6 @@
 </div>
 
 <div class="requestTitle">
-    <label><b> Amount Of Request</b></label><br />
-</div>
-
-<div class="contentAmountOfRequest">
-    ${stringRepresentationAmountOfRequest}
-    <p>after sum:</p>
-    ${totalSumAmountOfRequest}
-</div>
-
-
-<div class="requestTitle">
-    <label><b> Web Vitals Stats Report</b></label><br />
-</div>
-
-<!--web-vitals table-->
-${webVitalsTable}
-
-
-<div class="requestTitle">
     <label><b> Request Stats Report</b></label><br />
 </div>
 
@@ -271,8 +252,23 @@ ${checkBox}
 					}
 				}
 			}
+		});
+      var index;
+
+		var filterLegend = function (item, chart) {
+			if (report.data.datasets[item.datasetIndex].hidden == true)
+				return false;
+
+			else if (report.data.datasets[item.datasetIndex].hidden == false)
+				return true;
 		}
-      });
+
+		function updataChart(data) {
+			index = data.value;
+			report.data.datasets[index].hidden = !(report.data.datasets[index].hidden);
+			report.options.plugins.legend.labels.filter = filterLegend;
+			report.update();
+		}
 	</script>
 </body>
 

@@ -323,8 +323,6 @@ public class RequestStatsReport {
 
         }
 
-        webVitalsAnalyzeResultTable = wvObjToTable(this.webVitalsAnalyzeResult);
-
         Request_Statistics_Content = requestStatisticsContentStringBuilder.toString();
 
 
