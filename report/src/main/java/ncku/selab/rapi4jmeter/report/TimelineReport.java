@@ -47,7 +47,6 @@ public class TimelineReport {
 
     // merge EachTestResponseTime into ResponseTime
     //for chartjs
-    private final ArrayList<String> lineColor = new ArrayList<>();
     private final ArrayList<String> dataName = new ArrayList<>();
     private final ArrayList<String> labelName = new ArrayList<>();
     private final ArrayList<String> yaxis = new ArrayList<>();
@@ -205,10 +204,6 @@ public class TimelineReport {
         int endHour = Integer.parseInt(endTime.substring(9, 11));
         int startMinute = Integer.parseInt(startTime.substring(12, 14));
         int endMinute = Integer.parseInt(endTime.substring(12, 14));
-
-
-        Random rgb = new Random();
-
 
         JSONObject json, cases, records;
         JSONArray recordsArray, casesArray;
@@ -965,33 +960,27 @@ public class TimelineReport {
 
         yAxisData += userData + hitData + errorData + responseTimeData;
 
-
-        //Generate line color
-        for (int i = 0; i < ((hitTypeCount + 1) * 3 + (hitTypeCount + 1) * 7); i++) {
-
-            String hex = "";
-
-            hex += "#" + Integer.toHexString(rgb.nextInt(255)) + Integer.toHexString(rgb.nextInt(255))
-                    + Integer.toHexString(rgb.nextInt(255));
-
-            lineColor.add(hex);
-
-        }
-
-
         //Dataset information
         dataset += "datasets: [\r\n";
 
         int numberOfShow = 0;
 
+        Random randomNum = new Random();
+
         for (int i = 0; i < dataName.size(); i++) {
+
+            //Generate line color
+            // create a big random number - maximum is ffffff (hex) = 16777215 (dez)
+            int nextInt = randomNum.nextInt(0xffffff + 1);
+            // format it as hexadecimal string (with hashtag and leading zeros)
+            String colorCode = String.format("#%06x", nextInt);
 
             dataset += "\t{\r\n";
 
             dataset += "\t\tdata: " + dataName.get(i) + ",\r\n";
             dataset += "\t\tlabel: \"" + labelName.get(i) + "\",\r\n";
-            dataset += "\t\tbackgroundColor: \"" + lineColor.get(i) + "\",\r\n";
-            dataset += "\t\tborderColor: \"" + lineColor.get(i) + "\",\r\n";
+            dataset += "\t\tbackgroundColor: \"" + colorCode + "\",\r\n";
+            dataset += "\t\tborderColor: \"" + colorCode + "\",\r\n";
             dataset += "\t\tfill: false,\r\n";
 
             if (i % (hitTypeCount + 1) == 0 && numberOfShow < 4) {
