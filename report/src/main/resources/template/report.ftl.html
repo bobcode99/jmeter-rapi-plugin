@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Rapi report</title>
+    <!--Chart.js JS CDN-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+    <style>
+		.reportTitle {
+			position: absolute;
+
+			font-size: 25px;
+		}
+
+		img {
+			position: absolute;
+			margin-top: 30px;
+			width: 200px;
+			height: 200px;
+		}
+
+		.requestTitle {
+			margin-top: 20px;
+			margin-left: 700px;
+			margin-bottom: 20px;
+			font-size: 30px;
+		}
+
+		.contentAmountOfRequest {
+			margin-top: 20px;
+			margin-left: 700px;
+			margin-bottom: 20px;
+			font-size: 20px;
+		}
+
+		.timelineTitle {
+			margin-top: 20px;
+			margin-left: 730px;
+			margin-bottom: 20px;
+			font-size: 30px;
+		}
+
+		.request {
+			margin-left: 240px;
+			border-top: 30px solid DodgerBlue;
+			border-bottom: 1px solid gray;
+			border-left: 1px solid gray;
+			border-right: 1px solid gray;
+			border-radius: 10px;
+		}
+
+		.checkbox {
+			margin-top: 40px;
+			position: absolute;
+			left: 0px;
+			width: 100%;
+		}
+
+		.chart {
+			background-color: white;
+			border-top: 50px solid DodgerBlue;
+			border-bottom: 1px solid gray;
+			border-left: 1px solid gray;
+			border-right: 1px solid gray;
+			border-radius: 10px;
+			margin-top: 20px;
+			margin-left: 240px;
+
+			position: absolute;
+			width: 100%;
+		}
+
+		table,
+		th,
+		td {
+			background-color: white;
+			border: 1px solid black;
+		}
+
+		body {
+			background-color: rgb(246, 239, 239);
+		}
+
+		.tooltip {
+			position: relative;
+		}
+
+		.tooltip .tooltiptext {
+			visibility: hidden;
+			width: 120px;
+			background-color: white;
+			color: black;
+			opacity: 0.7;
+			text-align: center;
+			border-radius: 6px;
+			padding: 5px 0;
+
+			/* Position the tooltip */
+			position: absolute;
+			z-index: 1;
+			bottom: 100%;
+			/* Change from top to bottom */
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		.tooltip:hover .tooltiptext {
+			visibility: visible;
+		}
+	</style>
+</head>
+
+<body>
+<div class="reportTitle">
+    <label><b>Rapi-JMeter Report</b></label>
+</div>
+<div class="img">
+    <img src="https://sideex.io/static/media/sideex_logo.2728ffac.png" />
+</div>
+
+<div class="requestTitle">
+    <label><b> Request Stats Report</b></label><br />
+</div>
+
+<!--Request Stats Report table-->
+
+<table width="1250" class="request">
+    <tr>
+        <th class="tooltip">
+            <span class="tooltiptext">The name of the Rapi command.</span>
+            Element Label&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        <th class="tooltip">
+            <span class="tooltiptext">Average timing of the command execute.</span>
+            Avg. Time(ms)&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        <th class="tooltip">
+            <span class="tooltiptext">Average timing of the command started.</span>
+            Avg. Hits/s&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        <th class="tooltip">
+            <span class="tooltiptext">The total number of commands executed.</span>
+            #Samples&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        <th class="tooltip">
+				<span class="tooltiptext">90th percentile: Time value with 90% of samples below or
+					equal.</span>
+            90% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        <th class="tooltip">
+				<span class="tooltiptext">95th percentile: Time value with 95% of samples below or
+					equal.</span>
+            95% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        <th class="tooltip">
+				<span class="tooltiptext">99th percentile: Time value with 99% of samples below or
+					equal.</span>
+            99% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        <th class="tooltip">
+            <span class="tooltiptext">The shortest time of the samples.</span>
+            Min Time(ms)&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        <th class="tooltip">
+            <span class="tooltiptext">The maximum time of the samples.</span>
+            Max Time(ms)&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        <th class="tooltip">
+            <span class="tooltiptext">Error Percentage of the samples.</span>
+            Error Percentage&nbsp;&nbsp;&nbsp;&nbsp;
+        </th>
+        ${requestStatisticsContent}
+    </tr>
+</table>
+
+<div class="timelineTitle">
+    <label><b> Timeline Report</b></label><br />
+</div>
+
+${checkBox}
+
+<div>
+    <canvas id="line-chart" class="chart" width="1250" height="900"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+		var commandNumber = ${ commandNumber };
+            ${ yAxisData }
+
+    var report = new Chart(document.getElementById("line-chart"), {
+			type: 'line',
+			data: {
+				labels: ${listXAxisLabel},
+				datasets: ${datasets}
+			},
+			options: {
+				responsive: false, spanGaps: true,
+				plugins: {
+					legend: {
+						onClick: (e) => e.stopPropagation(),
+						position: 'bottom',
+						labels: {
+							filter: function (legendItem, chartData) {
+								if (legendItem.datasetIndex === 0 || legendItem.datasetIndex === (commandNumber) ||
+									legendItem.datasetIndex === (commandNumber * 2) || legendItem.datasetIndex === (commandNumber * 3))
+									return true;
+								return false;
+							}
+						}
+					}
+				}, scales: {
+					y1: {
+						type: 'linear',
+						display: true,
+						position: 'left',
+						title: {
+							display: true,
+							font: {
+								size: 20,
+								family: "Times New Roman"
+							}, text: "Virtual  Users"
+						}, beginAtZero: true
+					},
+					y2: {
+						type: 'linear',
+						display: true,
+						position: 'right',
+						title: {
+							display: true,
+							font: {
+								size: 20,
+								family: "Times New Roman"
+							}, text: "Response  Time (ms)"
+						}, beginAtZero: true
+					},
+					y3: {
+						type: 'linear',
+						display: true,
+						position: 'right',
+						title: {
+							display: true,
+							font: {
+								size: 20,
+								family: "Times New Roman"
+							}, text: "Hit/s"
+						}, beginAtZero: true
+					}
+				}
+			}
+		});
+      var index;
+
+		var filterLegend = function (item, chart) {
+			if (report.data.datasets[item.datasetIndex].hidden == true)
+				return false;
+
+			else if (report.data.datasets[item.datasetIndex].hidden == false)
+				return true;
+		}
+
+		function updataChart(data) {
+			index = data.value;
+			report.data.datasets[index].hidden = !(report.data.datasets[index].hidden);
+			report.options.plugins.legend.labels.filter = filterLegend;
+			report.update();
+		}
+	</script>
+</body>
+
+</html>

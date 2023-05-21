@@ -314,31 +314,17 @@ public class RequestStatsReport {
 
     public void generateHtml() {
 
-        StringBuilder DataContent = new StringBuilder();
+        StringBuilder requestStatisticsContentStringBuilder = new StringBuilder();
 
 
         for (int i = 0; i < commandList.size(); i++) {
 
-            DataContent.append("  </tr>\r\n" + "  <tr>\r\n" + "    <td>").append(commandList.get(i)).append("</td>\r\n").append("    <td>").append(AvgTime.get(i)).append("</td>\r\n").append("    <td>").append(Hit.get(i)).append("</td>\r\n").append("    <td>").append(commandTimeData.get(i).size()).append("</td>\r\n").append("    <td>").append(line_90.get(i)).append("</td>\r\n").append("    <td>").append(line_95.get(i)).append("</td>\r\n").append("    <td>").append(line_99.get(i)).append("</td>\r\n").append("    <td>").append(Min.get(i)).append("</td>\r\n").append("    <td>").append(Max.get(i)).append("</td>\r\n").append("    <td>").append(errorPercentage.get(i)).append("%</td>\r\n");
+            requestStatisticsContentStringBuilder.append("  </tr>\r\n" + "  <tr>\r\n" + "    <td>").append(commandList.get(i)).append("</td>\r\n").append("    <td>").append(AvgTime.get(i)).append("</td>\r\n").append("    <td>").append(Hit.get(i)).append("</td>\r\n").append("    <td>").append(commandTimeData.get(i).size()).append("</td>\r\n").append("    <td>").append(line_90.get(i)).append("</td>\r\n").append("    <td>").append(line_95.get(i)).append("</td>\r\n").append("    <td>").append(line_99.get(i)).append("</td>\r\n").append("    <td>").append(Min.get(i)).append("</td>\r\n").append("    <td>").append(Max.get(i)).append("</td>\r\n").append("    <td>").append(errorPercentage.get(i)).append("%</td>\r\n");
 
         }
 
-        Request_Statistics_Content +=
-                "<table width = \"1250\"  class=\"request\">\r\n" +
-                        "  <tr>\r\n" +
-                        "    <td>Element Label&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        "    <td>Avg. Time(ms)&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        "    <td>Avg. Hits/s&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        "    <td>#Samples&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        "    <td>90% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        "    <td>95% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        "    <td>99% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        "    <td>Min Time(ms)&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        "    <td>Max Time(ms)&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        "    <td>Error Percentage&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n" +
-                        DataContent +
-                        "  </tr>\r\n" +
-                        "</table>";
+        Request_Statistics_Content = requestStatisticsContentStringBuilder.toString();
+
 
 
     }
