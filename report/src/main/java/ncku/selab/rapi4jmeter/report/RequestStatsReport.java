@@ -15,24 +15,29 @@ import java.util.stream.Collectors;
 
 public class RequestStatsReport {
 
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+    // experimental use
+    final JSONObject webVitalsAnalyzeResult = new JSONObject();
+    // Combine allResults and rating data for each metric
+    final Map<String, List<Double>> wvAllResultsMap = new HashMap<>();
+    final Map<String, Map<String, Integer>> wvRatingMap = new HashMap<>();
+    // experimental use
+
     private final TimelineReport report = new TimelineReport();
     private final JsonParse jsonParse = new JsonParse();
     private final ArrayList<String> commandList = new ArrayList<>();
     private final ArrayList<Integer> commandSamplesCount = new ArrayList<>();
-
     /**
      * Sum of individual times per command
      * [openCommandTimeSum, clickAtCommandTimeSum1, ...]
      * [10190, 678, 5072, 804, 162, 3666, 3936, 93, 3230, 4085, 609, 20062, 2229, 68]
      */
     private final ArrayList<Long> commandTotalTime = new ArrayList<>();
-
     /**
      * Record each command data time
      * [[openCommandTime1, openCommandTime2],[clickAtCommandTime1, clickAtCommandTime2], [...]]
      */
     private final ArrayList<ArrayList<Long>> commandTimeData = new ArrayList<>();
-
     /**
      * record each Command Hit timestamp
      * Command Hit means timestamp that command start
@@ -52,17 +57,14 @@ public class RequestStatsReport {
     private final ArrayList<Integer> error = new ArrayList<>();
     private final ArrayList<Double> errorPercentage = new ArrayList<>();
     private final ArrayList<Long> commandTimeDifference = new ArrayList<>();
-
-    private final ArrayList<Long> allAmountOfRequest = new ArrayList<>();
-
-    private static final DecimalFormat df = new DecimalFormat("0.00");
-
     // experimental use
-    final JSONObject webVitalsAnalyzeResult = new JSONObject();
-
+    private final ArrayList<Long> allAmountOfRequest = new ArrayList<>();
     private String webVitalsAnalyzeResultTable = "";
     // experimental use
+<<<<<<< main
 
+=======
+>>>>>>> Reformat code
     /**
      * all test results
      * [{"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] },{...}]
@@ -72,11 +74,75 @@ public class RequestStatsReport {
     private long AllCommandTimeSum = 0;
     private String Request_Statistics_Content = "";
 
+    // experimental use
+    public static String wvObjToTable(JSONObject jsonObj) {
+        df.setRoundingMode(RoundingMode.UP);
+
+        StringBuilder sb = new StringBuilder();
+
+        // loop through each metric in the JSON object
+        for (Object key : jsonObj.keySet()) {
+            String metric = key.toString();
+            JSONObject values = (JSONObject) jsonObj.get(key);
+            String avg = df.format(values.get("avg"));
+            String min = df.format(values.get("min"));
+            String med = df.format(values.get("med"));
+            String max = df.format(values.get("max"));
+            String p90 = df.format(values.get("p90"));
+            String p95 = df.format(values.get("p95"));
+            String p99 = df.format(values.get("p99"));
+
+            // get the rating values
+            JSONObject rating = (JSONObject) values.get("rating");
+            String good = rating.containsKey("good") ? rating.get("good").toString() : "";
+            String needsImp = rating.containsKey("needs-improvement") ? rating.get("needs-improvement").toString() : "";
+            String poor = rating.containsKey("poor") ? rating.get("poor").toString() : "";
+
+            // build the HTML table row
+            sb.append("<tr>");
+            sb.append("<td>").append(metric).append("</td>");
+            sb.append("<td>").append(avg).append("</td>");
+            sb.append("<td>").append(min).append("</td>");
+            sb.append("<td>").append(med).append("</td>");
+            sb.append("<td>").append(max).append("</td>");
+            sb.append("<td>").append(p90).append("</td>");
+            sb.append("<td>").append(p95).append("</td>");
+            sb.append("<td>").append(p99).append("</td>");
+            StringBuilder ratingString = new StringBuilder();
+            ratingString.append("<td>");
+            boolean needAddBreak = false;
+            if (!good.isEmpty()) {
+                needAddBreak = true;
+                ratingString.append("good: ").append(good);
+            }
+            if (!needsImp.isEmpty()) {
+                if (needAddBreak) {
+                    ratingString.append("<br/>");
+                }
+                needAddBreak = true;
+                ratingString.append("needs-improvement: ").append(needsImp);
+            }
+            if (!poor.isEmpty()) {
+                if (needAddBreak) {
+                    ratingString.append("<br/>");
+                }
+                ratingString.append("poor: ").append(poor);
+            }
+            ratingString.append("</td>");
+            sb.append(ratingString);
+            sb.append("</tr>");
+        }
+        sb.append("</table>");
+        return sb.toString();
+    }
+    // experimental use
+
+
     public void startGenerateReport(String path, ArrayList<String> testResults) throws ParseException, java.text.ParseException {
         this.testResults = testResults;
 
         parse();
-        report.generate_report(Request_Statistics_Content, webVitalsAnalyzeResultTable, jsonParse, this.testResults, commandList, this.allAmountOfRequest , path);
+        report.generate_report(Request_Statistics_Content, webVitalsAnalyzeResultTable, jsonParse, this.testResults, commandList, this.allAmountOfRequest, path);
     }
 
     public void preprocessing() throws ParseException {
@@ -95,7 +161,7 @@ public class RequestStatsReport {
             JSONArray recordsArray = jsonParse.getRecordsArray(i);
 
             // experimental use
-            if(haveAmountOfRequest) {
+            if (haveAmountOfRequest) {
                 allAmountOfRequest.add(jsonParse.getAmountOfRequest(i));
             }
             // experimental use
@@ -148,15 +214,10 @@ public class RequestStatsReport {
 
     }
 
-
-    // Combine allResults and rating data for each metric
-    final Map<String, List<Double>> wvAllResultsMap = new HashMap<>();
-    final Map<String, Map<String, Integer>> wvRatingMap = new HashMap<>();
-
     // experimental use
     private void analyzeWebVitals(JSONObject needAnalyzeWVObject) {
 
-        for (String metric : new String[] { "FCP", "LCP", "CLS", "TTFB", "FID", "INP" }) {
+        for (String metric : new String[]{"FCP", "LCP", "CLS", "TTFB", "FID", "INP"}) {
             if (needAnalyzeWVObject.containsKey(metric)) {
                 JSONObject metricObject = (JSONObject) needAnalyzeWVObject.get(metric);
                 JSONArray allResultsArray = (JSONArray) metricObject.get("allResults");
@@ -188,12 +249,7 @@ public class RequestStatsReport {
     }
 
     public void parse() throws ParseException, java.text.ParseException {
-
-
         jsonParse.addTestResults(this.testResults);
-
-
-//        ArrayList<String> browserVersions = jsonParse.getBrowserVersion(); // no use this
 
         preprocessing();
 
@@ -219,7 +275,6 @@ public class RequestStatsReport {
 //            System.out.println("webVitalsResultAnalyze: " + webVitalsResultAnalyze.toString());
             analyzeWebVitals(webVitalsResultAnalyze);
             // experimental use
-
 
 
             JSONArray casesArray = (JSONArray) json.get("cases");
@@ -285,7 +340,7 @@ public class RequestStatsReport {
         for (String metric : wvAllResultsMap.keySet()) {
             List<Double> allResultsList = wvAllResultsMap.get(metric);
             Collections.sort(allResultsList);
-            double avg =  allResultsList.stream().mapToDouble(Double::doubleValue).average().orElse(Double.NaN);
+            double avg = allResultsList.stream().mapToDouble(Double::doubleValue).average().orElse(Double.NaN);
             double min = allResultsList.get(0);
             double med = allResultsList.get(allResultsList.size() / 2);
             double max = allResultsList.get(allResultsList.size() - 1);
@@ -323,8 +378,6 @@ public class RequestStatsReport {
         }
 //        System.out.println("webVitalsAnalyzeResult: " + webVitalsAnalyzeResult);
         // experimental use
-
-
 
 
         for (ArrayList<Long> longArrayList : commandTime) {
@@ -397,15 +450,15 @@ public class RequestStatsReport {
 
             //P90
             int positionP90 = getPercentilePosition(0.9, sizeCommandTimeDataArrayNow);
-            line_90.add( commandTimeData.get(i).get(positionP90) );
+            line_90.add(commandTimeData.get(i).get(positionP90));
 
             //P95
             int positionP95 = getPercentilePosition(0.95, sizeCommandTimeDataArrayNow);
-            line_95.add( commandTimeData.get(i).get(positionP95) );
+            line_95.add(commandTimeData.get(i).get(positionP95));
 
             //P99
             int positionP99 = getPercentilePosition(0.99, sizeCommandTimeDataArrayNow);
-            line_99.add( commandTimeData.get(i).get(positionP99) );
+            line_99.add(commandTimeData.get(i).get(positionP99));
 
             Min.add(commandTimeData.get(i).get(0));
             Max.add(commandTimeData.get(i).get(sizeCommandTimeDataArrayNow - 1));
@@ -421,85 +474,25 @@ public class RequestStatsReport {
 
     }
 
-    // experimental use
-    public static String wvObjToTable(JSONObject jsonObj){
-        df.setRoundingMode(RoundingMode.UP);
-
-        StringBuilder sb = new StringBuilder();
-
-        // loop through each metric in the JSON object
-        for (Object key : jsonObj.keySet()) {
-            String metric = key.toString();
-            JSONObject values = (JSONObject) jsonObj.get(key);
-            String avg = df.format(values.get("avg"));
-            String min = df.format(values.get("min"));
-            String med = df.format(values.get("med"));
-            String max = df.format(values.get("max"));
-            String p90 = df.format(values.get("p90"));
-            String p95 = df.format(values.get("p95"));
-            String p99 = df.format(values.get("p99"));
-
-            // get the rating values
-            JSONObject rating = (JSONObject) values.get("rating");
-            String good = rating.containsKey("good") ? rating.get("good").toString() : "";
-            String needsImp = rating.containsKey("needs-improvement") ? rating.get("needs-improvement").toString() : "";
-            String poor = rating.containsKey("poor") ? rating.get("poor").toString() : "";
-
-            // build the HTML table row
-            sb.append("<tr>");
-            sb.append("<td>").append(metric).append("</td>");
-            sb.append("<td>").append(avg).append("</td>");
-            sb.append("<td>").append(min).append("</td>");
-            sb.append("<td>").append(med).append("</td>");
-            sb.append("<td>").append(max).append("</td>");
-            sb.append("<td>").append(p90).append("</td>");
-            sb.append("<td>").append(p95).append("</td>");
-            sb.append("<td>").append(p99).append("</td>");
-            StringBuilder ratingString = new StringBuilder();
-            ratingString.append("<td>");
-            boolean needAddBreak = false;
-            if(!good.isEmpty()){
-                needAddBreak = true;
-                ratingString.append("good: ").append(good);
-            }
-            if (!needsImp.isEmpty()) {
-                if(needAddBreak) {
-                    ratingString.append("<br/>");
-                }
-                needAddBreak = true;
-                ratingString.append("needs-improvement: ").append(needsImp);
-            }
-            if (!poor.isEmpty()) {
-                if(needAddBreak) {
-                    ratingString.append("<br/>");
-                }
-                ratingString.append("poor: ").append(poor);
-            }
-            ratingString.append("</td>");
-            sb.append(ratingString);
-            sb.append("</tr>");
-        }
-        sb.append("</table>");
-        return sb.toString();
-    }
-    // experimental use
-
-
     public void generateHtml() {
 
         StringBuilder requestStatisticsContentStringBuilder = new StringBuilder();
 
 
         for (int i = 0; i < commandList.size(); i++) {
-
             requestStatisticsContentStringBuilder.append("  </tr>\r\n" + "  <tr>\r\n" + "    <td>").append(commandList.get(i)).append("</td>\r\n").append("    <td>").append(AvgTime.get(i)).append("</td>\r\n").append("    <td>").append(Hit.get(i)).append("</td>\r\n").append("    <td>").append(commandTimeData.get(i).size()).append("</td>\r\n").append("    <td>").append(line_90.get(i)).append("</td>\r\n").append("    <td>").append(line_95.get(i)).append("</td>\r\n").append("    <td>").append(line_99.get(i)).append("</td>\r\n").append("    <td>").append(Min.get(i)).append("</td>\r\n").append("    <td>").append(Max.get(i)).append("</td>\r\n").append("    <td>").append(errorPercentage.get(i)).append("%</td>\r\n");
-
         }
 
+        // experimental use
         webVitalsAnalyzeResultTable = wvObjToTable(this.webVitalsAnalyzeResult);
+        // experimental use
+
+<<<<<<< main
+=======
         Request_Statistics_Content = requestStatisticsContentStringBuilder.toString();
 
 
+>>>>>>> Reformat code
     }
 
 }
