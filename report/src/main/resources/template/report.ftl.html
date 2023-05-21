@@ -155,7 +155,21 @@
 </div>
 
 <!--web-vitals table-->
-${webVitalsTable}
+<table width="1250" class="request">
+    <tr>
+        <th class="tooltip"><span class="tooltiptext">WebVitals metrics Name.</span>Metric</th>
+        <th class="tooltip"><span class="tooltiptext">Average time of the metric.</span>avg</th>
+        <th class="tooltip"><span class="tooltiptext">The shortest time of the metric.</span>min</th>
+        <th class="tooltip"><span class="tooltiptext">The median time of the metric.</span>med</th>
+        <th class="tooltip"><span class="tooltiptext">The maximum time of the metric.</span>max</th>
+        <th class="tooltip"><span class="tooltiptext">90th percentile</span>p90</th>
+        <th class="tooltip"><span class="tooltiptext">95th percentile</span>p95</th>
+        <th class="tooltip"><span class="tooltiptext">99th percentile</span>p99</th>
+        <th class="tooltip"><span class="tooltiptext">The rating as to whether the metric value thresholds of the metric.</span>rating</th>
+    </tr>
+    ${webVitalsTable}
+</table>
+
 
 <div class="requestTitle">
     <label><b> Request Stats Report</b></label><br />
@@ -192,18 +206,15 @@ ${requestStatisticsContent}
             #Samples&nbsp;&nbsp;&nbsp;&nbsp;
         </th>
         <th class="tooltip">
-				<span class="tooltiptext">90th percentile: Time value with 90% of samples below or
-					equal.</span>
+				<span class="tooltiptext">90th percentile: Time value with 90% of samples below or equal.</span>
             90% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;
         </th>
         <th class="tooltip">
-				<span class="tooltiptext">95th percentile: Time value with 95% of samples below or
-					equal.</span>
+				<span class="tooltiptext">95th percentile: Time value with 95% of samples below or equal.</span>
             95% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;
         </th>
         <th class="tooltip">
-				<span class="tooltiptext">99th percentile: Time value with 99% of samples below or
-					equal.</span>
+				<span class="tooltiptext">99th percentile: Time value with 99% of samples below or equal.</span>
             99% line(ms)&nbsp;&nbsp;&nbsp;&nbsp;
         </th>
         <th class="tooltip">

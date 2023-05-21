@@ -426,8 +426,6 @@ public class RequestStatsReport {
         df.setRoundingMode(RoundingMode.UP);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<table  width = \"1250\"  class=\"request\"><tr>");
-        sb.append("<th>Metric</th><th>avg</th><th>min</th><th>med</th><th>max</th><th>p90</th><th>p95</th><th>p99</th><th>rating</th></tr>");
 
         // loop through each metric in the JSON object
         for (Object key : jsonObj.keySet()) {
