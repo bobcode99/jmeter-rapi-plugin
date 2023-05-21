@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Rapi report</title>
+    <!--Chart.js JS CDN-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+    <style>
+		.reportTitle {
+			position: absolute;
+
+			font-size: 25px;
+		}
+
+		img {
+			position: absolute;
+			margin-top: 30px;
+			width: 200px;
+			height: 200px;
+		}
+
+		.requestTitle {
+			margin-top: 20px;
+			margin-left: 700px;
+			margin-bottom: 20px;
+			font-size: 30px;
+		}
+
+		.contentAmountOfRequest {
+			margin-top: 20px;
+			margin-left: 700px;
+			margin-bottom: 20px;
+			font-size: 20px;
+		}
+
+		.timelineTitle {
+			margin-top: 20px;
+			margin-left: 730px;
+			margin-bottom: 20px;
+			font-size: 30px;
+		}
+
+		.request {
+			margin-left: 240px;
+			border-top: 30px solid DodgerBlue;
+			border-bottom: 1px solid gray;
+			border-left: 1px solid gray;
+			border-right: 1px solid gray;
+			border-radius: 10px;
+		}
+
+		.checkbox {
+			margin-top: 40px;
+			position: absolute;
+			left: 0px;
+			width: 100%;
+		}
+
+		.chart {
+			background-color: white;
+			border-top: 50px solid DodgerBlue;
+			border-bottom: 1px solid gray;
+			border-left: 1px solid gray;
+			border-right: 1px solid gray;
+			border-radius: 10px;
+			margin-top: 20px;
+			margin-left: 240px;
+
+			position: absolute;
+			width: 100%;
+		}
+
+		table,
+		th,
+		td {
+			background-color: white;
+			border: 1px solid black;
+		}
+
+		body {
+			background-color: rgb(246, 239, 239);
+		}
+	</style>
+</head>
+
+<body>
+<div class="reportTitle">
+    <label><b>Rapi-JMeter Report</b></label>
+</div>
+<div class="img">
+    <img src="https://sideex.io/static/media/sideex_logo.2728ffac.png" />
+</div>
+
+<div class="requestTitle">
+    <label><b> Amount Of Request</b></label><br />
+</div>
+
+<div class="contentAmountOfRequest">
+    ${stringRepresentationAmountOfRequest}
+    <p>after sum:</p>
+    ${totalSumAmountOfRequest}
+</div>
+
+
+<div class="requestTitle">
+    <label><b> Web Vitals Stats Report</b></label><br />
+</div>
+
+<!--web-vitals table-->
+${webVitalsTable}
+
+
+<div class="requestTitle">
+    <label><b> Request Stats Report</b></label><br />
+</div>
+
+${requestStatisticsContent}
+
+<div class="timelineTitle">
+    <label><b> Timeline Report</b></label><br />
+</div>
+
+${checkBox}
+
+${scriptTag}
+
+</body>
+
+</html>

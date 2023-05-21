@@ -3,15 +3,15 @@
  */
 package ncku.selab.rapi4jmeter.report;
 
+import freemarker.template.TemplateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TimelineReport {
 
@@ -52,8 +52,6 @@ public class TimelineReport {
     private final ArrayList<String> yaxis = new ArrayList<>();
     private JsonParse jsonFile = null;
     private ArrayList<String> jsonNames = new ArrayList<>();
-
-    private String Timeline_Report_Content = "";
     private String Request_Statistics_Content = "";
     private String checkBox = "";
     private String userData = "";
@@ -72,6 +70,10 @@ public class TimelineReport {
     public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
                                 ArrayList<String> command, String reportPath) throws java.text.ParseException {
 
+    private String WebVitalsAnalyzeResultTable;
+    public void generate_report(String requestStats, String webVitalsAnalyzeResultTable, JsonParse jsonParseFile, ArrayList<String> testResults,
+                                ArrayList<String> command, ArrayList<Long> allAmountOfRequest,String reportPath) throws java.text.ParseException {
+
         jsonNames = testResults;
         Request_Statistics_Content = requestStats;
         jsonFile = jsonParseFile;
@@ -79,16 +81,25 @@ public class TimelineReport {
         for (int i = 1; i < command.size(); i++)
             commandList.add(command.get(i));
 
-        try {
+        reportContentMap.put("stringRepresentationAmountOfRequest", stringRepresentationAmountOfRequest);
+        reportContentMap.put("webVitalsTable", WebVitalsAnalyzeResultTable);
+        reportContentMap.put("totalSumAmountOfRequest", totalSumAmountOfRequest);
+        reportContentMap.put("requestStatisticsContent", Request_Statistics_Content);
 
+
+        try {
             parse();
 
             // start generate report at here
-            html.generate(Timeline_Report_Content, reportPath);
+            html.generate(reportPath, reportContentMap);
 
         } catch (ParseException e1) {
 
             e1.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (TemplateException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -746,9 +757,10 @@ public class TimelineReport {
 
         checkBox += "</div>\r\n\n";
 
+        reportContentMap.put("checkBox", checkBox);
 
+        // userData
         userData += "const allUsers = [";
-
 
         for (String labelTime : xAxisLabel) {
 
@@ -1133,6 +1145,7 @@ public class TimelineReport {
                 + "} "
                 + "</script>\r\n";
 
+        reportContentMap.put("scriptTag", javascript);
 
         Timeline_Report_Content += "<!DOCTYPE html>\r\n"
                 + "<html>\r\n"
@@ -1165,6 +1178,12 @@ public class TimelineReport {
                 + "		margin-left: 700px;\r\n"
                 + "		margin-bottom: 20px;\r\n"
                 + "		font-size: 30px;\r\n"
+                + "	}\r\n"
+                + " .contentAmountOfRequest{\r\n"
+                + "		margin-top: 20px;\r\n"
+                + "		margin-left: 700px;\r\n"
+                + "		margin-bottom: 20px;\r\n"
+                + "		font-size: 20px;\r\n"
                 + "	}\r\n"
                 + "\r\n"
                 + "	.timelineTitle{\r\n"
@@ -1222,6 +1241,27 @@ public class TimelineReport {
                 + "<div class=\"img\">\r\n"
                 + "	<img src=\"https://sideex.io/static/media/sideex_logo.2728ffac.png\" >\r\n"
                 + "</div>"
+
+                + "<div class=\"requestTitle\">\r\n"
+                + "	<label><b> Amount Of Request</b></label><br>\r\n"
+                + "</div>\r\n"
+
+                + "<div class=\"contentAmountOfRequest\">\r\n"
+
+                + stringRepresentationAmountOfRequest
+                + "<p> after sum: </p>"
+                + totalSumAmountOfRequest
+
+                + "</div>\r\n"
+
+                + "<div  class=\"requestTitle\">\r\n"
+                + "\r\n"
+                + "	<label><b> Web Vitals Stats Report</b></label><br>\r\n"
+                + "\r\n"
+                + "</div>\n"
+
+                + WebVitalsAnalyzeResultTable
+
 
                 + "<div  class=\"requestTitle\">\r\n"
                 + "\r\n"
