@@ -20,8 +20,24 @@ public class RequestStatsReport {
     private final JsonParse jsonParse = new JsonParse();
     private final ArrayList<String> commandList = new ArrayList<>();
     private final ArrayList<Integer> commandSamplesCount = new ArrayList<>();
+
+    /**
+     * Sum of individual times per command
+     * [openCommandTimeSum, clickAtCommandTimeSum1, ...]
+     * [10190, 678, 5072, 804, 162, 3666, 3936, 93, 3230, 4085, 609, 20062, 2229, 68]
+     */
     private final ArrayList<Long> commandTotalTime = new ArrayList<>();
+
+    /**
+     * Record each command data time
+     * [[openCommandTime1, openCommandTime2],[clickAtCommandTime1, clickAtCommandTime2], [...]]
+     */
     private final ArrayList<ArrayList<Long>> commandTimeData = new ArrayList<>();
+
+    /**
+     * record each Command Hit timestamp
+     * Command Hit means timestamp that command start
+     */
     private final ArrayList<ArrayList<Long>> commandTime = new ArrayList<>();
     private final ArrayList<Long> AllTime = new ArrayList<>();
     private final ArrayList<Integer> AvgTime = new ArrayList<>();
@@ -31,14 +47,20 @@ public class RequestStatsReport {
     private final ArrayList<Long> line_99 = new ArrayList<>();
     private final ArrayList<Long> Min = new ArrayList<>();
     private final ArrayList<Long> Max = new ArrayList<>();
+    /**
+     * record each Command error
+     */
     private final ArrayList<Integer> error = new ArrayList<>();
     private final ArrayList<Double> errorPercentage = new ArrayList<>();
     private final ArrayList<Long> commandTimeDifference = new ArrayList<>();
 
 
-    // all test results
-    // [{"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] },{...}]
-    private ArrayList<String> testResults;
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+    /**
+     * all test results
+     * [{"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] },{...}]
+     */
+     private ArrayList<String> testResults;
     private int commandAmount = 0;
     private long AllCommandTimeSum = 0;
     private String Request_Statistics_Content = "";
@@ -110,6 +132,16 @@ public class RequestStatsReport {
 
     }
 
+    private int getPercentilePosition(double rankFloat, int arraySize) {
+        int position = (int) Math.round(arraySize * rankFloat);
+        position--;
+        if (position >= arraySize)
+            position--;
+        if (position < 0)
+            position = 0;
+
+        return position;
+    }
 
     public void parse() throws ParseException, java.text.ParseException {
 
@@ -121,19 +153,21 @@ public class RequestStatsReport {
 
         preprocessing();
 
-        int position, errorCount;
+        int errorCount;
         double percentage;
 
         for (int j = 0; j < commandAmount; j++) {
-            commandTimeData.add(new ArrayList<>());
-            commandTime.add(new ArrayList<>());
-            error.add(0);
-            commandTotalTime.add(0L);
+
+            // generate empty array for each command data time
+            // [[3924, 3170, 3096], [81, 397, 200], [1260, 2018, 1794], [237, 380, 187], [28, 106, 28], [1245, 1315, 1106], [1006, 1151, 1779], [33, 31, 29], [1072, 1037, 1121], [1952, 1063, 1070], [492, 38, 79], [10030, 10032], [973, 1256], [31, 37]]
+            commandTimeData.add(new ArrayList<>()); // [[], [], [], [], [], [], [], [], [], [], [], [], [], []]
+            commandTime.add(new ArrayList<>()); // [[], [], [], [], [], [], [], [], [], [], [], [], [], []]
+            error.add(0); // [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            commandTotalTime.add(0L); // [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         }
 
 
         for (int i = 0; i < testResults.size(); i++) {
-
             JSONObject json = jsonParse.getJson(i);
             JSONArray casesArray = (JSONArray) json.get("cases");
             JSONObject cases = (JSONObject) casesArray.get(0);
@@ -249,63 +283,33 @@ public class RequestStatsReport {
 
         for (int i = 0; i < commandList.size(); i++) {
 
+            int sizeCommandTimeDataArrayNow = commandTimeData.get(i).size();
 
             //Avg
             int avg = (int) Math.round((double) commandTotalTime.get(i) / commandSamplesCount.get(i));
             AvgTime.add(avg);
 
-            System.out.println("avg: " + avg);
-            System.out.println("AvgTime: " + AvgTime);
-
             //P90
-            position = (int) Math.round(commandTimeData.get(i).size() * 0.9);
-            position--;
-            if (position >= commandTimeData.get(i).size())
-                position--;
-            if (position < 0)
-                position = 0;
-            line_90.add(commandTimeData.get(i).get(position));
-
-            System.out.println("line_90: " + line_90);
-            System.out.println("position: " + position);
+            int positionP90 = getPercentilePosition(0.9, sizeCommandTimeDataArrayNow);
+            line_90.add( commandTimeData.get(i).get(positionP90) );
 
             //P95
-            position = (int) Math.round(commandTimeData.get(i).size() * 0.95);
-            position--;
-            if (position >= commandTimeData.get(i).size())
-                position--;
-            if (position < 0)
-                position = 0;
-            line_95.add(commandTimeData.get(i).get(position));
-
-            System.out.println("line_95: " + line_95);
-            System.out.println("position: " + position);
+            int positionP95 = getPercentilePosition(0.95, sizeCommandTimeDataArrayNow);
+            line_95.add( commandTimeData.get(i).get(positionP95) );
 
             //P99
-            position = (int) Math.round(commandTimeData.get(i).size() * 0.99);
-            position--;
-            if (position >= commandTimeData.get(i).size())
-                position--;
-            if (position < 0)
-                position = 0;
-            line_99.add(commandTimeData.get(i).get(position));
-
-            System.out.println("line_99: " + line_99);
-            System.out.println("position: " + position);
+            int positionP99 = getPercentilePosition(0.99, sizeCommandTimeDataArrayNow);
+            line_99.add( commandTimeData.get(i).get(positionP99) );
 
             Min.add(commandTimeData.get(i).get(0));
-            Max.add(commandTimeData.get(i).get(commandTimeData.get(i).size() - 1));
-
+            Max.add(commandTimeData.get(i).get(sizeCommandTimeDataArrayNow - 1));
 
             percentage = (float) error.get(i) / commandSamplesCount.get(i);
             percentage = Math.round(percentage * 1000.0);
             percentage /= 10;
 
-            System.out.println("error percentage: " + percentage);
             errorPercentage.add(percentage);
-
         }
-
 
         generateHtml();
 
