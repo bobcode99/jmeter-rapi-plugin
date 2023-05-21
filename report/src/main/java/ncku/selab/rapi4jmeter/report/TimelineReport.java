@@ -84,7 +84,7 @@ public class TimelineReport {
         for (Long amount : allAmountOfRequest) {
             sumAll += amount;
         }
-        totalSumAmountOfRequest = Long.toString(sumAll);
+        String totalSumAmountOfRequest = Long.toString(sumAll);
 
         for (int i = 1; i < command.size(); i++)
             commandList.add(command.get(i));
