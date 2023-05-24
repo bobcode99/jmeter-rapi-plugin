@@ -218,7 +218,7 @@ public class RequestStatsReport {
     private void analyzeWebVitals(JSONObject needAnalyzeWVObject) {
 
         for (String metric : new String[]{"FCP", "LCP", "CLS", "TTFB", "FID", "INP"}) {
-            if (needAnalyzeWVObject.containsKey(metric)) {
+            if (needAnalyzeWVObject != null && needAnalyzeWVObject.containsKey(metric)) {
                 JSONObject metricObject = (JSONObject) needAnalyzeWVObject.get(metric);
                 JSONArray allResultsArray = (JSONArray) metricObject.get("allResults");
                 var allResultsList = wvAllResultsMap.computeIfAbsent(metric, k -> new ArrayList<>());
