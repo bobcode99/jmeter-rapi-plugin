@@ -6,8 +6,6 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Rapi report</title>
-    <!--Chart.js JS CDN-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 
     <style>
 		.reportTitle {
@@ -76,6 +74,22 @@
 			margin-left: 250px;
 			position: absolute;
 			width: 100%;
+		}
+
+		.buttonResetZoom {
+			background-color: #3080d0;
+			border: none;
+			color: white;
+			padding: 8px 16px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			position: absolute;
+			margin-top: -20px;
+			margin-left: 250px;
+			cursor: pointer;
+			border-radius: 6px;
 		}
 
 		table,
@@ -190,7 +204,15 @@ ${checkBox}
 <div>
     <canvas id="line-chart" class="chart" width="1250" height="900"></canvas>
 </div>
+
+<div>
+    <button class="buttonResetZoom" onclick="resetZoom()">Reset Zoom</button>
+</div>
+
+<!--Chart.js JS CDN-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
 
 <script>
 		var commandNumber = ${ commandNumber };
@@ -215,6 +237,20 @@ ${checkBox}
 									return true;
 								return false;
 							}
+						}
+					},
+					zoom: {
+						zoom: {
+							wheel: {
+								enabled: true,
+							},
+							pinch: {
+								enabled: true
+							},
+							drag: {
+								enabled: true
+							},
+							mode: 'x',
 						}
 					}
 				}, scales: {
@@ -272,6 +308,10 @@ ${checkBox}
 			report.data.datasets[index].hidden = !(report.data.datasets[index].hidden);
 			report.options.plugins.legend.labels.filter = filterLegend;
 			report.update();
+		}
+
+		function resetZoom(){
+			report.resetZoom();
 		}
 	</script>
 </body>
