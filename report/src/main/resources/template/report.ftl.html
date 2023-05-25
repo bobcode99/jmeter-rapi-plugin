@@ -176,16 +176,6 @@
 </div>
 
 <!--Request Stats Report table-->
-<div>
-    <button class="buttonResetZoom" onclick="resetZoom()">Reset Zoom</button>
-</div>
-
-<!--Chart.js JS CDN-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>-->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
-
-${requestStatisticsContent}
 
 <table width="1250" class="request">
     <tr>
@@ -240,11 +230,22 @@ ${requestStatisticsContent}
 ${checkBox}
 
 <div>
+    <button class="buttonResetZoom" onclick="resetZoom()">Reset Zoom</button>
+</div>
+
+<div>
     <canvas id="line-chart" class="chart" width="1250" height="900"></canvas>
 </div>
+
+<!--Chart.js JS CDN-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
 
 <script>
+		var commandNumber = ${ commandNumber };
+        ${ yAxisData }
+
 		var report = new Chart(document.getElementById("line-chart"), {
 			type: 'line',
 			data: {
