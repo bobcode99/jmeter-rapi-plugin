@@ -61,10 +61,6 @@ public class RequestStatsReport {
     private final ArrayList<Long> allAmountOfRequest = new ArrayList<>();
     private String webVitalsAnalyzeResultTable = "";
     // experimental use
-<<<<<<< main
-
-=======
->>>>>>> Reformat code
     /**
      * all test results
      * [{"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] },{...}]
@@ -486,13 +482,9 @@ public class RequestStatsReport {
         // experimental use
         webVitalsAnalyzeResultTable = wvObjToTable(this.webVitalsAnalyzeResult);
         // experimental use
-
-<<<<<<< main
-=======
         Request_Statistics_Content = requestStatisticsContentStringBuilder.toString();
 
 
->>>>>>> Reformat code
     }
 
 }

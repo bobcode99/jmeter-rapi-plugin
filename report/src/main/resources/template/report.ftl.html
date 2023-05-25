@@ -236,7 +236,16 @@ ${requestStatisticsContent}
 <div class="timelineTitle">
     <label><b> Timeline Report</b></label><br />
 </div>
-    var report = new Chart(document.getElementById("line-chart"), {
+
+${checkBox}
+
+<div>
+    <canvas id="line-chart" class="chart" width="1250" height="900"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+		var report = new Chart(document.getElementById("line-chart"), {
 			type: 'line',
 			data: {
 				labels: ${listXAxisLabel},
@@ -311,89 +320,6 @@ ${requestStatisticsContent}
 				}
 			}
 		});
-      var index;
-
-${checkBox}
-
-<div>
-    <canvas id="line-chart" class="chart" width="1250" height="900"></canvas>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-		var commandNumber = ${ commandNumber };
-            ${ yAxisData }
-
-		var report = new Chart(document.getElementById("line-chart"), {
-			type: 'line',
-			data: {
-				labels: ${ listXAxisLabel },
-			datasets: ${ datasets }
-          	},
-		options: {
-			responsive: false, spanGaps: true,
-				plugins: {
-				legend: {
-					onClick: (e) => e.stopPropagation(),
-						position: 'bottom',
-							labels: {
-						filter: function (legendItem, chartData) {
-							if (legendItem.datasetIndex === 0 || legendItem.datasetIndex === (commandNumber) ||
-								legendItem.datasetIndex === (commandNumber * 2) || legendItem.datasetIndex === (commandNumber * 3))
-								return true;
-							return false;
-						}
-					}
-				}
-			}, scales: {
-				y1: {
-					type: 'linear',
-						display: true,
-							position: 'left',
-								title: {
-						display: true,
-							font: {
-							size: 20,
-								family: "Times New Roman"
-						}, text: "Virtual  Users"
-					}, beginAtZero: true
-				},
-				y2: {
-					type: 'linear',
-						display: true,
-							position: 'right',
-								title: {
-						display: true,
-							font: {
-							size: 20,
-								family: "Times New Roman"
-						}, text: "Response  Time (ms)"
-					}, beginAtZero: true
-				},
-				y3: {
-					type: 'linear',
-						display: true,
-							position: 'right',
-								title: {
-						display: true,
-							font: {
-							size: 20,
-								family: "Times New Roman"
-						}, text: "Hit/s"
-					}, beginAtZero: true
-				}
-			}
-		});
-
-</script>
-
-		function updateChart(data) {
-			index = data.value;
-			report.data.datasets[index].hidden = !(report.data.datasets[index].hidden);
-			report.options.plugins.legend.labels.filter = filterLegend;
-			report.update();
-		}
-          });
 		var index;
 
 		var filterLegend = function (item, chart) {

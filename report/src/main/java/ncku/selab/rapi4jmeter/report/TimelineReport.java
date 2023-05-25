@@ -67,8 +67,6 @@ public class TimelineReport {
 
     public String stringRepresentationAmountOfRequest;
 
-    private Map<String, Object> reportContentMap = new HashMap<>();
-
     public void generate_report(String requestStats, String webVitalsAnalyzeResultTable, JsonParse jsonParseFile, ArrayList<String> testResults,
                                 ArrayList<String> command, ArrayList<Long> allAmountOfRequest,String reportPath) throws java.text.ParseException {
 
