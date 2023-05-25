@@ -46,7 +46,7 @@ public class TimelineReport {
 
 
     // merge EachTestResponseTime into ResponseTime
-    //for chartjs
+    //for Chart.js
     private final ArrayList<String> dataName = new ArrayList<>();
     private final ArrayList<String> labelName = new ArrayList<>();
     private final ArrayList<String> yaxis = new ArrayList<>();
@@ -67,15 +67,12 @@ public class TimelineReport {
 
     public String stringRepresentationAmountOfRequest;
 
-    private String WebVitalsAnalyzeResultTable;
     private Map<String, Object> reportContentMap = new HashMap<>();
 
     public void generate_report(String requestStats, String webVitalsAnalyzeResultTable, JsonParse jsonParseFile, ArrayList<String> testResults,
                                 ArrayList<String> command, ArrayList<Long> allAmountOfRequest,String reportPath) throws java.text.ParseException {
 
         jsonNames = testResults;
-        Request_Statistics_Content = requestStats;
-        WebVitalsAnalyzeResultTable = webVitalsAnalyzeResultTable;
         jsonFile = jsonParseFile;
 
         stringRepresentationAmountOfRequest = allAmountOfRequest.stream().map(String::valueOf).collect(Collectors.joining(", ", "[", "]"));
@@ -90,9 +87,9 @@ public class TimelineReport {
             commandList.add(command.get(i));
 
         reportContentMap.put("stringRepresentationAmountOfRequest", stringRepresentationAmountOfRequest);
-        reportContentMap.put("webVitalsTable", WebVitalsAnalyzeResultTable);
+        reportContentMap.put("webVitalsTable", webVitalsAnalyzeResultTable);
         reportContentMap.put("totalSumAmountOfRequest", totalSumAmountOfRequest);
-        reportContentMap.put("requestStatisticsContent", Request_Statistics_Content);
+        reportContentMap.put("requestStatisticsContent", requestStats);
 
 
         try {
@@ -459,7 +456,7 @@ public class TimelineReport {
                     users.set(j, userCount);
                 }
 
-                //Active User for each command, 5 timepoints and 4 intervals
+                //Active User for each command, 5 time points and 4 intervals
                 for (int k = 0; k < recordsArray.size(); k++) {
 
                     String commandTimeOne = commandTimePoint.get(i).get(k);
@@ -1032,136 +1029,6 @@ public class TimelineReport {
         dataset += "\t]\r\n";
 
         reportContentMap.put("datasets", dataset);
-
-    }
-
-
-    public void generateHtml() {
-
-
-        javascript += "<div>\r\n"
-                + "      <canvas id=\"line-chart\" class=\"chart\" width=\"1250\" height=\"900\"></canvas>\r\n"
-                + "    </div>"
-                + "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script> \r\n <script>\r\n"
-                + "var  commandNumber = "
-                + commandNumber
-                + ";\n"
-                + yAxisData
-                + "var report = new Chart(document.getElementById(\"line-chart\"), {\r\n"
-                + "  type: 'line',\r\n"
-                + "  data: {\r\n";
-
-
-        javascript += "labels: [";
-
-        for (int i = 0; i < xAxisLabel.size(); i++) {
-
-            javascript += "\"" + xAxisLabel.get(i) + "\",";
-
-            if (i == xAxisLabel.size() / 2)
-                javascript += "\n\t\t";
-
-        }
-
-        javascript += "],\r\n";
-
-        javascript += dataset
-                + "  },\r\n"
-                + "  options: {\r\n"
-                + "	   responsive: false,"
-                + "    spanGaps: true,\r\n"
-                + "    plugins: {\r\n"
-                + "  legend: {\r\n"
-                + "		   onClick: (e) => e.stopPropagation(),\r\n"
-                + "		   position: 'bottom',\r\n"
-                + "		   labels: {\r\n"
-                + "			filter: function(legendItem, chartData) {\r\n"
-                + "                if (legendItem.datasetIndex === 0 || legendItem.datasetIndex === (commandNumber) || \r\n"
-                + "					legendItem.datasetIndex === (commandNumber * 2) || legendItem.datasetIndex === (commandNumber * 3))\r\n"
-                + "                    return true;\r\n"
-                + "            return false;\r\n"
-                + "            }\r\n"
-                + "		   }\r\n"
-                + "      }\r\n"
-                + "    },"
-                + "    scales: {\r\n"
-                + "	  y1: {\r\n"
-                + "        type: 'linear',\r\n"
-                + "        display: true,\r\n"
-                + "        position: 'left',\r\n"
-                + "	  title: {\r\n"
-                + "			display: true,\r\n"
-                + "	   font: {\r\n"
-                + "			size: 20,\r\n"
-                + "            family: \"Times New Roman\"\r\n"
-                + "        },"
-                + "			text: \"Virtual  Users\"\r\n"
-                + "		},"
-                + "		beginAtZero: true\r\n"
-                + "      },\r\n"
-                + "	  y2: {\r\n"
-                + "        type: 'linear',\r\n"
-                + "        display: true,\r\n"
-                + "        position: 'right',\r\n"
-                + "	  title: {\r\n"
-                + "			display: true,\r\n"
-                + "	   font: {\r\n"
-                + "			size: 20,\r\n"
-                + "            family: \"Times New Roman\"\r\n"
-                + "        },"
-                + "			text: \"Response  Time (ms)\"\r\n"
-                + "		},"
-                + "		beginAtZero: true\r\n"
-                + "      },\r\n"
-                + "	  y3: {\r\n"
-                + "        type: 'linear',\r\n"
-                + "        display: true,\r\n"
-                + "        position: 'right',\r\n"
-                + "	  title: {\r\n"
-                + "			display: true,\r\n"
-                + "	   font: {\r\n"
-                + "			size: 20,\r\n"
-                + "            family: \"Times New Roman\"\r\n"
-                + "        },"
-                + "			text: \"Hit/s\"\r\n"
-                + "		},"
-                + "		beginAtZero: true\r\n"
-                + "      }"
-                + "	}\r\n"
-                + "  }\r\n"
-                + "});\r\n\n";
-
-
-        javascript += "var index;\r\n"
-                + "\r\n"
-                + "var filterLegend = function(item, chart) {\r\n"
-                + "\r\n"
-                + "	\r\n"
-                + "\r\n"
-                + "	if(report.data.datasets[item.datasetIndex].hidden == true)		\r\n"
-                + "		return false;\r\n"
-                + "	\r\n"
-                + "    else if(report.data.datasets[item.datasetIndex].hidden == false) \r\n"
-                + " 		return true;\r\n"
-                + "\r\n"
-                + "}\r\n"
-                + "\r\n"
-                + "\r\n"
-                + "\r\n"
-                + "function updataChart(data){\r\n"
-                + "  \r\n"
-                + "	index = data.value;\r\n"
-                + "\r\n"
-                + "	report.data.datasets[index].hidden = !(report.data.datasets[index].hidden);\r\n"
-                + "	\r\n"
-                + "	report.options.plugins.legend.labels.filter = filterLegend;\r\n"
-                + "\r\n"
-                + "    \r\n"
-                + "  report.update();\r\n"
-                + "} "
-                + "</script>\r\n";
-
-        reportContentMap.put("scriptTag", javascript);
 
     }
 
