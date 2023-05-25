@@ -991,8 +991,6 @@ public class TimelineReport {
 
             dataset += "\t\tdata: " + dataName.get(i) + ",\r\n";
             dataset += "\t\tlabel: \"" + labelName.get(i) + "\",\r\n";
-            dataset += "\t\tbackgroundColor: \"" + colorCode + "\",\r\n";
-            dataset += "\t\tborderColor: \"" + colorCode + "\",\r\n";
             dataset += "\t\tfill: false,\r\n";
 
             if (i % (hitTypeCount + 1) == 0 && numberOfShow < 4) {
