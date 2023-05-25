@@ -51,7 +51,6 @@ public class TimelineReport {
     private final ArrayList<String> yaxis = new ArrayList<>();
     private JsonParse jsonFile = null;
     private ArrayList<String> jsonNames = new ArrayList<>();
-    private String Request_Statistics_Content = "";
     private String checkBox = "";
     private String userData = "";
     private String hitData = "";
@@ -59,12 +58,10 @@ public class TimelineReport {
     private String responseTimeData = "";
     private String dataset = "";
     private String yAxisData = "";
-    private final String javascript = "";
 
     private int checkValue = 0;
 
     private int hitTypeCount = 0;
-    private int commandNumber = 0;
     private final Map<String, Object> reportContentMap = new HashMap<>();
 
 
@@ -72,13 +69,12 @@ public class TimelineReport {
                                 ArrayList<String> command, String reportPath) throws java.text.ParseException {
 
         jsonNames = testResults;
-        Request_Statistics_Content = requestStats;
         jsonFile = jsonParseFile;
 
         for (int i = 1; i < command.size(); i++)
             commandList.add(command.get(i));
 
-        reportContentMap.put("requestStatisticsContent", Request_Statistics_Content);
+        reportContentMap.put("requestStatisticsContent", requestStats);
 
 
         try {
@@ -90,9 +86,7 @@ public class TimelineReport {
         } catch (ParseException e1) {
 
             e1.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (TemplateException e) {
+        } catch (IOException | TemplateException e) {
             throw new RuntimeException(e);
         }
 
@@ -303,7 +297,7 @@ public class TimelineReport {
 
         // initial Hit Data
         hitTypeCount = commandList.size();
-        commandNumber = hitTypeCount + 1;
+        int commandNumber = hitTypeCount + 1;
         reportContentMap.put("commandNumber", commandNumber);
 
 
@@ -706,11 +700,11 @@ public class TimelineReport {
                     commandName = commandList.get(j - 1);
 
                 if (j == 0)
-                    checkBox += "<input type=\"checkbox\" onclick=\"updataChart(this)\" value=\"" + checkValue
+                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
                             + "\"checked=\"\">";
 
                 else
-                    checkBox += "<input type=\"checkbox\" onclick=\"updataChart(this)\" value=\"" + checkValue
+                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
                             + "\">";
 
                 checkBox += "<label>" + commandName + "</label><br>\r\n";
@@ -734,11 +728,11 @@ public class TimelineReport {
             for (int j = 0; j < 7; j++) {
 
                 if (i == 0 && j == 0)
-                    checkBox += "<input type=\"checkbox\" onclick=\"updataChart(this)\" value=\"" + checkValue
+                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
                             + "\"checked=\"\">";
 
                 else
-                    checkBox += "<input type=\"checkbox\" onclick=\"updataChart(this)\" value=\"" + checkValue
+                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
                             + "\">";
 
                 if (j == 0)
@@ -973,7 +967,6 @@ public class TimelineReport {
                 responseTimeData += "]\r\n";
 
             }
-
 
         yAxisData += userData + hitData + errorData + responseTimeData;
         reportContentMap.put("yAxisData", yAxisData);
