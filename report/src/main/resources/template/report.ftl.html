@@ -76,7 +76,26 @@
 			width: 100%;
 		}
 
-		.buttonResetZoom {
+		.buttonContainer {
+			position: absolute;
+			margin-top: -20px;
+			margin-left: 250px;
+		}
+
+		.firstButton {
+			border: none;
+			background-color: #3080d0;
+			color: white;
+			padding: 8px 16px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			cursor: pointer;
+			border-radius: 6px;
+		}
+
+		.additionalButton {
 			background-color: #3080d0;
 			border: none;
 			color: white;
@@ -85,9 +104,7 @@
 			text-decoration: none;
 			display: inline-block;
 			font-size: 16px;
-			position: absolute;
-			margin-top: -20px;
-			margin-left: 250px;
+			margin-left: 8px; /* Adjust the margin as needed */
 			cursor: pointer;
 			border-radius: 6px;
 		}
@@ -205,9 +222,14 @@ ${checkBox}
     <canvas id="line-chart" class="chart" width="1250" height="900"></canvas>
 </div>
 
-<div>
-    <button class="buttonResetZoom" onclick="resetZoom()">Reset Zoom</button>
+<div class="buttonContainer">
+    <button class="firstButton" onclick="toogleZoom()">Toogle zoom</button>
+    <button class="additionalButton" onclick="tooglePan()">Toogle pan</button>
+    <button class="additionalButton" onclick="resetZoom()">Reset zoom</button>
 </div>
+
+<!--Hammer.js JS CDN-->
+<script src=" https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js "></script>
 
 <!--Chart.js JS CDN-->
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>-->
@@ -221,9 +243,35 @@ ${checkBox}
 
 		Chart.register(autocolors);
         const saturate = (color, value) => Chart.helpers.color(color).saturate(value).rgbString();
+        const zoomOptions = {
+			pan: {
+				enabled: true,
+				mode: 'x',
+			},
+			zoom: {
+				wheel: {
+					enabled: true,
+					speed: 0.05
+				},
+				pinch: {
+					enabled: true
+				},
+				drag: {
+					enabled: true
+				},
+				mode: 'x',
+			},
+			onZoomComplete({chart}) {
+			// This update is needed to display up to date zoom level in the title.
+			// Without this, previous zoom level is displayed.
+			// The reason is: title uses the same beforeUpdate hook, and is evaluated before zoom.
+				chart.update('none');
+			}
+	  	}
+		const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled';
+		const zoomStatus = (chart) => (zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled') + ' (' + chart.getZoomLevel() + 'x)';
 
-
-		var report = new Chart(document.getElementById("line-chart"), {
+		var reportChart = new Chart(document.getElementById("line-chart"), {
 			type: 'line',
 			data: {
 				labels: ${listXAxisLabel},
@@ -244,19 +292,11 @@ ${checkBox}
 							}
 						}
 					},
-					zoom: {
-						zoom: {
-							wheel: {
-								enabled: true,
-							},
-							pinch: {
-								enabled: true
-							},
-							drag: {
-								enabled: true
-							},
-							mode: 'x',
-						}
+					zoom: zoomOptions,
+					title: {
+						display: true,
+						position: 'bottom',
+						text: (ctx) => 'Zoom: ' + zoomStatus(ctx.chart) + ', Pan: ' + panStatus()
 					},
 					autocolors: {
                         enabled: true,
@@ -313,22 +353,32 @@ ${checkBox}
       var index;
 
 		var filterLegend = function (item, chart) {
-			if (report.data.datasets[item.datasetIndex].hidden == true)
+			if (reportChart.data.datasets[item.datasetIndex].hidden == true)
 				return false;
 
-			else if (report.data.datasets[item.datasetIndex].hidden == false)
+			else if (reportChart.data.datasets[item.datasetIndex].hidden == false)
 				return true;
 		}
 
 		function updateChart(data) {
 			index = data.value;
-			report.data.datasets[index].hidden = !(report.data.datasets[index].hidden);
-			report.options.plugins.legend.labels.filter = filterLegend;
-			report.update();
+			reportChart.data.datasets[index].hidden = !(reportChart.data.datasets[index].hidden);
+			reportChart.options.plugins.legend.labels.filter = filterLegend;
+			reportChart.update();
 		}
 
 		function resetZoom(){
-			report.resetZoom();
+			reportChart.resetZoom();
+		}
+		function tooglePan(){
+			zoomOptions.pan.enabled = !zoomOptions.pan.enabled;
+			reportChart.update();
+		}
+		function toogleZoom(){
+			zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
+      		zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled;
+      		zoomOptions.zoom.drag.enabled = !zoomOptions.zoom.drag.enabled;
+			reportChart.update();
 		}
 	</script>
 </body>
