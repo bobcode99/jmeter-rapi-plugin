@@ -8,8 +8,6 @@ package ncku.selab.rapi.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import ncku.selab.rapi.api.config.Config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Driver {

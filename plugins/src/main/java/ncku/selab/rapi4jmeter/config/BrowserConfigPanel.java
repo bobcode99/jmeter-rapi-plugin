@@ -1,7 +1,7 @@
 package ncku.selab.rapi4jmeter.config;
 
-import org.apache.jmeter.testelement.TestElement;
 import ncku.selab.rapi4jmeter.JMeterPluginUtils;
+import org.apache.jmeter.testelement.TestElement;
 
 import javax.swing.*;
 import java.awt.*;

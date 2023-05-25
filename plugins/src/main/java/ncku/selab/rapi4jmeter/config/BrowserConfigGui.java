@@ -1,8 +1,8 @@
 package ncku.selab.rapi4jmeter.config;
 
+import ncku.selab.rapi4jmeter.JMeterPluginUtils;
 import org.apache.jmeter.config.gui.AbstractConfigGui;
 import org.apache.jmeter.testelement.TestElement;
-import ncku.selab.rapi4jmeter.JMeterPluginUtils;
 
 import java.awt.*;
 

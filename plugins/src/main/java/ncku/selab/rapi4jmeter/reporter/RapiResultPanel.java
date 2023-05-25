@@ -1,7 +1,7 @@
 package ncku.selab.rapi4jmeter.reporter;
 
-import org.apache.jmeter.gui.util.FilePanel;
 import ncku.selab.rapi4jmeter.report.ReportGenerator;
+import org.apache.jmeter.gui.util.FilePanel;
 
 import javax.swing.*;
 import java.awt.*;
