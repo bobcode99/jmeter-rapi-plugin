@@ -45,7 +45,7 @@ public class TimelineReport {
 
 
     // merge EachTestResponseTime into ResponseTime
-    //for chartjs
+    //for Chart.js
     private final ArrayList<String> dataName = new ArrayList<>();
     private final ArrayList<String> labelName = new ArrayList<>();
     private final ArrayList<String> yaxis = new ArrayList<>();
@@ -94,14 +94,7 @@ public class TimelineReport {
 
     public void preprocessing() {
 
-        statisticsName.add("Avg");
-        statisticsName.add("Min");
-        statisticsName.add("Max");
-        statisticsName.add("Median");
-        statisticsName.add("P90");
-        statisticsName.add("P95");
-        statisticsName.add("P99");
-
+        statisticsName.addAll(Arrays.asList("Avg", "Min", "Max", "Median", "P90", "P95", "P99"));
         // data name
         dataName.add("allUsers");
         yaxis.add("y1");
@@ -128,13 +121,7 @@ public class TimelineReport {
         for (int i = 0; i < 7; i++)
             yaxis.add("y2");
 
-        dataName.add("allAvg");
-        dataName.add("allMin");
-        dataName.add("allMax");
-        dataName.add("allMedian");
-        dataName.add("allP90");
-        dataName.add("allP95");
-        dataName.add("allP99");
+        dataName.addAll(Arrays.asList("allAvg", "allMin", "allMax", "allMedian", "allP90", "allP95", "allP99"));
 
         for (int i = 0; i < hitTypeCount; i++)
             for (int j = 0; j < 7; j++) {
@@ -207,11 +194,6 @@ public class TimelineReport {
         JSONObject json, cases, records;
         JSONArray recordsArray, casesArray;
         Long commandTime;
-
-
-        //Calculate total cases HitTypeCount
-        for (int i = 0; i < fileSize; i++)
-            recordsArray = jsonFile.getRecordsArray(i);
 
 
         //Data of User
@@ -453,9 +435,9 @@ public class TimelineReport {
                     commandCalendarOne.setTime(commandDateOne);
                     commandCalendarTwo.setTime(commandDateTwo);
 
-                    if (eachTimeIntervalPoint.before(commandCalendarOne) || eachTimeIntervalPoint.after(commandCalendarTwo))
+                    if (eachTimeIntervalPoint.before(commandCalendarOne) || eachTimeIntervalPoint.after(commandCalendarTwo)) {
                         continue;
-                    else {
+                    } else {
 
 
                         userCount = commandUsers.get(j).get(k);
@@ -472,8 +454,6 @@ public class TimelineReport {
         for (int i = 0; i < fileSize; i++) {
 
             json = jsonFile.getJson(i);
-//            
-
 
             startTime = json.get("startTime").toString();
             startTime += ":000";
@@ -716,43 +696,35 @@ public class TimelineReport {
 
         //checkbox of Response Time
 
-        checkBox += "<label for=\"Response Time\"><b> Response Time</b></label><br>\r\n";
+        StringBuilder checkBoxResponseTimeBuilder = new StringBuilder();
+        checkBoxResponseTimeBuilder.append("<label for=\"Response Time\"><b> Response Time</b></label><br>\r\n");
 
         for (int i = 0; i < (hitTypeCount + 1); i++) {
-
-            if (i == 0)
-                checkBox += "<label><b> ALL</b></label><br>\r\n";
-            else
-                checkBox += "<label><b> " + commandList.get(i - 1) + "</b></label><br>\r\n";
+            checkBoxResponseTimeBuilder.append("<label><b> ").append((i == 0) ? "ALL" : commandList.get(i - 1)).append("</b></label><br>\r\n");
 
             for (int j = 0; j < 7; j++) {
+                checkBoxResponseTimeBuilder.append("<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"").append(checkValue).append("\"");
 
-                if (i == 0 && j == 0)
-                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
-                            + "\"checked=\"\">";
+                if (i == 0 && j == 0) {
+                    checkBoxResponseTimeBuilder.append(" checked=\"\">");
+                } else {
+                    checkBoxResponseTimeBuilder.append(">");
+                }
 
-                else
-                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
-                            + "\">";
+                checkBoxResponseTimeBuilder.append("<label>").append(statisticsName.get(j)).append("</label>");
 
-                if (j == 0)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else if (j == 1)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else if (j == 2)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else if (j == 3)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label><br>\r\n";
-                else if (j == 4)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else if (j == 5)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else checkBox += "<label>" + statisticsName.get(j) + "</label><br>\r\n";
+                if (j == 3 || j == 6) {
+                    checkBoxResponseTimeBuilder.append("<br>\r\n");
+                } else {
+                    checkBoxResponseTimeBuilder.append("\r\n");
+                }
 
                 checkValue++;
-
             }
         }
+
+        String checkBoxResponseTimeString = checkBoxResponseTimeBuilder.toString();
+        checkBox += checkBoxResponseTimeString;
 
         checkBox += "</div>\r\n\n";
 
@@ -977,15 +949,7 @@ public class TimelineReport {
 
         int numberOfShow = 0;
 
-        Random randomNum = new Random();
-
         for (int i = 0; i < dataName.size(); i++) {
-
-            //Generate line color
-            // create a big random number - maximum is ffffff (hex) = 16777215 (dez)
-            int nextInt = randomNum.nextInt(0xffffff + 1);
-            // format it as hexadecimal string (with hashtag and leading zeros)
-            String colorCode = String.format("#%06x", nextInt);
 
             dataset += "\t{\r\n";
 

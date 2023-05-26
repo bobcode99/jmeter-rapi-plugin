@@ -13,30 +13,8 @@ import java.util.ArrayList;
 
 public class JsonParse {
 
-//    private final ArrayList<String> browserVersions = new ArrayList<>(); // no use this
-
     // all test results [{}, {}, {}]
     private ArrayList<String> testResults = new ArrayList<>();
-
-//    public ArrayList<String> getBrowserVersion() throws ParseException {
-//
-//        // only get index 0, that non index 0 browsers result will be ignored
-//        String testResult = testResults.get(0);
-//        Object browserObj = new JSONParser().parse(testResult);
-//
-//        JSONObject jsonBrowserObj = (JSONObject) browserObj;
-//
-//        System.out.println("jsonBrowserObj: " + jsonBrowserObj);
-//        JSONArray jsonArray = (JSONArray) jsonBrowserObj.get("reports");
-//
-//        for (Object o : jsonArray) {
-//            JSONObject jsonReportContent = (JSONObject) o;
-//            String browserVersionName = (String) jsonReportContent.get("browser");
-//            browserVersions.add(browserVersionName);
-//        }
-//
-//        return browserVersions;
-//    }
 
     public JSONObject getJson(int index) throws ParseException {
 
