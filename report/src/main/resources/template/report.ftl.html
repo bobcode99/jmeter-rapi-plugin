@@ -242,10 +242,15 @@ ${checkBox}
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-autocolors"></script>
 <script>
 		var commandNumber = ${ commandNumber };
         ${ yAxisData }
+        const autocolors = window['chartjs-plugin-autocolors'];
+
+		Chart.register(autocolors);
+        const saturate = (color, value) => Chart.helpers.color(color).saturate(value).rgbString();
+
 
 		var report = new Chart(document.getElementById("line-chart"), {
 			type: 'line',
@@ -281,7 +286,19 @@ ${checkBox}
 							},
 							mode: 'x',
 						}
-					}
+					},
+					autocolors: {
+                        enabled: true,
+						mode: 'dataset',
+						offset: 5,
+						customize(context) {
+						    const colors = context.colors;
+                            return {
+                                background: saturate(colors.background, 0.6),
+                                border: saturate(colors.border, 0.6)
+                            };
+						}
+                  }
 				}, scales: {
 					y1: {
 						type: 'linear',
