@@ -275,7 +275,24 @@ ${checkBox}
 			type: 'line',
 			data: {
 				labels: ${listXAxisLabel},
-				datasets: ${datasets}
+				datasets: [
+                    <#assign numberOfShow = 0>
+                    <#list dataName as data>
+                        {
+                            data: ${data},
+                            label: "${labelName[data_index]}",
+                            fill: false,
+                            <#if data_index % (hitTypeCount + 1) == 0 && numberOfShow < 4>
+                            hidden: false,
+                            <#assign numberOfShow = numberOfShow + 1>
+                            <#else>
+                            hidden: true,
+                            </#if>
+                            pointRadius: 3,
+                            yAxisID: "${yaxis[data_index]}"
+                        }<#if data_index != dataName?size - 1>,</#if>
+                    </#list>
+				]
 			},
 			options: {
 				responsive: false, spanGaps: true, animation: false,

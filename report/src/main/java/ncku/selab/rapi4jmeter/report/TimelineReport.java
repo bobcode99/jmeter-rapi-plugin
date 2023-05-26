@@ -279,6 +279,7 @@ public class TimelineReport {
 
         // initial Hit Data
         hitTypeCount = commandList.size();
+        reportContentMap.put("hitTypeCount", hitTypeCount);
         int commandNumber = hitTypeCount + 1;
         reportContentMap.put("commandNumber", commandNumber);
 
@@ -943,40 +944,11 @@ public class TimelineReport {
         yAxisData += userData + hitData + errorData + responseTimeData;
         reportContentMap.put("yAxisData", yAxisData);
 
-
         //Dataset information
-        dataset += "[\r\n";
-
-        int numberOfShow = 0;
-
-        for (int i = 0; i < dataName.size(); i++) {
-
-            dataset += "\t{\r\n";
-
-            dataset += "\t\tdata: " + dataName.get(i) + ",\r\n";
-            dataset += "\t\tlabel: \"" + labelName.get(i) + "\",\r\n";
-            dataset += "\t\tfill: false,\r\n";
-
-            if (i % (hitTypeCount + 1) == 0 && numberOfShow < 4) {
-                dataset += "\t\thidden: false,\r\n";
-                numberOfShow++;
-            } else
-                dataset += "\t\thidden: true,\r\n";
-
-            dataset += "\t\tpointRadius: 3,\r\n";
-            //axis0 or axis1
-            dataset += "\t\tyAxisID: \"" + yaxis.get(i) + "\"\r\n";
-
-            if (i != dataName.size() - 1)
-                dataset += "\t},\r\n";
-            else
-                dataset += "\t}\r\n";
-        }
-
-        dataset += "\t]\r\n";
-        reportContentMap.put("datasets", dataset);
+        reportContentMap.put("dataName", dataName);
+        reportContentMap.put("labelName", labelName);
+        reportContentMap.put("yaxis", yaxis);
     }
-
 
     public String monthStringToString(String month) {
 
