@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ncku.selab</groupId>
     <artifactId>jmeter-rapi-report</artifactId>
     <version>1.0.2</version>
 
