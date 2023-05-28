@@ -56,13 +56,15 @@ public class TimelineReport {
     private String hitData = "";
     private String errorData = "";
     private String responseTimeData = "";
-    private String dataset = "";
     private String yAxisData = "";
 
     private int checkValue = 0;
 
     private int hitTypeCount = 0;
     private final Map<String, Object> reportContentMap = new HashMap<>();
+    Calendar startCalendar = Calendar.getInstance();
+    Calendar labelCalendar = Calendar.getInstance();
+
 
 
     public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
@@ -159,12 +161,26 @@ public class TimelineReport {
 
     }
 
+    private String getDateWithFormat(String timeNeedParse) {
+        return timeNeedParse.substring(0, 4) + "-" + timeNeedParse.substring(4, 6) + "-" + timeNeedParse.substring(6, 8);
+    }
+
+    private int getTimeDiffDataPosition(String labelTime) throws java.text.ParseException {
+        labelTime += ":000";
+        Date labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS").parse(labelTime);
+        labelCalendar.setTime(labelDate);
+
+        double timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+        timeDifference /= 1000;
+        timeDifference = Math.round(timeDifference);
+        return (int) timeDifference;
+    }
 
     @SuppressWarnings("StringConcatenationInLoop")
     public void parse() throws ParseException, java.text.ParseException {
 
 
-        int fileSize = jsonNames.size();
+        int fileSize = jsonNames.size(); // Means that the amount of Rapi json report that .csv have.
 
 
         for (int i = 0; i < fileSize; i++) {
@@ -179,12 +195,12 @@ public class TimelineReport {
         startTimeList.sort(null);
         endTimeList.sort(null);
 
-        String startTime = startTimeList.get(0);
-        String endTime = endTimeList.get(fileSize - 1);
+        // startTime, endTime is from the Rapi json report. The format will be YYYYMMDD HH:MM:SS
+        String startTime = startTimeList.get(0); // Ex: 20230527 19:22:37
+        String endTime = endTimeList.get(fileSize - 1); // Ex: 20230527 19:27:37
 
-
-        String startDate = startTime.substring(0, 4) + "-" + startTime.substring(4, 6) + "-" + startTime.substring(6, 8);
-        String endDate = endTime.substring(0, 4) + "-" + endTime.substring(4, 6) + "-" + endTime.substring(6, 8);
+        String startDate = getDateWithFormat(startTime);
+        String endDate = getDateWithFormat(endTime);
 
         int startHour = Integer.parseInt(startTime.substring(9, 11));
         int endHour = Integer.parseInt(endTime.substring(9, 11));
@@ -201,8 +217,10 @@ public class TimelineReport {
         String status;
 
         //Data of Hit, Error, ResponseTime
-        double timeDifference;
+//        double timeDifference;
+
         int dataPosition, commandAmount, errorCount;
+
 
         String year, month, day, EachTimeIntervalPointString;
 
@@ -216,27 +234,22 @@ public class TimelineReport {
         endPointTime += String.format("%02d", endMinute + 1);
         endPointTime += ":00";
 
-        Date currentDate;
-        Date endPointDate;
-        Calendar startCalendar = Calendar.getInstance();
         Calendar eachTimeIntervalPoint = Calendar.getInstance();
         Calendar endCalendar = Calendar.getInstance();
 
         Date caseStartDate;
         Date caseEndDate;
-        Date labelDate;
         Date commandDateOne;
         Date commandDateTwo;
 
         Calendar caseStartCalendar = Calendar.getInstance();
         Calendar caseEndCalendar = Calendar.getInstance();
-        Calendar labelCalendar = Calendar.getInstance();
         Calendar commandCalendarOne = Calendar.getInstance();
         Calendar commandCalendarTwo = Calendar.getInstance();
 
 
-        currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startDate + " " + originTime);
-        endPointDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endDate + " " + endPointTime);
+        Date currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startDate + " " + originTime);
+        Date endPointDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endDate + " " + endPointTime);
 
 
         // Original X point
@@ -474,7 +487,7 @@ public class TimelineReport {
 
 
                 //Error
-                timeDifference = (double) (caseStartCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+                double timeDifference = (double) (caseStartCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
                 timeDifference /= 1000;
                 timeDifference = Math.round(timeDifference);
                 dataPosition = (int) timeDifference;
@@ -592,7 +605,7 @@ public class TimelineReport {
             }
         }
 
-
+        // for what ?
         dataPosition = -1;
 
         // Data of response time for each command
@@ -735,15 +748,7 @@ public class TimelineReport {
         userData += "const allUsers = [";
 
         for (String labelTime : xAxisLabel) {
-
-            labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(labelTime);
-            labelCalendar.setTime(labelDate);
-
-            timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-            timeDifference /= 1000;
-            timeDifference = Math.round(timeDifference);
-            dataPosition = (int) timeDifference;
-
+            dataPosition = getTimeDiffDataPosition(labelTime);
             userData += users.get(dataPosition) + ", ";
 
         }
@@ -756,13 +761,8 @@ public class TimelineReport {
 
             for (String labelTime : xAxisLabel) {
 
-                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(labelTime);
-                labelCalendar.setTime(labelDate);
+                dataPosition = getTimeDiffDataPosition(labelTime);
 
-                timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-                timeDifference /= 1000;
-                timeDifference = Math.round(timeDifference);
-                dataPosition = (int) timeDifference;
 
                 userData += commandUsers.get(dataPosition).get(i) + ", ";
 
@@ -778,17 +778,11 @@ public class TimelineReport {
 
             hitData += "const " + dataName.get(hitTypeCount + 1 + i) + " = [";
 
-            for (String s : xAxisLabel) {
+            for (String labelTime : xAxisLabel) {
 
                 int allCount = 0;
 
-                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
-                labelCalendar.setTime(labelDate);
-
-                timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-                timeDifference /= 1000;
-                timeDifference = Math.round(timeDifference);
-                dataPosition = (int) timeDifference;
+                dataPosition = getTimeDiffDataPosition(labelTime);
 
 
                 if (i == 0) {
@@ -819,18 +813,12 @@ public class TimelineReport {
 
             errorData += "const " + dataName.get((hitTypeCount + 1) * 2 + i) + " = [";
 
-            for (String s : xAxisLabel) {
+            for (String labelTime : xAxisLabel) {
 
                 int allCount = 0, hitCount = 0;
 
 
-                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
-                labelCalendar.setTime(labelDate);
-
-                timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-                timeDifference /= 1000;
-                timeDifference = Math.round(timeDifference);
-                dataPosition = (int) timeDifference;
+                dataPosition = getTimeDiffDataPosition(labelTime);
 
                 if (i == 0) {
 
