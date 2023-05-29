@@ -66,7 +66,6 @@ public class RequestStatsReport {
     public void startGenerateReport(String path, ArrayList<String> testResults) throws ParseException, java.text.ParseException {
 //        File jsonFolder = new File(path);
 
-
         this.testResults = testResults;
 
         parse();

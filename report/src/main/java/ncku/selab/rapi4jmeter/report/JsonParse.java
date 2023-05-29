@@ -27,7 +27,7 @@ public class JsonParse {
 
         // format now:
         // {"version": {"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}, {"title": "date 16-13-30", "browserName": "firefox 112.0", ...}] }
-        // but usually will only have one browser if using this plugins
+        // but usually will only have one browser if using this jmeter-rapi-plugin
         // {"version": {"sideex": [4, 0, 0 ], "format": [1, 0, 1 ] }, "reports": [{"title": "date 16-13-30", "browserName": "chrome 112.0.5615.137", ...}] }
 
         JSONArray jsonArray = (JSONArray) json.get("reports");

@@ -20,7 +20,7 @@ import java.util.TimeZone;
 
 public class Html {
 
-    public void generate(String reportPath, Map<String, Object> reportDataMap) throws IOException, TemplateException {
+    public void generate(String reportPath, Map<String, Object> reportDataMap) throws IOException {
 
         /* ------------------------------------------------------------------------ */
         /* You should do this ONLY ONCE in the whole application life-cycle:        */
