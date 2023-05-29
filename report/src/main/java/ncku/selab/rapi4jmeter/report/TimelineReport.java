@@ -9,7 +9,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TimelineReport {
@@ -62,10 +66,11 @@ public class TimelineReport {
 
     private int hitTypeCount = 0;
     private final Map<String, Object> reportContentMap = new HashMap<>();
-    Calendar startCalendar = Calendar.getInstance();
-    Calendar labelCalendar = Calendar.getInstance();
 
-
+    final String withMilisecondsFormatString = "yyyyMMdd HH:mm:ss:SSS";
+    final DateTimeFormatter normalDateTimeFormatWithDash = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    final DateTimeFormatter withMillisecondsFormatter = DateTimeFormatter.ofPattern(withMilisecondsFormatString);
+    LocalDateTime startTimeIntervalPointLocalDateTime;
 
     public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
                                 ArrayList<String> command, String reportPath) throws java.text.ParseException {
@@ -161,20 +166,34 @@ public class TimelineReport {
 
     }
 
-    private String getDateWithFormat(String timeNeedParse) {
-        return timeNeedParse.substring(0, 4) + "-" + timeNeedParse.substring(4, 6) + "-" + timeNeedParse.substring(6, 8);
-    }
 
-    private int getTimeDiffDataPosition(String labelTime) throws java.text.ParseException {
+    private int getTimeDiffDataPosition(String labelTime) {
         labelTime += ":000";
-        Date labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS").parse(labelTime);
-        labelCalendar.setTime(labelDate);
+        String formattedDateTime = LocalDateTime.parse(labelTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS"))
+                .format(DateTimeFormatter.ofPattern(withMilisecondsFormatString));
 
-        double timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+        LocalDateTime labelLocalDate = getLocalDateTime(formattedDateTime);
+
+        double timeDifference = calculateDuration(labelLocalDate, startTimeIntervalPointLocalDateTime);
         timeDifference /= 1000;
         timeDifference = Math.round(timeDifference);
+
         return (int) timeDifference;
     }
+
+    private LocalDateTime getLocalDateTime(String timeStr) {
+        // timeStr: 20230527 19:22:37
+        LocalDate localDate = LocalDate.parse(timeStr.substring(0, 8), DateTimeFormatter.BASIC_ISO_DATE);
+        LocalTime localTimeObj = LocalTime.parse(timeStr.substring(9), DateTimeFormatter.ofPattern("HH:mm:ss:SSS"));
+
+        return LocalDateTime.of(localDate, localTimeObj);
+    }
+
+    private long calculateDuration(LocalDateTime localDateOne, LocalDateTime localDateTwo) {
+        Duration timeDifference = Duration.between(localDateOne, localDateTwo);
+        return Math.abs(timeDifference.toMillis());
+    }
+
 
     @SuppressWarnings("StringConcatenationInLoop")
     public void parse() throws ParseException, java.text.ParseException {
@@ -199,13 +218,8 @@ public class TimelineReport {
         String startTime = startTimeList.get(0); // Ex: 20230527 19:22:37
         String endTime = endTimeList.get(fileSize - 1); // Ex: 20230527 19:27:37
 
-        String startDate = getDateWithFormat(startTime);
-        String endDate = getDateWithFormat(endTime);
-
-        int startHour = Integer.parseInt(startTime.substring(9, 11));
-        int endHour = Integer.parseInt(endTime.substring(9, 11));
-        int startMinute = Integer.parseInt(startTime.substring(12, 14));
-        int endMinute = Integer.parseInt(endTime.substring(12, 14));
+        LocalDateTime startTimeLocalDateTime = getLocalDateTime(startTime);
+        LocalDateTime endTimeLocalDateTime = getLocalDateTime(endTime);
 
         JSONObject json, cases, records;
         JSONArray recordsArray, casesArray;
@@ -222,72 +236,25 @@ public class TimelineReport {
         int dataPosition, commandAmount, errorCount;
 
 
-        String year, month, day, EachTimeIntervalPointString;
-
-        String originTime = String.format("%02d", startHour);
-        originTime += ":";
-        originTime += String.format("%02d", startMinute);
-        originTime += ":00";
-
-        String endPointTime = String.format("%02d", endHour);
-        endPointTime += ":";
-        endPointTime += String.format("%02d", endMinute + 1);
-        endPointTime += ":00";
-
-        Calendar eachTimeIntervalPoint = Calendar.getInstance();
-        Calendar endCalendar = Calendar.getInstance();
-
-        Date caseStartDate;
-        Date caseEndDate;
-        Date commandDateOne;
-        Date commandDateTwo;
-
-        Calendar caseStartCalendar = Calendar.getInstance();
-        Calendar caseEndCalendar = Calendar.getInstance();
-        Calendar commandCalendarOne = Calendar.getInstance();
-        Calendar commandCalendarTwo = Calendar.getInstance();
-
-
-        Date currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startDate + " " + originTime);
-        Date endPointDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endDate + " " + endPointTime);
-
-
         // Original X point
-        startCalendar.setTime(currentDate);
-        eachTimeIntervalPoint.setTime(currentDate);
+        startTimeIntervalPointLocalDateTime = startTimeLocalDateTime.withSecond(0).withNano(0); // same with startCalendar
+        LocalDateTime eachTimeIntervalPointLocalDateTime = startTimeLocalDateTime.withSecond(0).withNano(0); // same with eachTimeIntervalPoint
+
         // Final X point
-        endCalendar.setTime(endPointDate);
+        LocalDateTime endTimeLocalDateTimeAddOneMinute = endTimeLocalDateTime.plusMinutes(1).withSecond(0).withNano(0); // same with endCalendar
 
 
         // Add x point in every 30 seconds to create X axis points
-        int timeLength = eachTimeIntervalPoint.getTime().toString().length();
-
-
-        while (eachTimeIntervalPoint.before(endCalendar)) {
-
-
-            month = eachTimeIntervalPoint.getTime().toString().substring(4, 7);
-            month = monthStringToString(month);
-            year = eachTimeIntervalPoint.getTime().toString().substring(timeLength - 4, timeLength);
-            day = eachTimeIntervalPoint.getTime().toString().substring(8, 19);
-
-            EachTimeIntervalPointString = year + "-" + month + "-" + day;
-
-
-            timeStamp.add(EachTimeIntervalPointString);
-
-            eachTimeIntervalPoint.add(Calendar.SECOND, 1);
+        while (eachTimeIntervalPointLocalDateTime.isBefore(endTimeLocalDateTimeAddOneMinute)) {
+            // 2023-05-24 13:48:00
+            String eachTimeIntervalPointString = eachTimeIntervalPointLocalDateTime.format(normalDateTimeFormatWithDash);
+            timeStamp.add(eachTimeIntervalPointString);
+            eachTimeIntervalPointLocalDateTime = eachTimeIntervalPointLocalDateTime.plusSeconds(1);
         }
 
-        //final time-point
-        month = eachTimeIntervalPoint.getTime().toString().substring(4, 7);
-        month = monthStringToString(month);
-        year = eachTimeIntervalPoint.getTime().toString().substring(timeLength - 4, timeLength);
-        day = eachTimeIntervalPoint.getTime().toString().substring(8, 19);
-
-        EachTimeIntervalPointString = year + "-" + month + "-" + day;
-
-        timeStamp.add(EachTimeIntervalPointString);
+        // final time-point
+        String eachTimeIntervalPointString = eachTimeIntervalPointLocalDateTime.format(normalDateTimeFormatWithDash);
+        timeStamp.add(eachTimeIntervalPointString);
 
 
         // initial Hit Data
@@ -354,84 +321,67 @@ public class TimelineReport {
 
         //Data of VirtualUser
         for (int i = 0; i < fileSize; i++) {
-
-
             JSONObject eachJson = jsonFile.getJson(i);
 
-
             String caseStartTime = eachJson.get("startTime").toString();
-            caseStartTime += ":000";
-            caseStartDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(caseStartTime);
-            caseStartCalendar.setTime(caseStartDate);
+//            caseStartTime += ":000";
 
+            LocalDateTime caseStartLocalDate = getLocalDateTime(caseStartTime);
 
             String caseEndTime = eachJson.get("endTime").toString();
-            caseEndTime += ":000";
-            caseEndDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(caseEndTime);
-            caseEndCalendar.setTime(caseEndDate);
+//            caseEndTime += ":000";
+
+            LocalDateTime caseEndLocalDate = getLocalDateTime(caseEndTime);
 
             casesArray = (JSONArray) eachJson.get("cases");
             cases = (JSONObject) casesArray.get(0);
             recordsArray = (JSONArray) cases.get("records");
 
-
-            //Add each command time interval
-            Calendar caseCommandTime = Calendar.getInstance();
-            caseCommandTime.setTime(caseStartDate);
-
-            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS");
-            commandTimePoint.get(i).add(simpleFormat.format(caseStartCalendar.getTime()));
-
+            commandTimePoint.get(i).add(withMillisecondsFormatter.format(caseStartLocalDate)); // ok
+            LocalDateTime willModifyCaseStartLocalDate = caseStartLocalDate;
 
             for (int j = 0; j < recordsArray.size(); j++) {
-
                 records = (JSONObject) recordsArray.get(j);
                 commandTime = (Long) records.get("time");
-                caseCommandTime.add(Calendar.MILLISECOND, commandTime.intValue());
+                willModifyCaseStartLocalDate = willModifyCaseStartLocalDate.plusNanos(commandTime.intValue() * 1_000_000L); // add the command milliseconds
 
-                Calendar round = Calendar.getInstance();
-                Date roundDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(simpleFormat.format(caseCommandTime.getTime()));
-                round.setTime(roundDate);
+                LocalDateTime willModifyCaseStartLocalDateAddSeconds = willModifyCaseStartLocalDate;
 
-                int firstDigit = Integer.parseInt(simpleFormat.format(round.getTime()).substring(18, 19));
+                int firstDigitMilliseconds = Integer.parseInt(String.valueOf(withMillisecondsFormatter.format(willModifyCaseStartLocalDateAddSeconds).charAt(18))); // If the time is 20230524 13:48:44:704, the firstDigitMilliseconds will be 7
 
-                if (firstDigit > 4)
-                    round.add(Calendar.SECOND, 1);
+                if (firstDigitMilliseconds > 4){
+                    willModifyCaseStartLocalDateAddSeconds = willModifyCaseStartLocalDateAddSeconds.plusSeconds(1);
+                }
 
                 ////to plugin
                 if (j == (recordsArray.size() - 1))
                     commandTimePoint.get(i).add(caseEndTime);
                 else
-                    commandTimePoint.get(i).add(simpleFormat.format(round.getTime()).substring(0, 18) + "000");
+                {
+                    // will be 20230524 13:48:46:000
+                    commandTimePoint.get(i).add(withMillisecondsFormatter.format(willModifyCaseStartLocalDateAddSeconds).substring(0, 18)+ "000");
+                }
 
             }
-
 
             for (int j = 0; j < timeStamp.size(); j++) {
 
                 //allUser
+                eachTimeIntervalPointLocalDateTime = LocalDateTime.parse(timeStamp.get(j), normalDateTimeFormatWithDash);
 
-                currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStamp.get(j));
-                eachTimeIntervalPoint.setTime(currentDate);
-
-                if (eachTimeIntervalPoint.equals(caseStartCalendar) || eachTimeIntervalPoint.equals(caseEndCalendar)) {
-
+                if (eachTimeIntervalPointLocalDateTime.isEqual(caseStartLocalDate) || eachTimeIntervalPointLocalDateTime.isEqual(caseEndLocalDate)) {
                     userCount = users.get(j);
                     userCount++;
                     users.set(j, userCount);
-
                 }
 
-
                 //commandUser
-
-
-                if (eachTimeIntervalPoint.before(caseStartCalendar) || eachTimeIntervalPoint.after(caseEndCalendar))
+                if (eachTimeIntervalPointLocalDateTime.isBefore(caseStartLocalDate) || eachTimeIntervalPointLocalDateTime.isAfter(caseEndLocalDate)) {
                     continue;
+                }
 
                 // Active User for all
-                if (caseStartCalendar.before(eachTimeIntervalPoint) && caseEndCalendar.after(eachTimeIntervalPoint)) {
-
+                if (caseStartLocalDate.isBefore(eachTimeIntervalPointLocalDateTime) && caseEndLocalDate.isAfter(eachTimeIntervalPointLocalDateTime)) {
                     userCount = users.get(j);
                     userCount++;
                     users.set(j, userCount);
@@ -443,17 +393,13 @@ public class TimelineReport {
                     String commandTimeOne = commandTimePoint.get(i).get(k);
                     String commandTimeTwo = commandTimePoint.get(i).get(k + 1);
 
-                    commandDateOne = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(commandTimeOne);
-                    commandDateTwo = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(commandTimeTwo);
+                    LocalDateTime commandLocalDateOne = getLocalDateTime(commandTimeOne);
+                    LocalDateTime commandLocalDateTwo = getLocalDateTime(commandTimeTwo);
 
-                    commandCalendarOne.setTime(commandDateOne);
-                    commandCalendarTwo.setTime(commandDateTwo);
 
-                    if (eachTimeIntervalPoint.before(commandCalendarOne) || eachTimeIntervalPoint.after(commandCalendarTwo)) {
+                    if (eachTimeIntervalPointLocalDateTime.isBefore(commandLocalDateOne) || eachTimeIntervalPointLocalDateTime.isAfter(commandLocalDateTwo)) {
                         continue;
                     } else {
-
-
                         userCount = commandUsers.get(j).get(k);
                         userCount++;
                         commandUsers.get(j).set(k, userCount);
@@ -470,9 +416,9 @@ public class TimelineReport {
             json = jsonFile.getJson(i);
 
             startTime = json.get("startTime").toString();
-            startTime += ":000";
-            caseStartDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(startTime);
-            caseStartCalendar.setTime(caseStartDate);
+//            startTime += ":000";
+
+            LocalDateTime caseStartLocalDate = getLocalDateTime(startTime);
 
             casesArray = (JSONArray) json.get("cases");
             cases = (JSONObject) casesArray.get(0);
@@ -487,7 +433,8 @@ public class TimelineReport {
 
 
                 //Error
-                double timeDifference = (double) (caseStartCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+                double timeDifference = (double) calculateDuration(caseStartLocalDate, startTimeIntervalPointLocalDateTime);
+
                 timeDifference /= 1000;
                 timeDifference = Math.round(timeDifference);
                 dataPosition = (int) timeDifference;
@@ -506,8 +453,7 @@ public class TimelineReport {
                     Error.get(dataPosition).set(j, errorCount);
 
                 }
-                caseStartCalendar.add(Calendar.MILLISECOND, commandTime.intValue());
-
+                caseStartLocalDate = caseStartLocalDate.plusNanos(commandTime.intValue() * 1_000_000L);
             }
         }
 
@@ -937,41 +883,5 @@ public class TimelineReport {
         reportContentMap.put("labelName", labelName);
         reportContentMap.put("yaxis", yaxis);
     }
-
-    public String monthStringToString(String month) {
-
-        switch (month) {
-            case "Jan":
-                return "01";
-            case "Feb":
-
-                return "02";
-            case "Mar":
-                return "03";
-            case "Apr":
-                return "04";
-            case "May":
-                return "05";
-            case "Jun":
-                return "06";
-            case "Jul":
-                return "07";
-            case "Aug":
-                return "08";
-            case "Sep":
-                return "09";
-            case "Oct":
-                return "10";
-            case "Nov":
-                return "11";
-            case "Dec":
-                return "12";
-        }
-
-
-        return "";
-
-    }
-
 
 }
