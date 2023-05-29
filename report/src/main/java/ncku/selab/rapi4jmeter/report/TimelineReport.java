@@ -73,7 +73,7 @@ public class TimelineReport {
     LocalDateTime startTimeIntervalPointLocalDateTime;
 
     public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
-                                ArrayList<String> command, String reportPath) throws java.text.ParseException {
+                                ArrayList<String> command, String reportPath) {
 
         jsonNames = testResults;
         jsonFile = jsonParseFile;
@@ -91,9 +91,8 @@ public class TimelineReport {
             html.generate(reportPath, reportContentMap);
 
         } catch (ParseException e1) {
-
             e1.printStackTrace();
-        } catch (IOException | TemplateException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -195,12 +194,8 @@ public class TimelineReport {
     }
 
 
-    @SuppressWarnings("StringConcatenationInLoop")
-    public void parse() throws ParseException, java.text.ParseException {
-
-
+    public void parse() throws ParseException {
         int fileSize = jsonNames.size(); // Means that the amount of Rapi json report that .csv have.
-
 
         for (int i = 0; i < fileSize; i++) {
 
@@ -620,18 +615,18 @@ public class TimelineReport {
 
 
         // checkbox
-        checkBox += "<div class=\"checkbox\">";
+        StringBuilder checkBoxFirstStringBuilder = new StringBuilder();
+        checkBoxFirstStringBuilder.append("<div class=\"checkbox\">");
 
         for (int i = 0; i < 3; i++) {
-
             if (i == 0)
-                checkBox += "<label for=\"Virtual Users\"><b> Virtual Users</b></label><br>\r\n";
+                checkBoxFirstStringBuilder.append("<label for=\"Virtual Users\"><b> Virtual Users</b></label><br>\r\n");
             else if (i == 1)
-                checkBox += "<label for=\"Hits\"><b> Hits</b></label><br>\r\n";
-            else checkBox += "<label for=\"Errors\"><b> Errors</b></label><br>\r\n";
+                checkBoxFirstStringBuilder.append("<label for=\"Hits\"><b> Hits</b></label><br>\r\n");
+            else
+                checkBoxFirstStringBuilder.append("<label for=\"Errors\"><b> Errors</b></label><br>\r\n");
 
             for (int j = 0; j < (hitTypeCount + 1); j++) {
-
                 String commandName;
 
                 if (j == 0)
@@ -639,20 +634,22 @@ public class TimelineReport {
                 else
                     commandName = commandList.get(j - 1);
 
+                checkBoxFirstStringBuilder.append("<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"")
+                        .append(checkValue);
+
                 if (j == 0)
-                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
-                            + "\"checked=\"\">";
-
+                    checkBoxFirstStringBuilder.append("\" checked=\"\">");
                 else
-                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
-                            + "\">";
+                    checkBoxFirstStringBuilder.append("\">");
 
-                checkBox += "<label>" + commandName + "</label><br>\r\n";
+                checkBoxFirstStringBuilder.append("<label>").append(commandName).append("</label><br>\r\n");
 
                 checkValue++;
             }
         }
 
+        String checkBoxFirstString = checkBoxFirstStringBuilder.toString();
+        checkBox += checkBoxFirstString;
 
         //checkbox of Response Time
 
@@ -691,189 +688,158 @@ public class TimelineReport {
         reportContentMap.put("checkBox", checkBox);
 
         // userData
-        userData += "const allUsers = [";
+        StringBuilder userDataBuilder = new StringBuilder();
+        userDataBuilder.append("const allUsers = [");
 
         for (String labelTime : xAxisLabel) {
             dataPosition = getTimeDiffDataPosition(labelTime);
-            userData += users.get(dataPosition) + ", ";
-
+            userDataBuilder.append(users.get(dataPosition)).append(", ");
         }
 
-        userData += "]\r\n";
+        userDataBuilder.append("]\r\n");
 
         for (int i = 0; i < hitTypeCount; i++) {
-
-            userData += "const " + dataName.get(i + 1) + " = [";
+            userDataBuilder.append("const ").append(dataName.get(i + 1)).append(" = [");
 
             for (String labelTime : xAxisLabel) {
-
                 dataPosition = getTimeDiffDataPosition(labelTime);
-
-
-                userData += commandUsers.get(dataPosition).get(i) + ", ";
-
+                userDataBuilder.append(commandUsers.get(dataPosition).get(i)).append(", ");
             }
 
-            userData += "]\r\n";
-
+            userDataBuilder.append("]\r\n");
         }
 
-
-        //hitData to js
+        StringBuilder hitDataBuilder = new StringBuilder();
         for (int i = 0; i <= hitTypeCount; i++) {
-
-            hitData += "const " + dataName.get(hitTypeCount + 1 + i) + " = [";
+            hitDataBuilder.append("const ").append(dataName.get(hitTypeCount + 1 + i)).append(" = [");
 
             for (String labelTime : xAxisLabel) {
-
                 int allCount = 0;
-
                 dataPosition = getTimeDiffDataPosition(labelTime);
 
-
                 if (i == 0) {
-
                     for (int k = 0; k < hitTypeCount; k++)
                         allCount += Hit.get(dataPosition).get(k);
 
                     if (allCount != 0)
-                        hitData += allCount + ", ";
+                        hitDataBuilder.append(allCount).append(", ");
                     else
-                        hitData += ", ";
-
+                        hitDataBuilder.append(", ");
                 } else {
                     if (Hit.get(dataPosition).get(i - 1) != 0)
-                        hitData += Hit.get(dataPosition).get(i - 1) + ", ";
+                        hitDataBuilder.append(Hit.get(dataPosition).get(i - 1)).append(", ");
                     else
-                        hitData += ", ";
+                        hitDataBuilder.append(", ");
                 }
             }
 
-            hitData += "]\r\n";
+            hitDataBuilder.append("]\r\n");
         }
 
-
-        //errorData to js
+        StringBuilder errorDataBuilder = new StringBuilder();
         for (int i = 0; i <= hitTypeCount; i++) {
-
-
-            errorData += "const " + dataName.get((hitTypeCount + 1) * 2 + i) + " = [";
+            errorDataBuilder.append("const ").append(dataName.get((hitTypeCount + 1) * 2 + i)).append(" = [");
 
             for (String labelTime : xAxisLabel) {
-
                 int allCount = 0, hitCount = 0;
-
-
                 dataPosition = getTimeDiffDataPosition(labelTime);
 
                 if (i == 0) {
-
                     for (int k = 0; k < hitTypeCount; k++) {
                         allCount += Error.get(dataPosition).get(k);
                         hitCount += Hit.get(dataPosition).get(k);
                     }
 
                     if (allCount != 0)
-                        errorData += allCount + ", ";
+                        errorDataBuilder.append(allCount).append(", ");
                     else {
-
                         if (hitCount != 0)
-                            errorData += "0, ";
+                            errorDataBuilder.append("0, ");
                         else
-                            errorData += ", ";
+                            errorDataBuilder.append(", ");
                     }
-
                 } else {
-
                     if (Error.get(dataPosition).get(i - 1) != 0)
-                        errorData += Error.get(dataPosition).get(i - 1) + ", ";
-
+                        errorDataBuilder.append(Error.get(dataPosition).get(i - 1)).append(", ");
                     else {
-
                         if (Hit.get(dataPosition).get(i - 1) != 0)
-                            errorData += "0, ";
+                            errorDataBuilder.append("0, ");
                         else
-                            errorData += ", ";
+                            errorDataBuilder.append(", ");
                     }
                 }
-
             }
 
-            errorData += "]\r\n";
+            errorDataBuilder.append("]\r\n");
         }
 
+        errorDataBuilder.append("\r\n\n");
 
-        errorData += "\r\n\n";
-
-
-        //ResponseTime Data for all
+        StringBuilder responseTimeDataBuilder = new StringBuilder();
         for (int i = 0; i < 7; i++) {
-
-            responseTimeData += "const all" + statisticsName.get(i) + " = [";
+            responseTimeDataBuilder.append("const all").append(statisticsName.get(i)).append(" = [");
 
             for (int j = 0; j < xAxisLabel.size(); j++) {
-
                 if (i == 0)
-                    responseTimeData += Avg.get(j);
+                    responseTimeDataBuilder.append(Avg.get(j));
                 else if (i == 1)
-                    responseTimeData += Min.get(j);
+                    responseTimeDataBuilder.append(Min.get(j));
                 else if (i == 2)
-                    responseTimeData += Max.get(j);
+                    responseTimeDataBuilder.append(Max.get(j));
                 else if (i == 3)
-                    responseTimeData += Median.get(j);
+                    responseTimeDataBuilder.append(Median.get(j));
                 else if (i == 4)
-                    responseTimeData += P90.get(j);
+                    responseTimeDataBuilder.append(P90.get(j));
                 else if (i == 5)
-                    responseTimeData += P95.get(j);
-                else responseTimeData += P99.get(j);
+                    responseTimeDataBuilder.append(P95.get(j));
+                else
+                    responseTimeDataBuilder.append(P99.get(j));
 
-                responseTimeData += " ,";
+                responseTimeDataBuilder.append(" ,");
             }
 
-            responseTimeData += "]\r\n";
-
+            responseTimeDataBuilder.append("]\r\n");
         }
 
-
-        //ResponseTime Data for each
-
-        for (int i = 0; i < hitTypeCount; i++)
+        for (int i = 0; i < hitTypeCount; i++) {
             for (int j = 0; j < 7; j++) {
-
-                responseTimeData += "const " + commandList.get(i) + statisticsName.get(j) + " = [";
+                responseTimeDataBuilder.append("const ").append(commandList.get(i)).append(statisticsName.get(j)).append(" = [");
 
                 for (int k = 0; k < xAxisLabel.size(); k++) {
-
                     if (j == 0) {
                         if (commandAvg.get(k).get(i).size() != 0)
-                            responseTimeData += commandAvg.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandAvg.get(k).get(i).get(0));
                     } else if (j == 1) {
                         if (commandMin.get(k).get(i).size() != 0)
-                            responseTimeData += commandMin.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandMin.get(k).get(i).get(0));
                     } else if (j == 2) {
                         if (commandMax.get(k).get(i).size() != 0)
-                            responseTimeData += commandMax.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandMax.get(k).get(i).get(0));
                     } else if (j == 3) {
                         if (commandMedian.get(k).get(i).size() != 0)
-                            responseTimeData += commandMedian.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandMedian.get(k).get(i).get(0));
                     } else if (j == 4) {
                         if (commandP90.get(k).get(i).size() != 0)
-                            responseTimeData += commandP90.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandP90.get(k).get(i).get(0));
                     } else if (j == 5) {
                         if (commandP95.get(k).get(i).size() != 0)
-                            responseTimeData += commandP95.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandP95.get(k).get(i).get(0));
                     } else {
                         if (commandP99.get(k).get(i).size() != 0)
-                            responseTimeData += commandP99.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandP99.get(k).get(i).get(0));
                     }
 
-                    responseTimeData += ", ";
-
+                    responseTimeDataBuilder.append(", ");
                 }
 
-                responseTimeData += "]\r\n";
-
+                responseTimeDataBuilder.append("]\r\n");
             }
+        }
+
+        String userData = userDataBuilder.toString();
+        String hitData = hitDataBuilder.toString();
+        String errorData = errorDataBuilder.toString();
+        String responseTimeData = responseTimeDataBuilder.toString();
 
         yAxisData += userData + hitData + errorData + responseTimeData;
         reportContentMap.put("yAxisData", yAxisData);
