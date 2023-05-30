@@ -5,7 +5,6 @@ package ncku.selab.rapi4jmeter.report;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 import java.awt.Desktop;
