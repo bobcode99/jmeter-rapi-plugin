@@ -223,8 +223,8 @@ ${checkBox}
 </div>
 
 <div class="buttonContainer">
-    <button class="firstButton" onclick="toogleZoom()">Toogle zoom</button>
-    <button class="additionalButton" onclick="tooglePan()">Toogle pan</button>
+    <button class="firstButton" onclick="toggleZoom()">Toggle zoom</button>
+    <button class="additionalButton" onclick="togglePan()">Toggle pan</button>
     <button class="additionalButton" onclick="resetZoom()">Reset zoom</button>
 </div>
 
@@ -387,11 +387,11 @@ ${checkBox}
 		function resetZoom(){
 			reportChart.resetZoom();
 		}
-		function tooglePan(){
+		function togglePan(){
 			zoomOptions.pan.enabled = !zoomOptions.pan.enabled;
 			reportChart.update();
 		}
-		function toogleZoom(){
+		function toggleZoom(){
 			zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
       		zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled;
       		zoomOptions.zoom.drag.enabled = !zoomOptions.zoom.drag.enabled;
