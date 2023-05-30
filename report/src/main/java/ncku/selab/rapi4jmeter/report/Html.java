@@ -5,7 +5,6 @@ package ncku.selab.rapi4jmeter.report;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 import java.awt.Desktop;
@@ -20,7 +19,7 @@ import java.util.TimeZone;
 
 public class Html {
 
-    public void generate(String reportPath, Map<String, Object> reportDataMap) throws IOException, TemplateException {
+    public void generate(String reportPath, Map<String, Object> reportDataMap) throws IOException {
 
         /* ------------------------------------------------------------------------ */
         /* You should do this ONLY ONCE in the whole application life-cycle:        */

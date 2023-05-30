@@ -7,11 +7,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 
 public class RequestStatsReport {
 
@@ -64,7 +65,6 @@ public class RequestStatsReport {
 
     public void startGenerateReport(String path, ArrayList<String> testResults) throws ParseException, java.text.ParseException {
 //        File jsonFolder = new File(path);
-
 
         this.testResults = testResults;
 
@@ -163,6 +163,7 @@ public class RequestStatsReport {
         }
 
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss:SSS");
         for (int i = 0; i < testResults.size(); i++) {
             JSONObject json = jsonParse.getJson(i);
             JSONArray casesArray = (JSONArray) json.get("cases");
@@ -176,11 +177,12 @@ public class RequestStatsReport {
 
             String startTime = (String) json.get("startTime");
 //            String endTime = (String) json.get("endTime");
-            startTime += ":000";
-            Date commandDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(startTime);
-            Calendar currentCalendar = Calendar.getInstance();
+            startTime += ":000"; // need add back if no milliseconds
 
-            currentCalendar.setTime(commandDate);
+            LocalDateTime commandDateTime = LocalDateTime.parse(startTime, formatter);
+
+            Calendar currentCalendar = Calendar.getInstance();
+            currentCalendar.setTimeInMillis(commandDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
             commandTime.get(0).add(currentCalendar.getTimeInMillis());
 
             for (int commandIndex = 0; commandIndex < recordsArray.size(); commandIndex++) {

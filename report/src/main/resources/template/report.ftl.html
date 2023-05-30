@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <!-- Required meta tags -->
@@ -154,7 +154,7 @@
     <label><b>Rapi-JMeter Report</b></label>
 </div>
 <div class="img">
-    <img src="https://sideex.io/static/media/sideex_logo.2728ffac.png" />
+    <img src="https://sideex.io/static/media/sideex_logo.2728ffac.png" alt="Logo of Rapi"/>
 </div>
 
 <div class="requestTitle">
@@ -223,8 +223,8 @@ ${checkBox}
 </div>
 
 <div class="buttonContainer">
-    <button class="firstButton" onclick="toogleZoom()">Toogle zoom</button>
-    <button class="additionalButton" onclick="tooglePan()">Toogle pan</button>
+    <button class="firstButton" onclick="toggleZoom()">Toggle zoom</button>
+    <button class="additionalButton" onclick="togglePan()">Toggle pan</button>
     <button class="additionalButton" onclick="resetZoom()">Reset zoom</button>
 </div>
 
@@ -275,7 +275,24 @@ ${checkBox}
 			type: 'line',
 			data: {
 				labels: ${listXAxisLabel},
-				datasets: ${datasets}
+				datasets: [
+                    <#assign numberOfShow = 0>
+                    <#list dataName as data>
+                        {
+                            data: ${data},
+                            label: "${labelName[data_index]}",
+                            fill: false,
+                            <#if data_index % (hitTypeCount + 1) == 0 && numberOfShow < 4>
+                            hidden: false,
+                            <#assign numberOfShow = numberOfShow + 1>
+                            <#else>
+                            hidden: true,
+                            </#if>
+                            pointRadius: 3,
+                            yAxisID: "${yaxis[data_index]}"
+                        }<#if data_index != dataName?size - 1>,</#if>
+                    </#list>
+				]
 			},
 			options: {
 				responsive: false, spanGaps: true, animation: false,
@@ -370,11 +387,11 @@ ${checkBox}
 		function resetZoom(){
 			reportChart.resetZoom();
 		}
-		function tooglePan(){
+		function togglePan(){
 			zoomOptions.pan.enabled = !zoomOptions.pan.enabled;
 			reportChart.update();
 		}
-		function toogleZoom(){
+		function toggleZoom(){
 			zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
       		zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled;
       		zoomOptions.zoom.drag.enabled = !zoomOptions.zoom.drag.enabled;

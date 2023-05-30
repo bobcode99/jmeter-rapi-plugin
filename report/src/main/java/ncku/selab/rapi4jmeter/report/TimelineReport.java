@@ -3,13 +3,16 @@
  */
 package ncku.selab.rapi4jmeter.report;
 
-import freemarker.template.TemplateException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TimelineReport {
@@ -45,18 +48,13 @@ public class TimelineReport {
 
 
     // merge EachTestResponseTime into ResponseTime
-    //for chartjs
+    //for Chart.js
     private final ArrayList<String> dataName = new ArrayList<>();
     private final ArrayList<String> labelName = new ArrayList<>();
     private final ArrayList<String> yaxis = new ArrayList<>();
     private JsonParse jsonFile = null;
     private ArrayList<String> jsonNames = new ArrayList<>();
     private String checkBox = "";
-    private String userData = "";
-    private String hitData = "";
-    private String errorData = "";
-    private String responseTimeData = "";
-    private String dataset = "";
     private String yAxisData = "";
 
     private int checkValue = 0;
@@ -64,9 +62,13 @@ public class TimelineReport {
     private int hitTypeCount = 0;
     private final Map<String, Object> reportContentMap = new HashMap<>();
 
+    final String withMilisecondsFormatString = "yyyyMMdd HH:mm:ss:SSS";
+    final DateTimeFormatter normalDateTimeFormatWithDash = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    final DateTimeFormatter withMillisecondsFormatter = DateTimeFormatter.ofPattern(withMilisecondsFormatString);
+    LocalDateTime startTimeIntervalPointLocalDateTime;
 
     public void generate_report(String requestStats, JsonParse jsonParseFile, ArrayList<String> testResults,
-                                ArrayList<String> command, String reportPath) throws java.text.ParseException {
+                                ArrayList<String> command, String reportPath) {
 
         jsonNames = testResults;
         jsonFile = jsonParseFile;
@@ -84,9 +86,8 @@ public class TimelineReport {
             html.generate(reportPath, reportContentMap);
 
         } catch (ParseException e1) {
-
             e1.printStackTrace();
-        } catch (IOException | TemplateException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -94,14 +95,7 @@ public class TimelineReport {
 
     public void preprocessing() {
 
-        statisticsName.add("Avg");
-        statisticsName.add("Min");
-        statisticsName.add("Max");
-        statisticsName.add("Median");
-        statisticsName.add("P90");
-        statisticsName.add("P95");
-        statisticsName.add("P99");
-
+        statisticsName.addAll(Arrays.asList("Avg", "Min", "Max", "Median", "P90", "P95", "P99"));
         // data name
         dataName.add("allUsers");
         yaxis.add("y1");
@@ -128,13 +122,7 @@ public class TimelineReport {
         for (int i = 0; i < 7; i++)
             yaxis.add("y2");
 
-        dataName.add("allAvg");
-        dataName.add("allMin");
-        dataName.add("allMax");
-        dataName.add("allMedian");
-        dataName.add("allP90");
-        dataName.add("allP95");
-        dataName.add("allP99");
+        dataName.addAll(Arrays.asList("allAvg", "allMin", "allMax", "allMedian", "allP90", "allP95", "allP99"));
 
         for (int i = 0; i < hitTypeCount; i++)
             for (int j = 0; j < 7; j++) {
@@ -173,12 +161,36 @@ public class TimelineReport {
     }
 
 
-    @SuppressWarnings("StringConcatenationInLoop")
-    public void parse() throws ParseException, java.text.ParseException {
+    private int getTimeDiffDataPosition(String labelTime) {
+        labelTime += ":000";
+        String formattedDateTime = LocalDateTime.parse(labelTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS"))
+                .format(DateTimeFormatter.ofPattern(withMilisecondsFormatString));
+
+        LocalDateTime labelLocalDate = getLocalDateTime(formattedDateTime);
+
+        double timeDifference = calculateDuration(labelLocalDate, startTimeIntervalPointLocalDateTime);
+        timeDifference /= 1000;
+        timeDifference = Math.round(timeDifference);
+
+        return (int) timeDifference;
+    }
+
+    private LocalDateTime getLocalDateTime(String timeStr) {
+        // timeStr: 20230527 19:22:37
+        LocalDate localDate = LocalDate.parse(timeStr.substring(0, 8), DateTimeFormatter.BASIC_ISO_DATE);
+        LocalTime localTimeObj = LocalTime.parse(timeStr.substring(9), DateTimeFormatter.ofPattern("HH:mm:ss:SSS"));
+
+        return LocalDateTime.of(localDate, localTimeObj);
+    }
+
+    private long calculateDuration(LocalDateTime localDateOne, LocalDateTime localDateTwo) {
+        Duration timeDifference = Duration.between(localDateOne, localDateTwo);
+        return Math.abs(timeDifference.toMillis());
+    }
 
 
-        int fileSize = jsonNames.size();
-
+    public void parse() throws ParseException {
+        int fileSize = jsonNames.size(); // Means that the amount of Rapi json report that .csv have.
 
         for (int i = 0; i < fileSize; i++) {
 
@@ -192,26 +204,19 @@ public class TimelineReport {
         startTimeList.sort(null);
         endTimeList.sort(null);
 
-        String startTime = startTimeList.get(0);
-        String endTime = endTimeList.get(fileSize - 1);
+        // startTime, endTime is from the Rapi json report. The format will be YYYYMMDD HH:MM:SS
+        String startTime = startTimeList.get(0); // Ex: 20230527 19:22:37
+        String endTime = endTimeList.get(fileSize - 1); // Ex: 20230527 19:27:37
 
+        startTime += ":000";
+        endTime += ":000";
 
-        String startDate = startTime.substring(0, 4) + "-" + startTime.substring(4, 6) + "-" + startTime.substring(6, 8);
-        String endDate = endTime.substring(0, 4) + "-" + endTime.substring(4, 6) + "-" + endTime.substring(6, 8);
-
-        int startHour = Integer.parseInt(startTime.substring(9, 11));
-        int endHour = Integer.parseInt(endTime.substring(9, 11));
-        int startMinute = Integer.parseInt(startTime.substring(12, 14));
-        int endMinute = Integer.parseInt(endTime.substring(12, 14));
+        LocalDateTime startTimeLocalDateTime = getLocalDateTime(startTime);
+        LocalDateTime endTimeLocalDateTime = getLocalDateTime(endTime);
 
         JSONObject json, cases, records;
         JSONArray recordsArray, casesArray;
         Long commandTime;
-
-
-        //Calculate total cases HitTypeCount
-        for (int i = 0; i < fileSize; i++)
-            recordsArray = jsonFile.getRecordsArray(i);
 
 
         //Data of User
@@ -219,84 +224,35 @@ public class TimelineReport {
         String status;
 
         //Data of Hit, Error, ResponseTime
-        double timeDifference;
+//        double timeDifference;
+
         int dataPosition, commandAmount, errorCount;
-
-        String year, month, day, EachTimeIntervalPointString;
-
-        String originTime = String.format("%02d", startHour);
-        originTime += ":";
-        originTime += String.format("%02d", startMinute);
-        originTime += ":00";
-
-        String endPointTime = String.format("%02d", endHour);
-        endPointTime += ":";
-        endPointTime += String.format("%02d", endMinute + 1);
-        endPointTime += ":00";
-
-        Date currentDate;
-        Date endPointDate;
-        Calendar startCalendar = Calendar.getInstance();
-        Calendar eachTimeIntervalPoint = Calendar.getInstance();
-        Calendar endCalendar = Calendar.getInstance();
-
-        Date caseStartDate;
-        Date caseEndDate;
-        Date labelDate;
-        Date commandDateOne;
-        Date commandDateTwo;
-
-        Calendar caseStartCalendar = Calendar.getInstance();
-        Calendar caseEndCalendar = Calendar.getInstance();
-        Calendar labelCalendar = Calendar.getInstance();
-        Calendar commandCalendarOne = Calendar.getInstance();
-        Calendar commandCalendarTwo = Calendar.getInstance();
-
-
-        currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startDate + " " + originTime);
-        endPointDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endDate + " " + endPointTime);
 
 
         // Original X point
-        startCalendar.setTime(currentDate);
-        eachTimeIntervalPoint.setTime(currentDate);
+        startTimeIntervalPointLocalDateTime = startTimeLocalDateTime.withSecond(0).withNano(0); // same with startCalendar
+        LocalDateTime eachTimeIntervalPointLocalDateTime = startTimeLocalDateTime.withSecond(0).withNano(0); // same with eachTimeIntervalPoint
+
         // Final X point
-        endCalendar.setTime(endPointDate);
+        LocalDateTime endTimeLocalDateTimeAddOneMinute = endTimeLocalDateTime.plusMinutes(1).withSecond(0).withNano(0); // same with endCalendar
 
 
         // Add x point in every 30 seconds to create X axis points
-        int timeLength = eachTimeIntervalPoint.getTime().toString().length();
-
-
-        while (eachTimeIntervalPoint.before(endCalendar)) {
-
-
-            month = eachTimeIntervalPoint.getTime().toString().substring(4, 7);
-            month = monthStringToString(month);
-            year = eachTimeIntervalPoint.getTime().toString().substring(timeLength - 4, timeLength);
-            day = eachTimeIntervalPoint.getTime().toString().substring(8, 19);
-
-            EachTimeIntervalPointString = year + "-" + month + "-" + day;
-
-
-            timeStamp.add(EachTimeIntervalPointString);
-
-            eachTimeIntervalPoint.add(Calendar.SECOND, 1);
+        while (eachTimeIntervalPointLocalDateTime.isBefore(endTimeLocalDateTimeAddOneMinute)) {
+            // 2023-05-24 13:48:00
+            String eachTimeIntervalPointString = eachTimeIntervalPointLocalDateTime.format(normalDateTimeFormatWithDash);
+            timeStamp.add(eachTimeIntervalPointString);
+            eachTimeIntervalPointLocalDateTime = eachTimeIntervalPointLocalDateTime.plusSeconds(1);
         }
 
-        //final time-point
-        month = eachTimeIntervalPoint.getTime().toString().substring(4, 7);
-        month = monthStringToString(month);
-        year = eachTimeIntervalPoint.getTime().toString().substring(timeLength - 4, timeLength);
-        day = eachTimeIntervalPoint.getTime().toString().substring(8, 19);
-
-        EachTimeIntervalPointString = year + "-" + month + "-" + day;
-
-        timeStamp.add(EachTimeIntervalPointString);
+        // final time-point
+        String eachTimeIntervalPointString = eachTimeIntervalPointLocalDateTime.format(normalDateTimeFormatWithDash);
+        timeStamp.add(eachTimeIntervalPointString);
 
 
         // initial Hit Data
         hitTypeCount = commandList.size();
+        reportContentMap.put("hitTypeCount", hitTypeCount);
         int commandNumber = hitTypeCount + 1;
         reportContentMap.put("commandNumber", commandNumber);
 
@@ -358,84 +314,67 @@ public class TimelineReport {
 
         //Data of VirtualUser
         for (int i = 0; i < fileSize; i++) {
-
-
             JSONObject eachJson = jsonFile.getJson(i);
-
 
             String caseStartTime = eachJson.get("startTime").toString();
             caseStartTime += ":000";
-            caseStartDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(caseStartTime);
-            caseStartCalendar.setTime(caseStartDate);
 
+            LocalDateTime caseStartLocalDate = getLocalDateTime(caseStartTime);
 
             String caseEndTime = eachJson.get("endTime").toString();
             caseEndTime += ":000";
-            caseEndDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(caseEndTime);
-            caseEndCalendar.setTime(caseEndDate);
+
+            LocalDateTime caseEndLocalDate = getLocalDateTime(caseEndTime);
 
             casesArray = (JSONArray) eachJson.get("cases");
             cases = (JSONObject) casesArray.get(0);
             recordsArray = (JSONArray) cases.get("records");
 
-
-            //Add each command time interval
-            Calendar caseCommandTime = Calendar.getInstance();
-            caseCommandTime.setTime(caseStartDate);
-
-            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS");
-            commandTimePoint.get(i).add(simpleFormat.format(caseStartCalendar.getTime()));
-
+            commandTimePoint.get(i).add(withMillisecondsFormatter.format(caseStartLocalDate)); // ok
+            LocalDateTime willModifyCaseStartLocalDate = caseStartLocalDate;
 
             for (int j = 0; j < recordsArray.size(); j++) {
-
                 records = (JSONObject) recordsArray.get(j);
                 commandTime = (Long) records.get("time");
-                caseCommandTime.add(Calendar.MILLISECOND, commandTime.intValue());
+                willModifyCaseStartLocalDate = willModifyCaseStartLocalDate.plusNanos(commandTime.intValue() * 1_000_000L); // add the command milliseconds
 
-                Calendar round = Calendar.getInstance();
-                Date roundDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(simpleFormat.format(caseCommandTime.getTime()));
-                round.setTime(roundDate);
+                LocalDateTime willModifyCaseStartLocalDateAddSeconds = willModifyCaseStartLocalDate;
 
-                int firstDigit = Integer.parseInt(simpleFormat.format(round.getTime()).substring(18, 19));
+                int firstDigitMilliseconds = Integer.parseInt(String.valueOf(withMillisecondsFormatter.format(willModifyCaseStartLocalDateAddSeconds).charAt(18))); // If the time is 20230524 13:48:44:704, the firstDigitMilliseconds will be 7
 
-                if (firstDigit > 4)
-                    round.add(Calendar.SECOND, 1);
+                if (firstDigitMilliseconds > 4){
+                    willModifyCaseStartLocalDateAddSeconds = willModifyCaseStartLocalDateAddSeconds.plusSeconds(1);
+                }
 
                 ////to plugin
                 if (j == (recordsArray.size() - 1))
                     commandTimePoint.get(i).add(caseEndTime);
                 else
-                    commandTimePoint.get(i).add(simpleFormat.format(round.getTime()).substring(0, 18) + "000");
+                {
+                    // will be 20230524 13:48:46:000
+                    commandTimePoint.get(i).add(withMillisecondsFormatter.format(willModifyCaseStartLocalDateAddSeconds).substring(0, 18)+ "000");
+                }
 
             }
-
 
             for (int j = 0; j < timeStamp.size(); j++) {
 
                 //allUser
+                eachTimeIntervalPointLocalDateTime = LocalDateTime.parse(timeStamp.get(j), normalDateTimeFormatWithDash);
 
-                currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timeStamp.get(j));
-                eachTimeIntervalPoint.setTime(currentDate);
-
-                if (eachTimeIntervalPoint.equals(caseStartCalendar) || eachTimeIntervalPoint.equals(caseEndCalendar)) {
-
+                if (eachTimeIntervalPointLocalDateTime.isEqual(caseStartLocalDate) || eachTimeIntervalPointLocalDateTime.isEqual(caseEndLocalDate)) {
                     userCount = users.get(j);
                     userCount++;
                     users.set(j, userCount);
-
                 }
 
-
                 //commandUser
-
-
-                if (eachTimeIntervalPoint.before(caseStartCalendar) || eachTimeIntervalPoint.after(caseEndCalendar))
+                if (eachTimeIntervalPointLocalDateTime.isBefore(caseStartLocalDate) || eachTimeIntervalPointLocalDateTime.isAfter(caseEndLocalDate)) {
                     continue;
+                }
 
                 // Active User for all
-                if (caseStartCalendar.before(eachTimeIntervalPoint) && caseEndCalendar.after(eachTimeIntervalPoint)) {
-
+                if (caseStartLocalDate.isBefore(eachTimeIntervalPointLocalDateTime) && caseEndLocalDate.isAfter(eachTimeIntervalPointLocalDateTime)) {
                     userCount = users.get(j);
                     userCount++;
                     users.set(j, userCount);
@@ -447,17 +386,13 @@ public class TimelineReport {
                     String commandTimeOne = commandTimePoint.get(i).get(k);
                     String commandTimeTwo = commandTimePoint.get(i).get(k + 1);
 
-                    commandDateOne = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(commandTimeOne);
-                    commandDateTwo = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(commandTimeTwo);
+                    LocalDateTime commandLocalDateOne = getLocalDateTime(commandTimeOne);
+                    LocalDateTime commandLocalDateTwo = getLocalDateTime(commandTimeTwo);
 
-                    commandCalendarOne.setTime(commandDateOne);
-                    commandCalendarTwo.setTime(commandDateTwo);
 
-                    if (eachTimeIntervalPoint.before(commandCalendarOne) || eachTimeIntervalPoint.after(commandCalendarTwo))
+                    if (eachTimeIntervalPointLocalDateTime.isBefore(commandLocalDateOne) || eachTimeIntervalPointLocalDateTime.isAfter(commandLocalDateTwo)) {
                         continue;
-                    else {
-
-
+                    } else {
                         userCount = commandUsers.get(j).get(k);
                         userCount++;
                         commandUsers.get(j).set(k, userCount);
@@ -472,13 +407,11 @@ public class TimelineReport {
         for (int i = 0; i < fileSize; i++) {
 
             json = jsonFile.getJson(i);
-//            
-
 
             startTime = json.get("startTime").toString();
             startTime += ":000";
-            caseStartDate = new SimpleDateFormat("yyyyMMdd HH:mm:ss:SSS").parse(startTime);
-            caseStartCalendar.setTime(caseStartDate);
+
+            LocalDateTime caseStartLocalDate = getLocalDateTime(startTime);
 
             casesArray = (JSONArray) json.get("cases");
             cases = (JSONObject) casesArray.get(0);
@@ -493,7 +426,8 @@ public class TimelineReport {
 
 
                 //Error
-                timeDifference = (double) (caseStartCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+                double timeDifference = (double) calculateDuration(caseStartLocalDate, startTimeIntervalPointLocalDateTime);
+
                 timeDifference /= 1000;
                 timeDifference = Math.round(timeDifference);
                 dataPosition = (int) timeDifference;
@@ -512,8 +446,7 @@ public class TimelineReport {
                     Error.get(dataPosition).set(j, errorCount);
 
                 }
-                caseStartCalendar.add(Calendar.MILLISECOND, commandTime.intValue());
-
+                caseStartLocalDate = caseStartLocalDate.plusNanos(commandTime.intValue() * 1_000_000L);
             }
         }
 
@@ -611,7 +544,7 @@ public class TimelineReport {
             }
         }
 
-
+        // for what ?
         dataPosition = -1;
 
         // Data of response time for each command
@@ -680,18 +613,18 @@ public class TimelineReport {
 
 
         // checkbox
-        checkBox += "<div class=\"checkbox\">";
+        StringBuilder checkBoxFirstStringBuilder = new StringBuilder();
+        checkBoxFirstStringBuilder.append("<div class=\"checkbox\">");
 
         for (int i = 0; i < 3; i++) {
-
             if (i == 0)
-                checkBox += "<label for=\"Virtual Users\"><b> Virtual Users</b></label><br>\r\n";
+                checkBoxFirstStringBuilder.append("<label for=\"Virtual Users\"><b> Virtual Users</b></label><br>\r\n");
             else if (i == 1)
-                checkBox += "<label for=\"Hits\"><b> Hits</b></label><br>\r\n";
-            else checkBox += "<label for=\"Errors\"><b> Errors</b></label><br>\r\n";
+                checkBoxFirstStringBuilder.append("<label for=\"Hits\"><b> Hits</b></label><br>\r\n");
+            else
+                checkBoxFirstStringBuilder.append("<label for=\"Errors\"><b> Errors</b></label><br>\r\n");
 
             for (int j = 0; j < (hitTypeCount + 1); j++) {
-
                 String commandName;
 
                 if (j == 0)
@@ -699,355 +632,220 @@ public class TimelineReport {
                 else
                     commandName = commandList.get(j - 1);
 
+                checkBoxFirstStringBuilder.append("<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"")
+                        .append(checkValue);
+
                 if (j == 0)
-                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
-                            + "\"checked=\"\">";
-
+                    checkBoxFirstStringBuilder.append("\" checked=\"\">");
                 else
-                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
-                            + "\">";
+                    checkBoxFirstStringBuilder.append("\">");
 
-                checkBox += "<label>" + commandName + "</label><br>\r\n";
+                checkBoxFirstStringBuilder.append("<label>").append(commandName).append("</label><br>\r\n");
 
                 checkValue++;
             }
         }
 
+        String checkBoxFirstString = checkBoxFirstStringBuilder.toString();
+        checkBox += checkBoxFirstString;
 
         //checkbox of Response Time
 
-        checkBox += "<label for=\"Response Time\"><b> Response Time</b></label><br>\r\n";
+        StringBuilder checkBoxResponseTimeBuilder = new StringBuilder();
+        checkBoxResponseTimeBuilder.append("<label for=\"Response Time\"><b> Response Time</b></label><br>\r\n");
 
         for (int i = 0; i < (hitTypeCount + 1); i++) {
-
-            if (i == 0)
-                checkBox += "<label><b> ALL</b></label><br>\r\n";
-            else
-                checkBox += "<label><b> " + commandList.get(i - 1) + "</b></label><br>\r\n";
+            checkBoxResponseTimeBuilder.append("<label><b> ").append((i == 0) ? "ALL" : commandList.get(i - 1)).append("</b></label><br>\r\n");
 
             for (int j = 0; j < 7; j++) {
+                checkBoxResponseTimeBuilder.append("<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"").append(checkValue).append("\"");
 
-                if (i == 0 && j == 0)
-                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
-                            + "\"checked=\"\">";
+                if (i == 0 && j == 0) {
+                    checkBoxResponseTimeBuilder.append(" checked=\"\">");
+                } else {
+                    checkBoxResponseTimeBuilder.append(">");
+                }
 
-                else
-                    checkBox += "<input type=\"checkbox\" onclick=\"updateChart(this)\" value=\"" + checkValue
-                            + "\">";
+                checkBoxResponseTimeBuilder.append("<label>").append(statisticsName.get(j)).append("</label>");
 
-                if (j == 0)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else if (j == 1)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else if (j == 2)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else if (j == 3)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label><br>\r\n";
-                else if (j == 4)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else if (j == 5)
-                    checkBox += "<label>" + statisticsName.get(j) + "</label>\r\n";
-                else checkBox += "<label>" + statisticsName.get(j) + "</label><br>\r\n";
+                if (j == 3 || j == 6) {
+                    checkBoxResponseTimeBuilder.append("<br>\r\n");
+                } else {
+                    checkBoxResponseTimeBuilder.append("\r\n");
+                }
 
                 checkValue++;
-
             }
         }
+
+        String checkBoxResponseTimeString = checkBoxResponseTimeBuilder.toString();
+        checkBox += checkBoxResponseTimeString;
 
         checkBox += "</div>\r\n\n";
 
         reportContentMap.put("checkBox", checkBox);
 
         // userData
-        userData += "const allUsers = [";
+        StringBuilder userDataBuilder = new StringBuilder();
+        userDataBuilder.append("const allUsers = [");
 
         for (String labelTime : xAxisLabel) {
-
-            labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(labelTime);
-            labelCalendar.setTime(labelDate);
-
-            timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-            timeDifference /= 1000;
-            timeDifference = Math.round(timeDifference);
-            dataPosition = (int) timeDifference;
-
-            userData += users.get(dataPosition) + ", ";
-
+            dataPosition = getTimeDiffDataPosition(labelTime);
+            userDataBuilder.append(users.get(dataPosition)).append(", ");
         }
 
-        userData += "]\r\n";
+        userDataBuilder.append("]\r\n");
 
         for (int i = 0; i < hitTypeCount; i++) {
-
-            userData += "const " + dataName.get(i + 1) + " = [";
+            userDataBuilder.append("const ").append(dataName.get(i + 1)).append(" = [");
 
             for (String labelTime : xAxisLabel) {
-
-                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(labelTime);
-                labelCalendar.setTime(labelDate);
-
-                timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-                timeDifference /= 1000;
-                timeDifference = Math.round(timeDifference);
-                dataPosition = (int) timeDifference;
-
-                userData += commandUsers.get(dataPosition).get(i) + ", ";
-
+                dataPosition = getTimeDiffDataPosition(labelTime);
+                userDataBuilder.append(commandUsers.get(dataPosition).get(i)).append(", ");
             }
 
-            userData += "]\r\n";
-
+            userDataBuilder.append("]\r\n");
         }
 
-
-        //hitData to js
+        StringBuilder hitDataBuilder = new StringBuilder();
         for (int i = 0; i <= hitTypeCount; i++) {
+            hitDataBuilder.append("const ").append(dataName.get(hitTypeCount + 1 + i)).append(" = [");
 
-            hitData += "const " + dataName.get(hitTypeCount + 1 + i) + " = [";
-
-            for (String s : xAxisLabel) {
-
+            for (String labelTime : xAxisLabel) {
                 int allCount = 0;
-
-                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
-                labelCalendar.setTime(labelDate);
-
-                timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-                timeDifference /= 1000;
-                timeDifference = Math.round(timeDifference);
-                dataPosition = (int) timeDifference;
-
+                dataPosition = getTimeDiffDataPosition(labelTime);
 
                 if (i == 0) {
-
                     for (int k = 0; k < hitTypeCount; k++)
                         allCount += Hit.get(dataPosition).get(k);
 
                     if (allCount != 0)
-                        hitData += allCount + ", ";
+                        hitDataBuilder.append(allCount).append(", ");
                     else
-                        hitData += ", ";
-
+                        hitDataBuilder.append(", ");
                 } else {
                     if (Hit.get(dataPosition).get(i - 1) != 0)
-                        hitData += Hit.get(dataPosition).get(i - 1) + ", ";
+                        hitDataBuilder.append(Hit.get(dataPosition).get(i - 1)).append(", ");
                     else
-                        hitData += ", ";
+                        hitDataBuilder.append(", ");
                 }
             }
 
-            hitData += "]\r\n";
+            hitDataBuilder.append("]\r\n");
         }
 
-
-        //errorData to js
+        StringBuilder errorDataBuilder = new StringBuilder();
         for (int i = 0; i <= hitTypeCount; i++) {
+            errorDataBuilder.append("const ").append(dataName.get((hitTypeCount + 1) * 2 + i)).append(" = [");
 
-
-            errorData += "const " + dataName.get((hitTypeCount + 1) * 2 + i) + " = [";
-
-            for (String s : xAxisLabel) {
-
+            for (String labelTime : xAxisLabel) {
                 int allCount = 0, hitCount = 0;
-
-
-                labelDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
-                labelCalendar.setTime(labelDate);
-
-                timeDifference = (double) (labelCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-                timeDifference /= 1000;
-                timeDifference = Math.round(timeDifference);
-                dataPosition = (int) timeDifference;
+                dataPosition = getTimeDiffDataPosition(labelTime);
 
                 if (i == 0) {
-
                     for (int k = 0; k < hitTypeCount; k++) {
                         allCount += Error.get(dataPosition).get(k);
                         hitCount += Hit.get(dataPosition).get(k);
                     }
 
                     if (allCount != 0)
-                        errorData += allCount + ", ";
+                        errorDataBuilder.append(allCount).append(", ");
                     else {
-
                         if (hitCount != 0)
-                            errorData += "0, ";
+                            errorDataBuilder.append("0, ");
                         else
-                            errorData += ", ";
+                            errorDataBuilder.append(", ");
                     }
-
                 } else {
-
                     if (Error.get(dataPosition).get(i - 1) != 0)
-                        errorData += Error.get(dataPosition).get(i - 1) + ", ";
-
+                        errorDataBuilder.append(Error.get(dataPosition).get(i - 1)).append(", ");
                     else {
-
                         if (Hit.get(dataPosition).get(i - 1) != 0)
-                            errorData += "0, ";
+                            errorDataBuilder.append("0, ");
                         else
-                            errorData += ", ";
+                            errorDataBuilder.append(", ");
                     }
                 }
-
             }
 
-            errorData += "]\r\n";
+            errorDataBuilder.append("]\r\n");
         }
 
+        errorDataBuilder.append("\r\n\n");
 
-        errorData += "\r\n\n";
-
-
-        //ResponseTime Data for all
+        StringBuilder responseTimeDataBuilder = new StringBuilder();
         for (int i = 0; i < 7; i++) {
-
-            responseTimeData += "const all" + statisticsName.get(i) + " = [";
+            responseTimeDataBuilder.append("const all").append(statisticsName.get(i)).append(" = [");
 
             for (int j = 0; j < xAxisLabel.size(); j++) {
-
                 if (i == 0)
-                    responseTimeData += Avg.get(j);
+                    responseTimeDataBuilder.append(Avg.get(j));
                 else if (i == 1)
-                    responseTimeData += Min.get(j);
+                    responseTimeDataBuilder.append(Min.get(j));
                 else if (i == 2)
-                    responseTimeData += Max.get(j);
+                    responseTimeDataBuilder.append(Max.get(j));
                 else if (i == 3)
-                    responseTimeData += Median.get(j);
+                    responseTimeDataBuilder.append(Median.get(j));
                 else if (i == 4)
-                    responseTimeData += P90.get(j);
+                    responseTimeDataBuilder.append(P90.get(j));
                 else if (i == 5)
-                    responseTimeData += P95.get(j);
-                else responseTimeData += P99.get(j);
+                    responseTimeDataBuilder.append(P95.get(j));
+                else
+                    responseTimeDataBuilder.append(P99.get(j));
 
-                responseTimeData += " ,";
+                responseTimeDataBuilder.append(" ,");
             }
 
-            responseTimeData += "]\r\n";
-
+            responseTimeDataBuilder.append("]\r\n");
         }
 
-
-        //ResponseTime Data for each
-
-        for (int i = 0; i < hitTypeCount; i++)
+        for (int i = 0; i < hitTypeCount; i++) {
             for (int j = 0; j < 7; j++) {
-
-                responseTimeData += "const " + commandList.get(i) + statisticsName.get(j) + " = [";
+                responseTimeDataBuilder.append("const ").append(commandList.get(i)).append(statisticsName.get(j)).append(" = [");
 
                 for (int k = 0; k < xAxisLabel.size(); k++) {
-
                     if (j == 0) {
                         if (commandAvg.get(k).get(i).size() != 0)
-                            responseTimeData += commandAvg.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandAvg.get(k).get(i).get(0));
                     } else if (j == 1) {
                         if (commandMin.get(k).get(i).size() != 0)
-                            responseTimeData += commandMin.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandMin.get(k).get(i).get(0));
                     } else if (j == 2) {
                         if (commandMax.get(k).get(i).size() != 0)
-                            responseTimeData += commandMax.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandMax.get(k).get(i).get(0));
                     } else if (j == 3) {
                         if (commandMedian.get(k).get(i).size() != 0)
-                            responseTimeData += commandMedian.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandMedian.get(k).get(i).get(0));
                     } else if (j == 4) {
                         if (commandP90.get(k).get(i).size() != 0)
-                            responseTimeData += commandP90.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandP90.get(k).get(i).get(0));
                     } else if (j == 5) {
                         if (commandP95.get(k).get(i).size() != 0)
-                            responseTimeData += commandP95.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandP95.get(k).get(i).get(0));
                     } else {
                         if (commandP99.get(k).get(i).size() != 0)
-                            responseTimeData += commandP99.get(k).get(i).get(0);
+                            responseTimeDataBuilder.append(commandP99.get(k).get(i).get(0));
                     }
 
-                    responseTimeData += ", ";
-
+                    responseTimeDataBuilder.append(", ");
                 }
 
-                responseTimeData += "]\r\n";
-
+                responseTimeDataBuilder.append("]\r\n");
             }
+        }
+
+        String userData = userDataBuilder.toString();
+        String hitData = hitDataBuilder.toString();
+        String errorData = errorDataBuilder.toString();
+        String responseTimeData = responseTimeDataBuilder.toString();
 
         yAxisData += userData + hitData + errorData + responseTimeData;
         reportContentMap.put("yAxisData", yAxisData);
 
-
         //Dataset information
-        dataset += "[\r\n";
-
-        int numberOfShow = 0;
-
-        Random randomNum = new Random();
-
-        for (int i = 0; i < dataName.size(); i++) {
-
-            //Generate line color
-            // create a big random number - maximum is ffffff (hex) = 16777215 (dez)
-            int nextInt = randomNum.nextInt(0xffffff + 1);
-            // format it as hexadecimal string (with hashtag and leading zeros)
-            String colorCode = String.format("#%06x", nextInt);
-
-            dataset += "\t{\r\n";
-
-            dataset += "\t\tdata: " + dataName.get(i) + ",\r\n";
-            dataset += "\t\tlabel: \"" + labelName.get(i) + "\",\r\n";
-            dataset += "\t\tfill: false,\r\n";
-
-            if (i % (hitTypeCount + 1) == 0 && numberOfShow < 4) {
-                dataset += "\t\thidden: false,\r\n";
-                numberOfShow++;
-            } else
-                dataset += "\t\thidden: true,\r\n";
-
-            dataset += "\t\tpointRadius: 3,\r\n";
-            //axis0 or axis1
-            dataset += "\t\tyAxisID: \"" + yaxis.get(i) + "\"\r\n";
-
-            if (i != dataName.size() - 1)
-                dataset += "\t},\r\n";
-            else
-                dataset += "\t}\r\n";
-        }
-
-        dataset += "\t]\r\n";
-        reportContentMap.put("datasets", dataset);
+        reportContentMap.put("dataName", dataName);
+        reportContentMap.put("labelName", labelName);
+        reportContentMap.put("yaxis", yaxis);
     }
-
-
-    public String monthStringToString(String month) {
-
-        switch (month) {
-            case "Jan":
-                return "01";
-            case "Feb":
-
-                return "02";
-            case "Mar":
-                return "03";
-            case "Apr":
-                return "04";
-            case "May":
-                return "05";
-            case "Jun":
-                return "06";
-            case "Jul":
-                return "07";
-            case "Aug":
-                return "08";
-            case "Sep":
-                return "09";
-            case "Oct":
-                return "10";
-            case "Nov":
-                return "11";
-            case "Dec":
-                return "12";
-        }
-
-
-        return "";
-
-    }
-
 
 }
