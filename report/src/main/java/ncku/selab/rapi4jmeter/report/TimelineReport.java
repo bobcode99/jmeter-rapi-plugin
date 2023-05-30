@@ -56,10 +56,6 @@ public class TimelineReport {
     private JsonParse jsonFile = null;
     private ArrayList<String> jsonNames = new ArrayList<>();
     private String checkBox = "";
-    private String userData = "";
-    private String hitData = "";
-    private String errorData = "";
-    private String responseTimeData = "";
     private String yAxisData = "";
 
     private int checkValue = 0;
@@ -213,6 +209,9 @@ public class TimelineReport {
         String startTime = startTimeList.get(0); // Ex: 20230527 19:22:37
         String endTime = endTimeList.get(fileSize - 1); // Ex: 20230527 19:27:37
 
+        startTime += ":000";
+        endTime += ":000";
+
         LocalDateTime startTimeLocalDateTime = getLocalDateTime(startTime);
         LocalDateTime endTimeLocalDateTime = getLocalDateTime(endTime);
 
@@ -319,12 +318,12 @@ public class TimelineReport {
             JSONObject eachJson = jsonFile.getJson(i);
 
             String caseStartTime = eachJson.get("startTime").toString();
-//            caseStartTime += ":000";
+            caseStartTime += ":000";
 
             LocalDateTime caseStartLocalDate = getLocalDateTime(caseStartTime);
 
             String caseEndTime = eachJson.get("endTime").toString();
-//            caseEndTime += ":000";
+            caseEndTime += ":000";
 
             LocalDateTime caseEndLocalDate = getLocalDateTime(caseEndTime);
 
@@ -411,7 +410,7 @@ public class TimelineReport {
             json = jsonFile.getJson(i);
 
             startTime = json.get("startTime").toString();
-//            startTime += ":000";
+            startTime += ":000";
 
             LocalDateTime caseStartLocalDate = getLocalDateTime(startTime);
 

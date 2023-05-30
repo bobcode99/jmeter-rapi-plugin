@@ -177,7 +177,7 @@ public class RequestStatsReport {
 
             String startTime = (String) json.get("startTime");
 //            String endTime = (String) json.get("endTime");
-//            startTime += ":000"; // need add back if no milliseconds
+            startTime += ":000"; // need add back if no milliseconds
 
             LocalDateTime commandDateTime = LocalDateTime.parse(startTime, formatter);
 
