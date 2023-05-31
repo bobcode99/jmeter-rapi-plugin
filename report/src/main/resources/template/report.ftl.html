@@ -96,7 +96,7 @@
 		}
 
 		.additionalButton {
-			background-color: #3080d0;
+			background-color: #4CAF50;
 			border: none;
 			color: white;
 			padding: 8px 16px;
@@ -108,6 +108,10 @@
 			cursor: pointer;
 			border-radius: 6px;
 		}
+
+        .additionalButton.clicked {
+            background-color: red;
+        }
 
 		table,
 		th,
@@ -223,9 +227,9 @@ ${checkBox}
 </div>
 
 <div class="buttonContainer">
-    <button class="firstButton" onclick="toggleZoom()">Toggle zoom</button>
-    <button class="additionalButton" onclick="togglePan()">Toggle pan</button>
-    <button class="additionalButton" onclick="resetZoom()">Reset zoom</button>
+    <button class="firstButton" onclick="resetZoom()">Reset zoom</button>
+    <button class="additionalButton" onclick="toggleZoom(this)">Toggle zoom</button>
+    <button class="additionalButton" onclick="togglePan(this)">Toggle pan</button>
 </div>
 
 <!--Hammer.js JS CDN-->
@@ -237,6 +241,14 @@ ${checkBox}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-autocolors"></script>
 <script>
+    const asciiArt = `
+      _           __                          _
+     (_)_ _  ___ / /____ ____  _______ ____  (_)
+    / /  ' \\/ -_) __/ -_) __/ / __/ _ \`/ _ \\/ /
+ __/ /_/_/_/\\__/\\__/\\__/_/   /_/  \\_,_/ .__/_/
+|___/                                /_/
+    `
+    console.log(asciiArt);
 		var commandNumber = ${ commandNumber };
         ${ yAxisData }
         const autocolors = window['chartjs-plugin-autocolors'];
@@ -247,6 +259,10 @@ ${checkBox}
 			pan: {
 				enabled: true,
 				mode: 'x',
+                onPanComplete({ chart }) {
+                    // console.log("onPanComplete")
+                    chart.update('none');
+                }
 			},
 			zoom: {
 				wheel: {
@@ -260,13 +276,14 @@ ${checkBox}
 					enabled: true
 				},
 				mode: 'x',
+                onZoomComplete({chart}) {
+                    // This update is needed to display up to date zoom level in the title.
+                    // Without this, previous zoom level is displayed.
+                    // The reason is: title uses the same beforeUpdate hook, and is evaluated before zoom.
+                    chart.update('none');
+                }
 			},
-			onZoomComplete({chart}) {
-			// This update is needed to display up to date zoom level in the title.
-			// Without this, previous zoom level is displayed.
-			// The reason is: title uses the same beforeUpdate hook, and is evaluated before zoom.
-				chart.update('none');
-			}
+
 	  	}
 		const panStatus = () => zoomOptions.pan.enabled ? 'enabled' : 'disabled';
 		const zoomStatus = (chart) => (zoomOptions.zoom.wheel.enabled ? 'enabled' : 'disabled') + ' (' + chart.getZoomLevel() + 'x)';
@@ -312,7 +329,7 @@ ${checkBox}
 					zoom: zoomOptions,
 					title: {
 						display: true,
-						position: 'bottom',
+						position: 'top',
 						text: (ctx) => 'Zoom: ' + zoomStatus(ctx.chart) + ', Pan: ' + panStatus()
 					},
 					autocolors: {
@@ -387,11 +404,13 @@ ${checkBox}
 		function resetZoom(){
 			reportChart.resetZoom();
 		}
-		function togglePan(){
-			zoomOptions.pan.enabled = !zoomOptions.pan.enabled;
+		function togglePan(button){
+            button.classList.toggle("clicked");
+            zoomOptions.pan.enabled = !zoomOptions.pan.enabled;
 			reportChart.update();
 		}
-		function toggleZoom(){
+		function toggleZoom(button){
+            button.classList.toggle("clicked");
 			zoomOptions.zoom.wheel.enabled = !zoomOptions.zoom.wheel.enabled;
       		zoomOptions.zoom.pinch.enabled = !zoomOptions.zoom.pinch.enabled;
       		zoomOptions.zoom.drag.enabled = !zoomOptions.zoom.drag.enabled;
