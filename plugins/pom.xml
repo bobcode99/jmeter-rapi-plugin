@@ -55,7 +55,7 @@
 
         <dependency>
             <groupId>ncku.selab</groupId>
-            <artifactId>jmeter-rapi-report</artifactId>
+            <artifactId>rapi-jmeter-report</artifactId>
             <version>1.0.3</version>
         </dependency>
 
