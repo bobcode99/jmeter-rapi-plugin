@@ -36,7 +36,9 @@ jobs:
       with:
         name: jarFiles
         path: |
-          ./plugins/target/*-jar-with-dependencies.jar
+          ./plugins/target/*.jar
+          ./report/target/*.jar
+          ./rapi-api-java/target/*.jar
           ./report-generator-cmd-tools/target/*-jar-with-dependencies.jar
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
@@ -61,7 +63,7 @@ jobs:
           files: |
             ./plugins/target/*.jar
             ./report/target/*.jar
-            ./rapi-api-java/*.jar
+            ./rapi-api-java/target/*.jar
             ./report-generator-cmd-tools/target/*-jar-with-dependencies.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
