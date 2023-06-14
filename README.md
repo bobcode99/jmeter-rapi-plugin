@@ -7,18 +7,6 @@ This plugin can run frontend load test using [Rapi Runner](https://github.com/Ra
 ## User Guide
 Please check [wiki](https://github.com/bobcode99/jmeter-rapi-plugin/wiki).
 
-## Jar Dependencies Required
-
-- rapi-jmeter-plugins-1.0.0
-- rapi-api-java-1.0.1
-- rapi-jmeter-report-1.0.3
-- opencsv-5.7.1
-- json-simple-1.1.1
-
-Jar that already provided in JMeter 5.5 `lib` folder
-- freemarker-2.3.31 
-- jackson-databind-2.14.1
-
 ## Needed Jmeter Version
 
 Recommended use
