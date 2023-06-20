@@ -1,10 +1,14 @@
 package ncku.selab.rapi.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class Proc {
-    private String executable;
+    private final String executable;
+    private static final Logger LOG = LoggerFactory.getLogger(Proc.class);
 
     public Proc(String executable) {
         this.executable = executable;
@@ -23,11 +27,23 @@ public class Proc {
         StringBuilder stderrStrBuilder = new StringBuilder();
         StringBuilder stdoutStrBuilder = new StringBuilder();
         String line = null;
-        while ((line = reader.readLine()) != null)
+        LOG.info("STDERR RAPI API log start");
+        while ((line = reader.readLine()) != null) {
+            LOG.info(line);
             stderrStrBuilder.append(line);
+        }
+        LOG.info("STDERR RAPI API log end");
+
+
+        LOG.info("STDOUT RAPI API log start");
         reader = new BufferedReader(new InputStreamReader(stdout));
-        while ((line = reader.readLine()) != null)
+        while ((line = reader.readLine()) != null) {
+            LOG.info(line);
             stdoutStrBuilder.append(line);
+        }
+        LOG.info("STDOUT RAPI API log end");
+
+
         int status = proc.waitFor();
         status = proc.exitValue();
         return new ProcResult(stdoutStrBuilder.toString(), stderrStrBuilder.toString(), status);
