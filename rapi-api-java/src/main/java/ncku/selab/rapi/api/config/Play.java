@@ -20,4 +20,6 @@ public class Play {
     private int speed = 5;
     @Builder.Default
     private Period period = new Period();
+    @Builder.Default
+    private Boolean noLog = true;
 }
