@@ -1,31 +1,21 @@
-/*
- * @link    https://github.com/RapiTest/rapi-api
- * @author  fourcolor
- */
-
 package ncku.selab.rapi.api.config;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.Map;
 
+@Builder(setterPrefix = "with")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Browser {
     private final boolean active = true;
+    @Builder.Default
     private boolean keepSessionAlive = false;
+    @Builder.Default
     private Map<String, Object> capability = Collections.emptyMap();
-
-    public Map<String, Object> getCapability() {
-        return capability;
-    }
-
-    public void setCapability(Map<String, Object> capability) {
-        this.capability = capability;
-    }
-
-    public boolean getKeepSessionAlive() {
-        return keepSessionAlive;
-    }
-
-    public void setKeepSessionAlive(boolean keepSessionAlive) {
-        this.keepSessionAlive = keepSessionAlive;
-    }
 }

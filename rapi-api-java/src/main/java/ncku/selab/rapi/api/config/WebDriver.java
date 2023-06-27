@@ -1,33 +1,21 @@
-/*
- * @link    https://github.com/RapiTest/rapi-api
- * @author  fourcolor
- */
-
 package ncku.selab.rapi.api.config;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
+@Builder(toBuilder = true, setterPrefix = "with")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class WebDriver {
-    private ArrayList<WebDriverConfig> configs = new ArrayList<>();
-
+    @Builder.Default
+    private ArrayList<WebDriverCommonConfig> configs = new ArrayList<WebDriverCommonConfig>();
+    @Builder.Default
     private Map<String, String> i18n = Collections.emptyMap();
-
-    public ArrayList<WebDriverConfig> getConfigs() {
-        return configs;
-    }
-
-    public void setConfigs(ArrayList<WebDriverConfig> configs) {
-        this.configs = configs;
-    }
-
-    public Map<String, String> getI18n() {
-        return i18n;
-    }
-
-    public void setI18n(Map<String, String> i18n) {
-        this.i18n = i18n;
-    }
-
 }

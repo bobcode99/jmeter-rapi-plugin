@@ -1,49 +1,19 @@
-/*
- * @link    https://github.com/RapiTest/rapi-api
- * @author  fourcolor
- */
-
 package ncku.selab.rapi.api.config;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Builder(toBuilder = true, setterPrefix = "with")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Report {
+    @Builder.Default
     private String type = "json";
+    @Builder.Default
     private int snapshot = 0;
+    @Builder.Default
     private int snapshotQuality = 20;
-
-    public int getSnapshot() {
-        return snapshot;
-    }
-
-    public void setSnapshot(int snapshot) {
-        if (snapshot >= 0 && snapshot <= 2)
-            this.snapshot = snapshot;
-        else {
-            throw new Error("Unsupport snapshot value " + snapshot);
-        }
-    }
-
-    public int getSnapshotQuality() {
-        return snapshotQuality;
-    }
-
-    public void setSnapshotQuality(int snapshotQuality) {
-        if (snapshotQuality >= 0 && snapshotQuality <= 100)
-            this.snapshotQuality = snapshotQuality;
-        else {
-            throw new Error("Unsupport snapshot value " + snapshotQuality);
-        }
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        if (type.equals("json") || type.equals("html") || type.equals("all"))
-            this.type = type;
-        else {
-            throw new Error("Unknown type " + type);
-        }
-    }
-
 }

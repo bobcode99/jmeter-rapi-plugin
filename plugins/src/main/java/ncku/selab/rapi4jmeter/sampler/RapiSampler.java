@@ -4,10 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import ncku.selab.rapi.api.Driver;
-import ncku.selab.rapi.api.config.Browser;
-import ncku.selab.rapi.api.config.Config;
-import ncku.selab.rapi.api.config.WebDriverConfig;
+import ncku.selab.rapi.api.Rapi;
+import ncku.selab.rapi.api.RapiReport;
+import ncku.selab.rapi.api.config.*;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
@@ -69,6 +68,14 @@ public class RapiSampler extends AbstractSampler {
         return browserName;
     }
 
+    private String getBrowserOptions(String browserName) {
+        HashMap<String, String> browserOptions = new HashMap<>();
+        browserOptions.put("chrome", "goog:chromeOptions");
+        browserOptions.put("firefox", "moz:firefoxOptions");
+        browserOptions.put("MicrosoftEdge", "ms:edgeOptions");
+        return browserOptions.get(browserName);
+    }
+
     private ResultRapi startRunRapi(String testCase, String browserName) throws Exception {
         // For get config settings
         JMeterContext context = getThreadContext();
@@ -77,7 +84,8 @@ public class RapiSampler extends AbstractSampler {
         ArrayList<String> testSuites = new ArrayList<>();
         testSuites.add(testCase);
 
-        Browser browser = new Browser();
+        Input inputRapiTest = Input.builder().withTestSuites(testSuites).build();
+
         Map<String, Object> caps = new HashMap<>();
 
         // browserName: {"chrome", "firefox", "MicrosoftEdge"}
@@ -109,44 +117,32 @@ public class RapiSampler extends AbstractSampler {
         LOG.info("browserArgs: " + browserArgs);
 
         // set browserOptions: "moz:firefoxOptions": {"args": ["-headless","-disable-gpu", "-window-size=1080,720"]}
-        caps.put(Driver.getBrowserOptions(browserName), browserArgs);
+        caps.put(getBrowserOptions(browserName), browserArgs);
+        ArrayList<WebDriverCommonConfig> service = new ArrayList<>();
+        service.add(
+                WebDriverBrowserConfig.builder()
+                        .withBrowsers(Browser.builder().withCapability(caps).build())
+                        .withServerUrl(jMeterVariables.get("SELENIUM_URL_FOR_RAPI_USE")).build());
 
-        browser.setCapability(caps);
 
-//        System.out.println("browser.getCapability: " + browser.getCapability());
-        LOG.info("browser.getCapability: " + browser.getCapability());
+        Config config = Config.builder().withInput(inputRapiTest)
+                .withWebdriver(WebDriver.builder().withConfigs(service).build()).build();
 
-        ArrayList<Browser> browsers = new ArrayList<>();
-        browsers.add(browser);
-
-        WebDriverConfig webDriverConfig = new WebDriverConfig();
-        webDriverConfig.setBrowsers(browsers);
-
-//        System.out.println("jMeterVariables RUNNER_EXE_PATH: " + jMeterVariables.get("RUNNER_EXE_PATH_FOR_RAPI_USE"));
-//        System.out.println("jMeterVariables SELENIUM_PORT: " + jMeterVariables.get("SELENIUM_PORT_FOR_RAPI_USE"));
-
-        webDriverConfig.setServerUrl(jMeterVariables.get("SELENIUM_URL_FOR_RAPI_USE"));
-        ArrayList<WebDriverConfig> webDriverConfigs = new ArrayList<>();
-        webDriverConfigs.add(webDriverConfig);
-
-        Config config = new Config();
-        config.getInput().setTestSuites(testSuites);
-        config.getWebdriver().setConfigs(webDriverConfigs);
-        config.getPlay().setAutoWaitTimeout(30);
-        config.getPlay().setMode(2);
-
-        // Note that if executable path doesn't exist, it will not print any warning message.
+        String rapiConfigStr = config.toString();
+        System.out.println("rapiConfigStr: " + rapiConfigStr);
+        LOG.info("Rapi config: ");
+        LOG.info(rapiConfigStr);
         // TODO: add file check exist
-        Driver driver = new Driver(
-                jMeterVariables.get("RUNNER_EXE_PATH_FOR_RAPI_USE"), config);
-
-        JsonNode report = driver.run();
+        // Note that if executable path doesn't exist, it will not print any warning message.
+        Rapi rapi = new Rapi(jMeterVariables.get("RUNNER_EXE_PATH_FOR_RAPI_USE"), config);
+        RapiReport report = rapi.run();
+        JsonNode rapiResultJsonNode = report.getJson();
 
         // runner report format: {"version":{"sideex":[4,0,0],"format":[1,0,1]},"reports":[{}]}
         String reportFieldNames = "reports";
 
-        String resultSuite = report.get(reportFieldNames).get(0).get("suites").get(0).get("status").asText();
-        ArrayNode reportContent = (ArrayNode) report.get(reportFieldNames);
+        String resultSuite = rapiResultJsonNode.get(reportFieldNames).get(0).get("suites").get(0).get("status").asText();
+        ArrayNode reportContent = (ArrayNode) rapiResultJsonNode.get(reportFieldNames);
 
         // if enable log is false will remove the report's logs.
         if(!getEnableLog()) {
@@ -162,9 +158,12 @@ public class RapiSampler extends AbstractSampler {
 
 //        System.out.println("resultSuite: " + resultSuite);
 
-        resultRapi.jsonReport = objectMapper.writeValueAsString(report);
+        resultRapi.jsonReport = objectMapper.writeValueAsString(rapiResultJsonNode);
         resultRapi.successfulStatus = resultSuite.equals("success");
 
+        LOG.info(objectMapper.writeValueAsString(rapiResultJsonNode));
+
+        LOG.info("End test");
         return resultRapi;
     }
 

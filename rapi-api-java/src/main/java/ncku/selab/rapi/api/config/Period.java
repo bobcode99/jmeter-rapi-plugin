@@ -1,27 +1,17 @@
-/*
- * @link    https://github.com/RapiTest/rapi-api
- * @author  fourcolor
- */
-
 package ncku.selab.rapi.api.config;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Builder(setterPrefix = "with")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Period {
+    @Builder.Default
     private int time = -1;
-    private int maxNum = 1;
-
-    public int getMaxNum() {
-        return maxNum;
-    }
-
-    public void setMaxNum(int maxNum) {
-        this.maxNum = maxNum;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-    }
+    @Builder.Default
+    private int maxNum = -1;
 }
