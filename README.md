@@ -5,7 +5,7 @@
 This plugin can run frontend load test using [Rapi Runner](https://github.com/RapiTest/rapi-runner) while using JMeter and can parse the `.csv` file result to generate a frontend load report.
 
 ## User Guide
-Please check [wiki](https://github.com/bobcode99/jmeter-rapi-plugin/wiki).
+Please check [wiki](https://github.com/bobcode99/jmeter-rapi-plugin/wiki/jmeter%E2%80%90rapi%E2%80%90plugin-wiki).
 
 ## Needed Jmeter Version
 
