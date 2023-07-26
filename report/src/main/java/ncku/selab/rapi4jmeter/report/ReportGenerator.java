@@ -11,23 +11,27 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReportGenerator {
 
     public static void generateReport(ArrayList<String> reportArrayList, String csvFilePath) {
-        String generateReportPath = csvFilePath.substring(0, csvFilePath.lastIndexOf('/'));
-
-        if (generateReportPath.contains("/"))
-            generateReportPath += "/";
-        else {
-            generateReportPath += "\\";
+        Path path = FileSystems.getDefault().getPath(csvFilePath);
+        Path directoryPath = path.getParent();
+        String directory = "";
+        if (directoryPath != null) {
+            directory = directoryPath.toString();
+            System.out.println("Generate report directory path: " + directory);
+        } else {
+            System.out.println("Invalid file path or the file is in the root directory.");
         }
 
         try {
             RequestStatsReport requestStatsReport = new RequestStatsReport();
-            requestStatsReport.startGenerateReport(generateReportPath, reportArrayList);
+            requestStatsReport.startGenerateReport(directory, reportArrayList);
         } catch (java.text.ParseException | ParseException ex) {
             throw new RuntimeException(ex);
         }
