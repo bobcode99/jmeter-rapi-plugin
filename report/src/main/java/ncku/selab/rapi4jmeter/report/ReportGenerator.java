@@ -26,7 +26,7 @@ public class ReportGenerator {
             directory = directoryPath.toString();
             System.out.println("Generate report directory path: " + directory);
         } else {
-            System.out.println("Invalid file path or the file is in the root directory.");
+            throw new Error("Invalid file path or the file is in the root directory.");
         }
 
         try {
