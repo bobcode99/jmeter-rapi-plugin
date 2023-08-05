@@ -47,6 +47,7 @@ public class RequestStatsReport {
     private final ArrayList<Long> line_99 = new ArrayList<>();
     private final ArrayList<Long> Min = new ArrayList<>();
     private final ArrayList<Long> Max = new ArrayList<>();
+    private final ArrayList<Long> Median = new ArrayList<>();
     /**
      * record each Command error
      */
@@ -137,6 +138,18 @@ public class RequestStatsReport {
             position = 0;
 
         return position;
+    }
+
+    private static long findMedian(ArrayList<Long> sortedArray) {
+        int n = sortedArray.size();
+        int middleIndex = n / 2;
+        if (n % 2 == 1) {
+            // Array has odd number of elements, return the middle element
+            return sortedArray.get(middleIndex);
+        } else {
+            // Array has even number of elements, return the average of the two middle elements
+            return (sortedArray.get(middleIndex - 1) + sortedArray.get(middleIndex) / 2);
+        }
     }
 
     public void parse() throws ParseException, java.text.ParseException {
@@ -250,6 +263,8 @@ public class RequestStatsReport {
 
 
         // Calculate Hit Data
+        // AllTime.size() same as All samples
+        // hit = All samples / time
         double hit = (double) AllTime.size() / commandTimeDifference.get(0);
         hit = Math.round(hit * 100.0) / 100.0;
         Hit.add(hit);
@@ -301,6 +316,7 @@ public class RequestStatsReport {
 
             Min.add(commandTimeData.get(i).get(0));
             Max.add(commandTimeData.get(i).get(sizeCommandTimeDataArrayNow - 1));
+            Median.add(findMedian(commandTimeData.get(i)));
 
             percentage = (float) error.get(i) / commandSamplesCount.get(i);
             percentage = Math.round(percentage * 1000.0);
@@ -321,7 +337,49 @@ public class RequestStatsReport {
 
         for (int i = 0; i < commandList.size(); i++) {
 
-            requestStatisticsContentStringBuilder.append("  </tr>\r\n" + "  <tr>\r\n" + "    <td>").append(commandList.get(i)).append("</td>\r\n").append("    <td>").append(AvgTime.get(i)).append("</td>\r\n").append("    <td>").append(Hit.get(i)).append("</td>\r\n").append("    <td>").append(commandTimeData.get(i).size()).append("</td>\r\n").append("    <td>").append(line_90.get(i)).append("</td>\r\n").append("    <td>").append(line_95.get(i)).append("</td>\r\n").append("    <td>").append(line_99.get(i)).append("</td>\r\n").append("    <td>").append(Min.get(i)).append("</td>\r\n").append("    <td>").append(Max.get(i)).append("</td>\r\n").append("    <td>").append(errorPercentage.get(i)).append("%</td>\r\n");
+            requestStatisticsContentStringBuilder.append("  </tr>\r\n" + "  <tr>\r\n" + "    <td>");
+            requestStatisticsContentStringBuilder.append(commandList.get(i));
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(AvgTime.get(i));
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(Hit.get(i));
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(commandTimeData.get(i).size());
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(Median.get(i));
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(line_90.get(i));
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(line_95.get(i));
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(line_99.get(i));
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(Min.get(i));
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(Max.get(i));
+            requestStatisticsContentStringBuilder.append("</td>\r\n");
+
+            requestStatisticsContentStringBuilder.append("    <td>");
+            requestStatisticsContentStringBuilder.append(errorPercentage.get(i));
+            requestStatisticsContentStringBuilder.append("%</td>\r\n");
 
         }
 
